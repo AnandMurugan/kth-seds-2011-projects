@@ -79,7 +79,7 @@ public class HangmanClientUI extends javax.swing.JFrame {
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         imageLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        imageLabel.setIcon(new javax.swing.ImageIcon("D:\\Programming\\NetBeansProjects\\ID2212_HW1\\data\\img\\0.png")); // NOI18N
+        imageLabel.setIcon(new javax.swing.ImageIcon("data\\img\\6.png"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
