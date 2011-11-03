@@ -78,8 +78,8 @@
     <Component class="javax.swing.JLabel" name="imageLabel">
       <Properties>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="2" name="D:\Programming\NetBeansProjects\ID2212_HW1\data\img\0.png"/>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="new javax.swing.ImageIcon(&quot;data\\img\\6.png&quot;)" type="code"/>
         </Property>
       </Properties>
       <Constraints>
