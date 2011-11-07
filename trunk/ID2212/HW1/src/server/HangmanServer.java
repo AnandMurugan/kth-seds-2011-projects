@@ -15,9 +15,10 @@ import java.util.logging.Logger;
  * @author julio
  */
 public class HangmanServer {
-    private int port = 8080;
-    private int maxAttemptNumber = 6;
-    public void main(String args[]) {
+    public static void main(String args[]) {
+        int port = 8080;
+        int maxAttemptNumber = 6;
+
         if (args.length > 0) {
             try {
                 port = Integer.parseInt(args[0]);
@@ -26,14 +27,16 @@ public class HangmanServer {
             }
         }
 
+        System.out.println("Starting server...");
+        
         ServerSocket servSocket = null;
         try {
             servSocket = new ServerSocket(port);
             while (true) {
+                System.out.println("Waiting for incomming clients...");
                 Socket clientSocket = servSocket.accept();
                 (new HangmanHandler(clientSocket, maxAttemptNumber)).start();
             }
-
         } catch (IOException ex) {
             Logger.getLogger(HangmanServer.class.getName()).log(Level.SEVERE, null, ex);
         }
