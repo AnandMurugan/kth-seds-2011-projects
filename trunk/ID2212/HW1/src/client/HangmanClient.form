@@ -415,11 +415,17 @@
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="0"/>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="wholeWordText.addActionListener(wholeWordListener);"/>
+              </AuxValues>
             </Component>
             <Component class="javax.swing.JButton" name="guessWholeWordButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Guess"/>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="guessWholeWordButton.addActionListener(wholeWordListener);"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>

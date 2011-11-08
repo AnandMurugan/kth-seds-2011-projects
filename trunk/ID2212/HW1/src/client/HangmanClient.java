@@ -73,7 +73,9 @@ public class HangmanClient extends javax.swing.JFrame {
         wholeWordPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         wholeWordText = new javax.swing.JTextField();
+        wholeWordText.addActionListener(wholeWordListener);
         guessWholeWordButton = new javax.swing.JButton();
+        guessWholeWordButton.addActionListener(wholeWordListener);
         wordLabel = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         gameMenu = new javax.swing.JMenu();
@@ -271,7 +273,7 @@ public class HangmanClient extends javax.swing.JFrame {
         gridBagConstraints.weightx = 1.0;
         getContentPane().add(gamePanel, gridBagConstraints);
 
-        wordLabel.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        wordLabel.setFont(new java.awt.Font("Tahoma", 1, 36));
         wordLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         wordLabel.setText("-----------");
         wordLabel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
@@ -568,6 +570,40 @@ public class HangmanClient extends javax.swing.JFrame {
         }
     }
 
+    public void reportWin() {
+        final java.awt.Component c = this;
+        Runnable updateUI = new Runnable() {
+            @Override
+            public void run() {
+                JOptionPane.showMessageDialog(c, "YOU WIN!", "Hangman", JOptionPane.INFORMATION_MESSAGE);
+            }
+        };
+        try {
+            SwingUtilities.invokeAndWait(updateUI);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HangmanClient.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(HangmanClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void reportGameOver() {
+        final java.awt.Component c = this;
+        Runnable updateUI = new Runnable() {
+            @Override
+            public void run() {
+                JOptionPane.showMessageDialog(c, "YOU LOSE :(", "Hangman", JOptionPane.INFORMATION_MESSAGE);
+            }
+        };
+        try {
+            SwingUtilities.invokeAndWait(updateUI);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HangmanClient.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(HangmanClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public void connectToServer(final String host, final int port) {
         setTitle("Hangman --- Connecting to server...");
 
@@ -587,6 +623,24 @@ public class HangmanClient extends javax.swing.JFrame {
                 newGameMenuItem.setEnabled(true);
                 disconnectMenuItem.setEnabled(true);
                 connectMenuItem.setEnabled(false);
+            }
+        };
+        try {
+            SwingUtilities.invokeAndWait(updateUI);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HangmanClient.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(HangmanClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    void connectionClosed() {
+        Runnable updateUI = new Runnable() {
+            @Override
+            public void run() {
+                newGameMenuItem.setEnabled(false);
+                disconnectMenuItem.setEnabled(false);
+                connectMenuItem.setEnabled(true);
             }
         };
         try {
