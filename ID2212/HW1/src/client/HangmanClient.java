@@ -73,9 +73,7 @@ public class HangmanClient extends javax.swing.JFrame {
         wholeWordPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         wholeWordText = new javax.swing.JTextField();
-        wholeWordText.addActionListener(wholeWordListener);
         guessWholeWordButton = new javax.swing.JButton();
-        guessWholeWordButton.addActionListener(wholeWordListener);
         wordLabel = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         gameMenu = new javax.swing.JMenu();
@@ -257,10 +255,12 @@ public class HangmanClient extends javax.swing.JFrame {
         jLabel3.setText("Whole word:");
         wholeWordPanel.add(jLabel3);
 
+        wholeWordText.addActionListener(wholeWordListener);
         wholeWordText.setFont(new java.awt.Font("Tahoma", 1, 14));
         wholeWordText.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         wholeWordPanel.add(wholeWordText);
 
+        guessWholeWordButton.addActionListener(wholeWordListener);
         guessWholeWordButton.setText("Guess");
         wholeWordPanel.add(guessWholeWordButton);
 

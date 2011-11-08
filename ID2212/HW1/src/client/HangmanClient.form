@@ -410,22 +410,16 @@
             </Component>
             <Component class="javax.swing.JTextField" name="wholeWordText">
               <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor" preCode="wholeWordText.addActionListener(wholeWordListener);">
                   <Font name="Tahoma" size="14" style="1"/>
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="0"/>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="wholeWordText.addActionListener(wholeWordListener);"/>
-              </AuxValues>
             </Component>
             <Component class="javax.swing.JButton" name="guessWholeWordButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Guess"/>
+                <Property name="text" type="java.lang.String" value="Guess" preCode="guessWholeWordButton.addActionListener(wholeWordListener);"/>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="guessWholeWordButton.addActionListener(wholeWordListener);"/>
-              </AuxValues>
             </Component>
           </SubComponents>
         </Container>
