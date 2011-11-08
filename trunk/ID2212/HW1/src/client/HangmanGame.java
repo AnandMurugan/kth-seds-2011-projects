@@ -54,11 +54,11 @@ public class HangmanGame {
         } catch (UnknownHostException ex) {
             ui.updateTitle("Hangman");
             ui.reportConnectionError();
-            Logger.getLogger(HangmanGame.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(HangmanGame.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             ui.updateTitle("Hangman");
             ui.reportConnectionError();
-            Logger.getLogger(HangmanGame.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(HangmanGame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -73,6 +73,8 @@ public class HangmanGame {
     public void disconnect() {
         if (socket != null) {
             try {
+                //TODO: send DISCONNECT message
+                
                 in.close();
                 out.close();
                 socket.close();
