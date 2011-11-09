@@ -85,6 +85,7 @@ public class HangmanHandler extends Thread {
                             } else {
                                 this.leftAttempts--;
                                 if (this.leftAttempts == 0) {
+                                    this.totalScore--;
                                     wr.print(MessageType.SERVER_GAME_OVER);
                                     wr.print("\t");
                                     wr.println(this.totalScore);
