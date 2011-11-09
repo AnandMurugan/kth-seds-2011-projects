@@ -46,9 +46,9 @@ public class ConnectDialog extends javax.swing.JDialog {
 
         jLabel2.setText("Port:");
 
-        hostText.setText("localhost");
+        hostText.setText(HangmanGame.DEFAULT_HOST);
 
-        portText.setText("8080");
+        portText.setText(Integer.toString(HangmanGame.DEFAULT_PORT));
 
         connectButon.setText("Connect");
 
