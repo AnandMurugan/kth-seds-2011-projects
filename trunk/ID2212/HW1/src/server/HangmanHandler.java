@@ -136,7 +136,7 @@ public class HangmanHandler extends Thread {
         char[] word = this.gameWord.toCharArray();
         boolean correct = false;
         for (int i = 0; i < word.length; i++) {
-            if (word[i] == letter) {
+            if (Character.toUpperCase(word[i]) == Character.toUpperCase(letter)) {
                 correct = true;
                 this.currentUserWord[i] = letter;
             }
