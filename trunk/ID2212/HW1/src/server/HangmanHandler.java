@@ -67,10 +67,17 @@ public class HangmanHandler extends Thread {
                                 wr.flush();
                             } else {
                                 this.leftAttempts--;
-                                wr.print(MessageType.SERVER_WRONG_LETTER);
-                                wr.print("\t");
-                                wr.println(this.leftAttempts);
-                                wr.flush();
+                                if (this.leftAttempts == 0) {
+                                    wr.print(MessageType.SERVER_GAME_OVER);
+                                    wr.print("\t");
+                                    wr.println(this.totalScore);
+                                    wr.flush();
+                                } else {
+                                    wr.print(MessageType.SERVER_WRONG_LETTER);
+                                    wr.print("\t");
+                                    wr.println(this.leftAttempts);
+                                    wr.flush();
+                                }
                             }
                         } else {
                             // TODO. handle error
@@ -104,7 +111,7 @@ public class HangmanHandler extends Thread {
                         wr.close();
                         break;
                     default:
-                        // TODO. handle bad message
+                    // TODO. handle bad message
                 }
             }
             reader.close();
