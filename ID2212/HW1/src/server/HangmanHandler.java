@@ -52,7 +52,7 @@ public class HangmanHandler extends Thread {
                         newGame();
                         wr.print(MessageType.SERVER_NEW_GAME);
                         wr.print("\t");
-                        wr.print(this.currentUserWord);
+                        wr.print(this.gameWord.length());
                         wr.print("\t");
                         wr.println(this.maxAttemptNumber);
                         wr.flush();
