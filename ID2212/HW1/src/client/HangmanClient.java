@@ -527,7 +527,7 @@ public class HangmanClient extends javax.swing.JFrame {
         Runnable updateUI = new Runnable() {
             @Override
             public void run() {
-                attemptsLeftText.setText(Integer.toString(totalScore));
+                totalScoreText.setText(Integer.toString(totalScore));
             }
         };
         try {
