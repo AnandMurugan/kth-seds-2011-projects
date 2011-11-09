@@ -78,7 +78,9 @@
     </Component>
     <Component class="javax.swing.JTextField" name="hostText">
       <Properties>
-        <Property name="text" type="java.lang.String" value="localhost"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="HangmanGame.DEFAULT_HOST" type="code"/>
+        </Property>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="hostText.addActionListener(connectListener);"/>
@@ -86,7 +88,9 @@
     </Component>
     <Component class="javax.swing.JTextField" name="portText">
       <Properties>
-        <Property name="text" type="java.lang.String" value="8080"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="Integer.toString(HangmanGame.DEFAULT_PORT)" type="code"/>
+        </Property>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="portText.addActionListener(connectListener);"/>
