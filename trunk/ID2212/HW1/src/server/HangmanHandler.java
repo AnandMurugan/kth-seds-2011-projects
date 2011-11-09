@@ -21,17 +21,19 @@ import utils.WordDictionary;
  * @author julio
  */
 public class HangmanHandler extends Thread {
-    Socket clientSocket;
-    int maxAttemptNumber;
-    int totalScore;
-    int leftAttempts;
-    String gameWord;
-    char[] currentUserWord;
-    boolean isGameStarted = false;
+    private Socket clientSocket;
+    private int maxAttemptNumber;
+    private int totalScore;
+    private int leftAttempts;
+    private String gameWord;
+    private char[] currentUserWord;
+    private boolean isGameStarted = false;
+    private WordDictionary wd;
 
-    public HangmanHandler(Socket clientSocket, int maxAttemptNum) {
+    public HangmanHandler(Socket clientSocket, int maxAttemptNum, WordDictionary wd) {
         this.clientSocket = clientSocket;
         this.maxAttemptNumber = maxAttemptNum;
+        this.wd = wd;
     }
 
     @Override
@@ -141,7 +143,7 @@ public class HangmanHandler extends Thread {
 
     @SuppressWarnings("ReplaceAllDot")
     public void newGame() {
-        this.gameWord = WordDictionary.getWord();
+        this.gameWord = wd.getWord();
         this.currentUserWord = this.gameWord.replaceAll(".", "-").toCharArray();
         this.leftAttempts = this.maxAttemptNumber;
         this.isGameStarted = true;

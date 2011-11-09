@@ -10,14 +10,18 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import utils.WordDictionary;
 
 /**
  *
  * @author julio
  */
 public class HangmanServer {
+    private final static int DEFAULT_PORT = HangmanGame.DEFAULT_PORT;
+
     public static void main(String args[]) {
-        int port = 8080;
+        int port = DEFAULT_PORT;
+        WordDictionary wd = new WordDictionary();
 
         if (args.length > 0) {
             try {
@@ -28,7 +32,7 @@ public class HangmanServer {
         }
 
         System.out.println("Starting server...");
-        
+
         ServerSocket servSocket = null;
         try {
             servSocket = new ServerSocket(port);
@@ -36,7 +40,7 @@ public class HangmanServer {
                 System.out.println("Waiting for incomming clients...");
                 Socket clientSocket = servSocket.accept();
                 System.out.println("New client connection started.");
-                (new HangmanHandler(clientSocket, HangmanGame.MAX_ATTEMPTS)).start();
+                (new HangmanHandler(clientSocket, HangmanGame.MAX_ATTEMPTS, wd)).start();
             }
         } catch (IOException ex) {
             Logger.getLogger(HangmanServer.class.getName()).log(Level.SEVERE, null, ex);

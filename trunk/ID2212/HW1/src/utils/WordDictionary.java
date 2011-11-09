@@ -4,46 +4,49 @@
  */
 package utils;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author julio
  */
 public class WordDictionary {
+    private final static String DICTIONARY_PATH = "data\\dict.txt";
     private static List<String> wordList;
-    private static Random rd;
+    private static Random rnd;
 
     public WordDictionary() {
+        this(DICTIONARY_PATH);
+    }
+
+    public WordDictionary(String dictionaryPath) {
         // Open file
+        rnd = new Random(System.nanoTime());
         wordList = new ArrayList<String>();
-        rd = new Random(System.nanoTime());
-        wordList.add("test 1");
-        wordList.add("test 2");
-        wordList.add("test 3");
+        try {
+            BufferedReader file = new BufferedReader(new FileReader(DICTIONARY_PATH));
 
+            String word;
+            while ((word = file.readLine()) != null) {
+                wordList.add(word);
+            }
+            file.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(WordDictionary.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(WordDictionary.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    public static synchronized String getWord() {
-        if (rd == null) {
-            rd = new Random(System.nanoTime());
-        }
-        if (wordList == null) {
-            wordList = new ArrayList<String>();
-            wordList.add("testa");
-            wordList.add("testb");
-            wordList.add("testc");
-        }
-
-        return wordList.get(rd.nextInt(wordList.size()));
-    }
-
-    public void InitWordList() {
-        wordList = new ArrayList<String>();
-        wordList.add("test 1");
-        wordList.add("test 2");
-        wordList.add("test 3");
+    public synchronized String getWord() {
+        return wordList.get(rnd.nextInt(wordList.size()));
     }
 }
