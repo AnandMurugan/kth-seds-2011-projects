@@ -61,10 +61,20 @@ public class HangmanHandler extends Thread {
                         if (tokens.hasMoreTokens()) {
                             String suggestedLetter = tokens.nextToken();
                             if (evaluateLetter(suggestedLetter.charAt(0))) {
-                                wr.print(MessageType.SERVER_CORRECT_LETTER);
-                                wr.print("\t");
-                                wr.println(this.currentUserWord);
-                                wr.flush();
+                                if (this.currentUserWord.toString().indexOf('-') == -1) {
+                                    this.totalScore++;
+                                    wr.print(MessageType.SERVER_WIN);
+                                    wr.print("\t");
+                                    wr.print(this.gameWord);
+                                    wr.print("\t");
+                                    wr.println(this.totalScore);
+                                    wr.flush();
+                                } else {
+                                    wr.print(MessageType.SERVER_CORRECT_LETTER);
+                                    wr.print("\t");
+                                    wr.println(this.currentUserWord);
+                                    wr.flush();
+                                }
                             } else {
                                 this.leftAttempts--;
                                 if (this.leftAttempts == 0) {
