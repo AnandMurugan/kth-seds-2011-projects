@@ -467,8 +467,10 @@ public class HangmanClient extends javax.swing.JFrame {
 
     public void prepareNewGame() {
         //enable all letters
-        for (java.awt.Component c : gamePanel.getComponents()) {
-            c.setEnabled(true);
+        for (java.awt.Component c : keyboardPanel.getComponents()) {
+            if (c instanceof javax.swing.JButton) {
+                c.setEnabled(true);
+            }
             //System.out.println(((javax.swing.JButton) c).getText());
         }
     }
