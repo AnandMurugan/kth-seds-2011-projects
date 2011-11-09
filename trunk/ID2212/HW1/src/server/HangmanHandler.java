@@ -35,15 +35,18 @@ public class HangmanHandler extends Thread {
 
     @Override
     public void run() {
-        String gameWord = "";
         BufferedReader reader = null;
         PrintWriter wr = null;
+        boolean isConnected = true;
         try {
             reader = new BufferedReader(
                     new InputStreamReader(clientSocket.getInputStream()));
             String str;
             wr = new PrintWriter(clientSocket.getOutputStream()); // output stream
-            while ((str = reader.readLine()) != null) {
+            while (isConnected) {
+                if ((str = reader.readLine()) == null) {
+                    break;
+                }
                 StringTokenizer tokens = new StringTokenizer(str, "\t");
                 String msgTypeString = tokens.nextToken();
                 MessageType msgType = MessageType.valueOf(msgTypeString);
@@ -117,13 +120,13 @@ public class HangmanHandler extends Thread {
                         ;
                         break;
                     case CLIENT_DISCONNECT:
-                        reader.close();
-                        wr.close();
+                        isConnected = false;
                         break;
                     default:
                     // TODO. handle bad message
                 }
             }
+
             reader.close();
             wr.close();
             clientSocket.close();
