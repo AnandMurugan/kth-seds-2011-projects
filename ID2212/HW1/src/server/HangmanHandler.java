@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.CharBuffer;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,7 +63,7 @@ public class HangmanHandler extends Thread {
                         if (tokens.hasMoreTokens()) {
                             String suggestedLetter = tokens.nextToken();
                             if (evaluateLetter(suggestedLetter.charAt(0))) {
-                                if (this.currentUserWord.toString().indexOf("-") == -1) {
+                                if (!String.copyValueOf(currentUserWord).contains("-")) {
                                     this.totalScore++;
                                     wr.print(MessageType.SERVER_WIN);
                                     wr.print("\t");
