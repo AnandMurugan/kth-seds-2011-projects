@@ -4,6 +4,7 @@
  */
 package server;
 
+import client.HangmanGame;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,7 +18,6 @@ import java.util.logging.Logger;
 public class HangmanServer {
     public static void main(String args[]) {
         int port = 8080;
-        int maxAttemptNumber = 6;
 
         if (args.length > 0) {
             try {
@@ -36,7 +36,7 @@ public class HangmanServer {
                 System.out.println("Waiting for incomming clients...");
                 Socket clientSocket = servSocket.accept();
                 System.out.println("New client connection started.");
-                (new HangmanHandler(clientSocket, maxAttemptNumber)).start();
+                (new HangmanHandler(clientSocket, HangmanGame.MAX_ATTEMPTS)).start();
             }
         } catch (IOException ex) {
             Logger.getLogger(HangmanServer.class.getName()).log(Level.SEVERE, null, ex);
