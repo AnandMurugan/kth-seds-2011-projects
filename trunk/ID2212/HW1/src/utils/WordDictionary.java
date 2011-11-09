@@ -32,9 +32,9 @@ public class WordDictionary {
         }
         if (wordList == null) {
             wordList = new ArrayList<String>();
-            wordList.add("test 1");
-            wordList.add("test 2");
-            wordList.add("test 3");
+            wordList.add("testa");
+            wordList.add("testb");
+            wordList.add("testc");
         }
 
         return wordList.get(rd.nextInt(wordList.size()));
