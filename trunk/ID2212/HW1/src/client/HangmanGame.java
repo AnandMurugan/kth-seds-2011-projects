@@ -36,9 +36,9 @@ public class HangmanGame {
     private BufferedReader in;
     private final static int LINGER = 100;
     //UI variable declaration
-    private HangmanClient ui;
+    private HangmanResponsiveUI ui;
 
-    public HangmanGame(HangmanClient ui) {
+    public HangmanGame(HangmanResponsiveUI ui) {
         this.ui = ui;
     }
 
