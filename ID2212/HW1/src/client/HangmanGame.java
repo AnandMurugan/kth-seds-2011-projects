@@ -174,8 +174,8 @@ public class HangmanGame {
 
                             //Update UI
                             ui.updateWordView(wordView);
-                            ui.reportWin();
                             ui.updateTotalScore(totalScore);
+                            ui.reportWin();
 
                             break;
                         case SERVER_GAME_OVER:
@@ -184,8 +184,10 @@ public class HangmanGame {
                             playing = false;
 
                             //Update UI
-                            ui.reportGameOver();
                             ui.updateTotalScore(totalScore);
+                            ui.updateAttemptsLeftCount(0);
+                            ui.updateHangmanImage(MAX_ATTEMPTS);
+                            ui.reportGameOver();
 
                             break;
                         default:
@@ -225,8 +227,8 @@ public class HangmanGame {
 
                             //Update UI
                             ui.updateWordView(wordView);
-                            ui.reportWin();
                             ui.updateTotalScore(totalScore);
+                            ui.reportWin();
 
                             break;
                         case SERVER_GAME_OVER:
@@ -234,9 +236,11 @@ public class HangmanGame {
 
                             playing = false;
 
-                            //Update UI
-                            ui.reportGameOver();
+                            //Update UI                            
                             ui.updateTotalScore(totalScore);
+                            ui.updateAttemptsLeftCount(0);
+                            ui.updateHangmanImage(MAX_ATTEMPTS);
+                            ui.reportGameOver();
 
                             break;
                         default:
