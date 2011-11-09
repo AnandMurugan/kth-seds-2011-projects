@@ -84,8 +84,13 @@ public class HangmanClient extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Hangman");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         imageLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -319,6 +324,11 @@ public class HangmanClient extends javax.swing.JFrame {
 
         exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F12, 0));
         exitMenuItem.setText("Exit");
+        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitMenuItemActionPerformed(evt);
+            }
+        });
         gameMenu.add(exitMenuItem);
 
         menuBar.add(gameMenu);
@@ -354,6 +364,42 @@ public class HangmanClient extends javax.swing.JFrame {
         };
         (new Thread(disconnectTask)).start();
     }//GEN-LAST:event_disconnectMenuItemActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        Runnable disconnectTask = new Runnable() {
+            @Override
+            public void run() {
+                game.disconnect();
+            }
+        };
+        Thread disconnectThread = new Thread(disconnectTask);
+        disconnectThread.start();
+
+        try {
+            disconnectThread.join(100);
+            System.exit(0);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HangmanClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowClosing
+
+    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
+        Runnable disconnectTask = new Runnable() {
+            @Override
+            public void run() {
+                game.disconnect();
+            }
+        };
+        Thread disconnectThread = new Thread(disconnectTask);
+        disconnectThread.start();
+
+        try {
+            disconnectThread.join(100);
+            System.exit(0);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HangmanClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_exitMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -478,15 +524,14 @@ public class HangmanClient extends javax.swing.JFrame {
     private ConnectDialog dialog = new ConnectDialog(this, true);
     //Game variable declaration
     private HangmanGame game = new HangmanGame(this);
-    //Updating interface
 
+    //Updating interface
     public void prepareNewGame() {
         //enable all letters
         for (java.awt.Component c : keyboardPanel.getComponents()) {
             if (c instanceof javax.swing.JButton) {
                 c.setEnabled(true);
             }
-            //System.out.println(((javax.swing.JButton) c).getText());
         }
     }
 
