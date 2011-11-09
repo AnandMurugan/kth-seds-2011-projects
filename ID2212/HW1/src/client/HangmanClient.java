@@ -309,6 +309,11 @@ public class HangmanClient extends javax.swing.JFrame {
         disconnectMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F9, 0));
         disconnectMenuItem.setText("Disconnect");
         disconnectMenuItem.setEnabled(false);
+        disconnectMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                disconnectMenuItemActionPerformed(evt);
+            }
+        });
         gameMenu.add(disconnectMenuItem);
         gameMenu.add(jSeparator1);
 
@@ -339,6 +344,16 @@ public class HangmanClient extends javax.swing.JFrame {
     private void connectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectMenuItemActionPerformed
         dialog.setVisible(true);
     }//GEN-LAST:event_connectMenuItemActionPerformed
+
+    private void disconnectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disconnectMenuItemActionPerformed
+        Runnable disconnectTask = new Runnable() {
+            @Override
+            public void run() {
+                game.disconnect();
+            }
+        };
+        (new Thread(disconnectTask)).start();
+    }//GEN-LAST:event_disconnectMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
