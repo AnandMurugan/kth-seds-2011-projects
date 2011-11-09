@@ -81,6 +81,8 @@ public class HangmanGame {
                 in.close();
                 out.close();
                 socket.close();
+                socket = null;
+                playing = false;
 
                 ui.updateTitle("Hangman");
                 ui.connectionClosed();
@@ -99,6 +101,7 @@ public class HangmanGame {
 
                 String response;
                 if ((response = in.readLine()) != null) {
+                    System.out.println(response);
                     String[] msgParts = response.split("\t");
                     MessageType type = MessageType.valueOf(msgParts[0]);
                     switch (type) {
@@ -127,6 +130,8 @@ public class HangmanGame {
                     //TODO: Connection lost
                 }
             } catch (IOException ex) {
+                ui.updateTitle("Hangman");
+                ui.reportConnectionError();
                 Logger.getLogger(HangmanGame.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -141,6 +146,7 @@ public class HangmanGame {
 
                 String response;
                 if ((response = in.readLine()) != null) {
+                    System.out.println(response);
                     String[] msgParts = response.split("\t");
                     MessageType type = MessageType.valueOf(msgParts[0]);
                     switch (type) {
@@ -189,6 +195,10 @@ public class HangmanGame {
                     //TODO: Connection lost
                 }
             } catch (IOException ex) {
+                playing = false;
+                socket = null;
+                ui.updateTitle("Hangman");
+                ui.reportConnectionError();
                 Logger.getLogger(HangmanGame.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -203,6 +213,7 @@ public class HangmanGame {
 
                 String response;
                 if ((response = in.readLine()) != null) {
+                    System.out.println(response);
                     String[] msgParts = response.split("\t");
                     MessageType type = MessageType.valueOf(msgParts[0]);
                     switch (type) {
@@ -213,7 +224,7 @@ public class HangmanGame {
                             playing = false;
 
                             //Update UI
-                            ui.updateWordView(word);
+                            ui.updateWordView(wordView);
                             ui.reportWin();
                             ui.updateTotalScore(totalScore);
 
@@ -235,6 +246,10 @@ public class HangmanGame {
                     //TODO: Connection lost
                 }
             } catch (IOException ex) {
+                playing = false;
+                socket = null;
+                ui.updateTitle("Hangman");
+                ui.reportConnectionError();
                 Logger.getLogger(HangmanGame.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

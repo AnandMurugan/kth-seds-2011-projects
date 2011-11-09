@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,6 +48,7 @@ public class HangmanHandler extends Thread {
                 if ((str = reader.readLine()) == null) {
                     break;
                 }
+                System.out.println(Thread.currentThread().getId() + " : " + str);
                 StringTokenizer tokens = new StringTokenizer(str, "\t");
                 String msgTypeString = tokens.nextToken();
                 MessageType msgType = MessageType.valueOf(msgTypeString);
@@ -133,11 +135,11 @@ public class HangmanHandler extends Thread {
         } catch (IOException ex) {
             Logger.getLogger(HangmanHandler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalArgumentException ex) {
-            ex.printStackTrace();
-        } finally {
+            Logger.getLogger(HangmanHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    @SuppressWarnings("ReplaceAllDot")
     public void newGame() {
         this.gameWord = WordDictionary.getWord();
         this.currentUserWord = this.gameWord.replaceAll(".", "-").toCharArray();
