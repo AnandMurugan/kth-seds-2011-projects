@@ -29,8 +29,8 @@ public class HangmanGame {
     private int totalScore;
     private boolean playing = false;
     //Network connection variable decalration
-    private final static String DEFAULT_HOST = "localhost";
-    private final static int DEFAULT_PORT = 8080;
+    public final static String DEFAULT_HOST = "localhost";
+    public final static int DEFAULT_PORT = 8080;
     private Socket socket;
     private BufferedWriter out;
     private BufferedReader in;
