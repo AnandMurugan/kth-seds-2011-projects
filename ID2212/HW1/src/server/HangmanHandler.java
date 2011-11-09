@@ -61,7 +61,7 @@ public class HangmanHandler extends Thread {
                         if (tokens.hasMoreTokens()) {
                             String suggestedLetter = tokens.nextToken();
                             if (evaluateLetter(suggestedLetter.charAt(0))) {
-                                if (this.currentUserWord.toString().indexOf('-') == -1) {
+                                if (this.currentUserWord.toString().indexOf("-") == -1) {
                                     this.totalScore++;
                                     wr.print(MessageType.SERVER_WIN);
                                     wr.print("\t");
