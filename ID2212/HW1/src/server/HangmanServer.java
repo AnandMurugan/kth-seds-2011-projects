@@ -35,6 +35,7 @@ public class HangmanServer {
             while (true) {
                 System.out.println("Waiting for incomming clients...");
                 Socket clientSocket = servSocket.accept();
+                System.out.println("New client connection started.");
                 (new HangmanHandler(clientSocket, maxAttemptNumber)).start();
             }
         } catch (IOException ex) {
