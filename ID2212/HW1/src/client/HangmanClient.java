@@ -20,8 +20,8 @@ import javax.swing.SwingUtilities;
  *
  * @author Igor
  */
-public class HangmanClient extends javax.swing.JFrame {
-    /** Creates new form HangmanClientUI */
+public class HangmanClient extends javax.swing.JFrame implements HangmanResponsiveUI{
+    /** Creates new form HangmanClient */
     public HangmanClient() {
         initComponents();
     }
@@ -535,6 +535,7 @@ public class HangmanClient extends javax.swing.JFrame {
         }
     }
 
+    @Override
     public void updateHangmanImage(final int stage) {
         Runnable updateUI = new Runnable() {
             @Override
@@ -551,6 +552,7 @@ public class HangmanClient extends javax.swing.JFrame {
         }
     }
 
+    @Override
     public void updateWordView(final String view) {
         Runnable updateUI = new Runnable() {
             @Override
@@ -567,6 +569,7 @@ public class HangmanClient extends javax.swing.JFrame {
         }
     }
 
+    @Override
     public void updateAttemptsLeftCount(final int attemptsLeft) {
         Runnable updateUI = new Runnable() {
             @Override
@@ -583,6 +586,7 @@ public class HangmanClient extends javax.swing.JFrame {
         }
     }
 
+    @Override
     public void updateTotalScore(final int totalScore) {
         Runnable updateUI = new Runnable() {
             @Override
@@ -599,6 +603,7 @@ public class HangmanClient extends javax.swing.JFrame {
         }
     }
 
+    @Override
     public void updateTitle(final String title) {
         Runnable updateUI = new Runnable() {
             @Override
@@ -615,6 +620,7 @@ public class HangmanClient extends javax.swing.JFrame {
         }
     }
 
+    @Override
     public void reportConnectionError() {
         final java.awt.Component c = this;
         Runnable updateUI = new Runnable() {
@@ -632,6 +638,7 @@ public class HangmanClient extends javax.swing.JFrame {
         }
     }
 
+    @Override
     public void reportWin() {
         final java.awt.Component c = this;
         Runnable updateUI = new Runnable() {
@@ -649,6 +656,7 @@ public class HangmanClient extends javax.swing.JFrame {
         }
     }
 
+    @Override
     public void reportGameOver() {
         final java.awt.Component c = this;
         Runnable updateUI = new Runnable() {
@@ -678,7 +686,8 @@ public class HangmanClient extends javax.swing.JFrame {
         (new Thread(connectTask)).start();
     }
 
-    void connectionEstablished() {
+    @Override
+    public void connectionEstablished() {
         Runnable updateUI = new Runnable() {
             @Override
             public void run() {
@@ -696,7 +705,8 @@ public class HangmanClient extends javax.swing.JFrame {
         }
     }
 
-    void connectionClosed() {
+    @Override
+    public void connectionClosed() {
         Runnable updateUI = new Runnable() {
             @Override
             public void run() {
