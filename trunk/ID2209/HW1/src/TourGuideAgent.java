@@ -177,7 +177,9 @@ public class TourGuideAgent extends Agent {
                         try {
                             artifacts = (List<Artifact>) msg.getContentObject();
                             for (Artifact a : artifacts) {
-                                artifactsAndCurators.put(a, curator);
+                                if (!artifactsAndCurators.containsKey(a)) {
+                                    artifactsAndCurators.put(a, curator);
+                                }
                             }
                         } catch (UnreadableException ex) {
                             ex.printStackTrace();
