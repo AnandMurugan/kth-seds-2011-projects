@@ -49,7 +49,7 @@ public class TourGuideAgent extends Agent {
             doDelete();
         }
 
-        System.out.println("Hello! TourGuide " + getAID().getName() + " for museum " + targetMuseum + " is ready.");
+        System.out.println("Hello! TourGuide " + getAID().getName() + " for museum " + targetMuseum + " is ready...");
 
         //Register the service in DF
         DFAgentDescription dfd = new DFAgentDescription();
@@ -69,7 +69,7 @@ public class TourGuideAgent extends Agent {
 
     @Override
     protected void takeDown() {
-        super.takeDown();
+        System.out.println("!!!!!!!!!!!!!!!! TourGuide " + getAID().getName() + " terminating...");
     }
 
     private class TourGuideBehaviour extends ParallelBehaviour {
@@ -89,7 +89,7 @@ public class TourGuideAgent extends Agent {
                         int age = Integer.parseInt(st.nextToken());
                         String style = st.nextToken();
 
-                        System.out.println(myAgent.getAID().getName() + " got request for tour!");
+                        System.out.println(myAgent.getAID().getName() + " received request for tour...");
 
                         //StringBuilder tour = new StringBuilder();
                         List<Entry<Long, AID>> tour = new ArrayList<Entry<Long, AID>>();
@@ -105,7 +105,7 @@ public class TourGuideAgent extends Agent {
                         try {
                             reply.setContentObject((Serializable) tour);
                             reply.setPerformative(ACLMessage.PROPOSE);
-                            System.out.println(myAgent.getAID().getName() + " sending tour!");
+                            System.out.println(myAgent.getAID().getName() + " sending tour...");
                             myAgent.send(reply);
                         } catch (IOException ex) {
                             Logger.getLogger(TourGuideAgent.class.getName()).log(Level.SEVERE, null, ex);
@@ -123,7 +123,7 @@ public class TourGuideAgent extends Agent {
                     Set<AID> curators = new HashSet<AID>();
 
                     //Search
-                    System.out.println(myAgent.getAID().getName() + " is searching for curators!");
+                    System.out.println(myAgent.getAID().getName() + " is searching for curators...");
 
                     DFAgentDescription template = new DFAgentDescription();
                     ServiceDescription sd = new ServiceDescription();
@@ -133,7 +133,7 @@ public class TourGuideAgent extends Agent {
                     try {
                         DFAgentDescription[] result = DFService.search(myAgent, template);
                         if (result.length == 0) {
-                            System.out.println(myAgent.getAID().getName() + ": ERROR - No curators found");
+                            System.out.println(myAgent.getAID().getName() + ": ERROR - No curators found...");
                             myAgent.doDelete();
                             return;
                         }
@@ -143,9 +143,9 @@ public class TourGuideAgent extends Agent {
                         }
 
 
-                        System.out.println(myAgent.getAID().getName() + " found the following curators:");
+                        System.out.println(myAgent.getAID().getName() + " has found the next curators:");
                         for (AID aid : curators) {
-                            System.out.println("  ->  " + aid.getName());
+                            System.out.println("\t" + aid.getName());
                         }
                     } catch (FIPAException fe) {
                         fe.printStackTrace();
@@ -153,7 +153,7 @@ public class TourGuideAgent extends Agent {
 
                     //ask for artifacts
                     for (AID c : curators) {
-                        System.out.println(myAgent.getAID().getName() + " is messaging the curator " + c.getName());
+                        System.out.println(myAgent.getAID().getName() + " is communicating with the curator " + c.getName());
 
                         ACLMessage req = new ACLMessage(ACLMessage.REQUEST);
                         req.addReceiver(c);
@@ -173,7 +173,7 @@ public class TourGuideAgent extends Agent {
                     ACLMessage msg = myAgent.receive(mt);
                     if (msg != null) {
                         AID curator = msg.getSender();
-                        System.out.println(myAgent.getAID().getName() + " got answer from the curator " + curator.getName() + "!");
+                        System.out.println(myAgent.getAID().getName() + " has got response from the curator " + curator.getName() + "!");
                         List<Artifact> artifacts;
                         try {
                             artifacts = (List<Artifact>) msg.getContentObject();
