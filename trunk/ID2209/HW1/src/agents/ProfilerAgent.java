@@ -18,9 +18,9 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,7 +34,7 @@ public class ProfilerAgent extends Agent {
     //private ProfilerUi gui;
     private int guideTimeDelay;
     private List<Long> visitedArtifacts;
-    private Hashtable<Long, AID> artifactsToVisit;
+    private Map<Long, AID> artifactsToVisit;
     AID[] tourGuideAgents;
     AID curator;
     // Preferences to be moved to class Profile
@@ -45,12 +45,11 @@ public class ProfilerAgent extends Agent {
     String style = "cubism";
 
     @Override
-    @SuppressWarnings("UseOfObsoleteCollectionType")
     protected void setup() {
         //gui = new ProfilerUi(this);
         //gui.setVisible(true);
         visitedArtifacts = new ArrayList<Long>();
-        artifactsToVisit = new Hashtable<Long, AID>();
+        artifactsToVisit = new HashMap<Long, AID>();
         guideTimeDelay = 1000;
 
         Object[] args = getArguments();
@@ -88,6 +87,7 @@ public class ProfilerAgent extends Agent {
 
             // search tour guides
             addSubBehaviour(new OneShotBehaviour(aAgent) {
+                @Override
                 public void action() {
 
                     System.out.println(myAgent.getAID().getName() + " searching tour guides...");
@@ -117,6 +117,7 @@ public class ProfilerAgent extends Agent {
 
             // send requests
             addSubBehaviour(new WakerBehaviour(aAgent, guideTimeDelay) {
+                @Override
                 protected void onWake() {
                     System.out.println(myAgent.getAID().getName() + " sending request to Tour guides...");
                     // Send the cfp to all sellers
@@ -175,13 +176,13 @@ public class ProfilerAgent extends Agent {
 
                     System.out.println(myAgent.getAID().getName() + " request curator about artifact info...");
 
-                    for (Enumeration<Long> en = artifactsToVisit.keys(); en.hasMoreElements();) {
-                        Long artifactItem = en.nextElement();
+                    for (Entry<Long, AID> entry : artifactsToVisit.entrySet()) {
+                        Long artifactItem = entry.getKey();
                         ACLMessage req = new ACLMessage(ACLMessage.REQUEST);
-                        req.addReceiver(artifactsToVisit.get(artifactItem));
+                        req.addReceiver(entry.getValue());
                         req.setContent("id;" + artifactItem);
                         req.setConversationId("info-request");
-                        req.setReplyWith("inf-" + artifactItem);
+                        req.setReplyWith("info-" + artifactItem);
                         myAgent.send(req);
                     }
 
@@ -195,7 +196,6 @@ public class ProfilerAgent extends Agent {
                 int artifactsInfoReceived = 0;
 
                 @Override
-                @SuppressWarnings("CallToThreadDumpStack")
                 public void action() {
                     ACLMessage reply = myAgent.receive(mt);
                     if (reply != null) {
