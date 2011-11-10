@@ -1,13 +1,16 @@
+
+import java.io.Serializable;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author Igor
  */
-public class Artifact {
+public class Artifact implements Serializable {
+    private static long idCounter = 1;
     private long id;
     private String name;
     private String creator;
@@ -18,6 +21,7 @@ public class Artifact {
     private String museum;
 
     public Artifact(String name, String creator, String description, String style, int minAge, int maxAge, String museum) {
+        this.id = idCounter++;
         this.name = name;
         this.creator = creator;
         this.description = description;
@@ -55,5 +59,7 @@ public class Artifact {
         return style;
     }
 
-    
+    public long getId() {
+        return id;
+    }
 }
