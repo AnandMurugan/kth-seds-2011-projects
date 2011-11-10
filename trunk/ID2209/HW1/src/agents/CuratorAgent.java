@@ -81,7 +81,6 @@ public class CuratorAgent extends Agent {
                 System.out.println(getAID().getName() + ": Message received...");
                 ACLMessage reply = msg.createReply();
 
-                //process message and send reply
                 StringTokenizer st = new StringTokenizer(msg.getContent(), ";");
                 String request = st.nextToken();
                 if (request.equals("items")) {
