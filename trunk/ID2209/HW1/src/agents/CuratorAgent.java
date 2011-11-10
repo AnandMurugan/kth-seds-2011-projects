@@ -1,3 +1,4 @@
+package agents;
 
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import model.Artifact;
 
 /*
  * To change this template, choose Tools | Templates
@@ -101,7 +103,7 @@ public class CuratorAgent extends Agent {
                     System.out.println(getAID().getName() + ": Someone is asking for artifact details!");
 
                     reply.setPerformative(ACLMessage.CONFIRM);
-                    int id = Integer.parseInt(st.nextToken());
+                    long id = Long.parseLong(st.nextToken());
                     Artifact toReply = null;
                     for (Artifact a : artifacts) {
                         if (a.getId() == id) {

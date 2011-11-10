@@ -1,8 +1,9 @@
+package agents;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 import jade.core.Agent;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
@@ -20,8 +21,10 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Artifact;
 
 /**
  *
@@ -30,8 +33,8 @@ import java.util.logging.Logger;
 public class ProfilerAgent extends Agent {
     //private ProfilerUi gui;
     private int guideTimeDelay;
-    private List<String> visitedArtifacts;
-    private Hashtable<String, AID> artifactsToVisit;
+    private List<Long> visitedArtifacts;
+    private Hashtable<Long, AID> artifactsToVisit;
     AID[] tourGuideAgents;
     AID curator;
     // Preferences to be moved to class Profile
@@ -46,14 +49,21 @@ public class ProfilerAgent extends Agent {
     protected void setup() {
         //gui = new ProfilerUi(this);
         //gui.setVisible(true);
-        visitedArtifacts = new ArrayList<String>();
-        artifactsToVisit = new Hashtable<String, AID>();
+        visitedArtifacts = new ArrayList<Long>();
+        artifactsToVisit = new Hashtable<Long, AID>();
         guideTimeDelay = 1000;
 
-        // TODO. get Preferences from command line argument
+        Object[] args = getArguments();
+        if (args != null && args.length > 1) {
+            age = Integer.parseInt((String) args[0]);
+            style = (String) args[1];
+        } else {
+            doDelete();
+        }
+
+        System.out.println("Hello! Profiler " + getAID().getName() + " is ready.");
 
         addBehaviour(new ProfilerBehaviour(this));
-
     }
 
     // Put agent clean-up operations here 
@@ -83,7 +93,7 @@ public class ProfilerAgent extends Agent {
                     System.out.println(myAgent.getAID().getName() + " searching tour guides...");
                     DFAgentDescription template = new DFAgentDescription();
                     ServiceDescription sd = new ServiceDescription();
-                    sd.setType("tour-guide");
+                    sd.setType("tourguide");
                     template.addServices(sd);
                     try {
                         DFAgentDescription[] result = DFService.search(aAgent, template);
@@ -97,7 +107,7 @@ public class ProfilerAgent extends Agent {
                         tourGuideAgents = new AID[result.length];
                         for (int i = 0; i < result.length; ++i) {
                             tourGuideAgents[i] = result[i].getName();
-                            System.out.println(tourGuideAgents[i].getName());
+                            System.out.println("\t" + tourGuideAgents[i].getName());
                         }
                     } catch (FIPAException fe) {
                         fe.printStackTrace();
@@ -135,16 +145,16 @@ public class ProfilerAgent extends Agent {
 
                     ACLMessage reply = myAgent.receive(mt);
                     if (reply != null) {
-                        System.out.println("Proposal received from:" + myAgent.getAID().getName());
+                        System.out.println(myAgent.getAID().getName() + ": Proposal received from: " + reply.getSender().getName());
                         if (reply.getPerformative() == ACLMessage.PROPOSE) {
-                            List<AID> curatorList = null;  
+                            List<Entry<Long, AID>> tour = null;
                             try {
-                                curatorList = (List<AID>) reply.getContentObject();
+                                tour = (List<Entry<Long, AID>>) reply.getContentObject();
                             } catch (UnreadableException ex) {
                                 Logger.getLogger(ProfilerAgent.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                            handleTourMessageContent(reply.getContent(), curatorList);
-                            System.out.println(reply.getContent());
+                            handleTourMessageContent(tour);
+                            //System.out.println(reply.getContent());
                         }
                         tourGuideAnswers++;
                     } else {
@@ -164,17 +174,17 @@ public class ProfilerAgent extends Agent {
                 public void action() {
 
                     System.out.println(myAgent.getAID().getName() + " request curator about artifact info...");
-                    
-                    for (Enumeration<String> en = artifactsToVisit.keys();en.hasMoreElements();){
-                        String artifactItem = en.nextElement(); 
+
+                    for (Enumeration<Long> en = artifactsToVisit.keys(); en.hasMoreElements();) {
+                        Long artifactItem = en.nextElement();
                         ACLMessage req = new ACLMessage(ACLMessage.REQUEST);
                         req.addReceiver(artifactsToVisit.get(artifactItem));
-                        req.setContent(artifactItem);
+                        req.setContent("id;" + artifactItem);
                         req.setConversationId("info-request");
                         req.setReplyWith("inf-" + artifactItem);
                         myAgent.send(req);
                     }
-                    
+
                     // Prepare the template to get proposals
                     mt = MessageTemplate.MatchConversationId("info-request");
                 }
@@ -189,16 +199,16 @@ public class ProfilerAgent extends Agent {
                 public void action() {
                     ACLMessage reply = myAgent.receive(mt);
                     if (reply != null) {
-                        System.out.println("Artifact info received from:" + myAgent.getAID().getName());
+                        System.out.println(myAgent.getAID().getName() + ": Artifact info received from: " + reply.getSender().getName());
                         if (reply.getPerformative() == ACLMessage.CONFIRM) {
                             try {
                                 Artifact currentArtifact = (Artifact) reply.getContentObject();
-                                System.out.println("Received details information from artifact:  " + currentArtifact.getName());
-                                System.out.println("id:" + reply.getReplyWith());
-                                System.out.println("Name: " + currentArtifact.getName());
-                                System.out.println("Style: " + currentArtifact.getStyle());
-                                System.out.println("museum:" + currentArtifact.getMuseum());
-                                System.out.println("Description: " + currentArtifact.getDescription());
+                                System.out.println("\tReceived details information from artifact:  " + currentArtifact.getName());
+                                System.out.println("\tid:" + currentArtifact.getId());
+                                System.out.println("\tName: " + currentArtifact.getName());
+                                System.out.println("\tStyle: " + currentArtifact.getStyle());
+                                System.out.println("\tmuseum:" + currentArtifact.getMuseum());
+                                System.out.println("\tDescription: " + currentArtifact.getDescription());
                             } catch (UnreadableException uex) {
                                 uex.printStackTrace();
                             } catch (Exception ex) {
@@ -218,16 +228,13 @@ public class ProfilerAgent extends Agent {
             });
         }
 
-        private void handleTourMessageContent(String aContent, List<AID> aCuratorAIDs) {
-            if (!aContent.equals("") && aCuratorAIDs != null) {
-                String[] artifacts = aContent.split(";");
-                if (artifacts.length == aCuratorAIDs.size()) {
-                    for (int i = 0; i < artifacts.length; i++) {
-                        if (!artifactsToVisit.containsKey(artifacts[i]) && !visitedArtifacts.contains(artifacts[i])) {
-                            artifactsToVisit.put(artifacts[i], aCuratorAIDs.get(i));
-                        }
-
+        private void handleTourMessageContent(List<Entry<Long, AID>> tour) {
+            if (tour != null) {
+                for (Entry<Long, AID> e : tour) {
+                    if (!artifactsToVisit.containsKey(e.getKey()) && !visitedArtifacts.contains(e.getKey())) {
+                        artifactsToVisit.put(e.getKey(), e.getValue());
                     }
+
                 }
             }
         }
