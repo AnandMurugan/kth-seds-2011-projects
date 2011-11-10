@@ -1,3 +1,4 @@
+package agents;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -13,6 +14,7 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +25,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Artifact;
 
 /*
  * To change this template, choose Tools | Templates
@@ -88,21 +91,19 @@ public class TourGuideAgent extends Agent {
 
                         System.out.println(myAgent.getAID().getName() + " got request for tour!");
 
-                        StringBuilder tour = new StringBuilder();
-                        List<AID> curators = new ArrayList<AID>();
+                        //StringBuilder tour = new StringBuilder();
+                        List<Entry<Long, AID>> tour = new ArrayList<Entry<Long, AID>>();
                         for (Entry<Artifact, AID> entry : artifactsAndCurators.entrySet()) {
                             Artifact a = entry.getKey();
                             AID aid = entry.getValue();
                             if (a.getStyle().equals(style) && (a.getMinAge() <= age) && (a.getMaxAge() >= age)) {
-                                tour.append(a.getId()).append(";");
-                                curators.add(aid);
+                                Entry<Long, AID> e = new SimpleEntry<Long, AID>(a.getId(), aid);
+                                tour.add(e);
                             }
                         }
 
                         try {
-                            String tourStr = (tour.length() == 0 ? "" : tour.substring(0, tour.length() - 1));
-                            reply.setContent(tourStr);
-                            reply.setContentObject((Serializable) curators);
+                            reply.setContentObject((Serializable) tour);
                             reply.setPerformative(ACLMessage.PROPOSE);
                             System.out.println(myAgent.getAID().getName() + " sending tour!");
                             myAgent.send(reply);
@@ -172,12 +173,12 @@ public class TourGuideAgent extends Agent {
                     ACLMessage msg = myAgent.receive(mt);
                     if (msg != null) {
                         AID curator = msg.getSender();
-                        System.out.println(myAgent.getAID().getName() + " got answer from the curator " + curator + "!");
+                        System.out.println(myAgent.getAID().getName() + " got answer from the curator " + curator.getName() + "!");
                         List<Artifact> artifacts;
                         try {
                             artifacts = (List<Artifact>) msg.getContentObject();
                             for (Artifact a : artifacts) {
-                                if (!artifactsAndCurators.containsKey(a)) {
+                                if (!containsArtifact(a)) {
                                     artifactsAndCurators.put(a, curator);
                                 }
                             }
@@ -187,6 +188,19 @@ public class TourGuideAgent extends Agent {
                     } else {
                         block();
                     }
+                }
+
+                private boolean containsArtifact(Artifact a) {
+                    boolean result = false;
+
+                    for (Artifact aInMap : artifactsAndCurators.keySet()) {
+                        if (aInMap.getId() == a.getId()) {
+                            result = true;
+                            break;
+                        }
+                    }
+
+                    return result;
                 }
             });
         }
