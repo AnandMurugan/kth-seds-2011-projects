@@ -70,8 +70,6 @@ public class TourGuideAgent extends Agent {
     }
 
     private class TourGuideBehaviour extends ParallelBehaviour {
-        private List<MessageTemplate> mts = new ArrayList<MessageTemplate>();
-
         public TourGuideBehaviour(Agent a) {
             super(a, ParallelBehaviour.WHEN_ALL);
 
@@ -162,9 +160,6 @@ public class TourGuideAgent extends Agent {
                         req.setConversationId("items");
                         req.setReplyWith(Long.toString(System.currentTimeMillis()));
                         myAgent.send(req);
-                        // Prepare the template to get proposals
-                        mts.add(MessageTemplate.and(MessageTemplate.MatchConversationId("items"),
-                                MessageTemplate.MatchInReplyTo(req.getReplyWith())));
                     }
                 }
             });
