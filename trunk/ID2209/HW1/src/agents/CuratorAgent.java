@@ -50,10 +50,9 @@ public class CuratorAgent extends Agent {
         a = new Artifact("Campbell Soup", "Warhall", "A real masterpieceby Warhall", "new-age", 15, 50, museum);
         artifacts.add(a);
 
-        System.out.println("Hello! Curator " + getAID().getName() + " in museum " + museum + " is ready.");
+        System.out.println("Hello! Curator " + getAID().getName() + " in museum " + museum + " is ready...");
 
         //Register service in DF
-        System.out.println(getAID().getName() + ": Registering service in DF");
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(getAID());
         ServiceDescription sd = new ServiceDescription();
@@ -79,7 +78,7 @@ public class CuratorAgent extends Agent {
         public void action() {
             ACLMessage msg = myAgent.receive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
             if (msg != null) {
-                System.out.println(getAID().getName() + ": Message received!");
+                System.out.println(getAID().getName() + ": Message received...");
                 ACLMessage reply = msg.createReply();
 
                 //process message and send reply
@@ -88,7 +87,7 @@ public class CuratorAgent extends Agent {
                 if (request.equals("items")) {
                     String m = st.nextToken();
                     if (m.equals(museum)) {
-                        System.out.println(getAID().getName() + ": Someone is asking for my artifacts!");
+                        System.out.println(getAID().getName() + ": Some tour-guide is asking for my artifacts...");
 
                         reply.setPerformative(ACLMessage.CONFIRM);
                         try {
@@ -97,10 +96,11 @@ public class CuratorAgent extends Agent {
                             ex.printStackTrace();
                         }
                     } else {
+                        System.out.println(getAID().getName() + ": That was not " + museum + "'s tour-guide...");
                         return;
                     }
                 } else if (request.equals("id")) {
-                    System.out.println(getAID().getName() + ": Someone is asking for artifact details!");
+                    System.out.println(getAID().getName() + ": Some profiler is asking for artifact details...");
 
                     reply.setPerformative(ACLMessage.CONFIRM);
                     long id = Long.parseLong(st.nextToken());
@@ -118,7 +118,7 @@ public class CuratorAgent extends Agent {
                         e.printStackTrace();
                     }
                 } else {
-                    System.out.println(getAID().getName() + ": Wrong message!");
+                    System.out.println(getAID().getName() + ": Wrong message...");
 
                     // content not understood
                     reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
@@ -126,7 +126,7 @@ public class CuratorAgent extends Agent {
                 }
 
                 myAgent.send(reply);
-                System.out.println(getAID().getName() + ": Sending reply!");
+                System.out.println(getAID().getName() + " is sending response...");
             } else {
                 block();
             }

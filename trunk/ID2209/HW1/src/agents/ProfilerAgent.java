@@ -31,23 +31,16 @@ import model.Artifact;
  * @author julio
  */
 public class ProfilerAgent extends Agent {
-    //private ProfilerUi gui;
     private int guideTimeDelay;
     private List<Long> visitedArtifacts;
     private Map<Long, AID> artifactsToVisit;
-    AID[] tourGuideAgents;
-    AID curator;
-    // Preferences to be moved to class Profile
-    int age = 30;
-    String interest = "history";
-    String gender = "male";
-    String occupation = "historian";
-    String style = "cubism";
+    private AID[] tourGuideAgents;
+    // Preferences
+    private int age;
+    private String style;
 
     @Override
     protected void setup() {
-        //gui = new ProfilerUi(this);
-        //gui.setVisible(true);
         visitedArtifacts = new ArrayList<Long>();
         artifactsToVisit = new HashMap<Long, AID>();
         guideTimeDelay = 1000;
@@ -60,17 +53,14 @@ public class ProfilerAgent extends Agent {
             doDelete();
         }
 
-        System.out.println("Hello! Profiler " + getAID().getName() + " is ready.");
-
+        System.out.println("Hello! Profiler " + getAID().getName() + " is ready...");
         addBehaviour(new ProfilerBehaviour(this));
     }
 
     // Put agent clean-up operations here 
     @Override
-    protected void takeDown() {     // Close the GUI 
-        //gui.dispose();
-        // Printout a dismissal message 
-        System.out.println("Profiler-Agent " + getAID().getName() + " terminating.");
+    protected void takeDown() {
+        System.out.println("!!!!!!!!!!!!!!!! Profiler " + getAID().getName() + " terminating...");
     }
 
     public void requestNewTour() {
@@ -80,7 +70,7 @@ public class ProfilerAgent extends Agent {
     private class ProfilerBehaviour extends SequentialBehaviour {
         int requests;
         int replies;
-        private MessageTemplate mt;
+        private MessageTemplate msgTemplate;
 
         ProfilerBehaviour(final Agent aAgent) {
             super(aAgent);
@@ -90,7 +80,7 @@ public class ProfilerAgent extends Agent {
                 @Override
                 public void action() {
 
-                    System.out.println(myAgent.getAID().getName() + " searching tour guides...");
+                    System.out.println(myAgent.getAID().getName() + " is searching for tour-guides...");
                     DFAgentDescription template = new DFAgentDescription();
                     ServiceDescription sd = new ServiceDescription();
                     sd.setType("tourguide");
@@ -98,12 +88,12 @@ public class ProfilerAgent extends Agent {
                     try {
                         DFAgentDescription[] result = DFService.search(aAgent, template);
                         if (result.length == 0) {
-                            System.out.println("No Tour guides found.");
+                            System.out.println(myAgent.getAID().getName() + ": ERROR - No tour-guides found...");
                             myAgent.doDelete();
                             return;
                         }
 
-                        System.out.println("Tour Guides available:");
+                        System.out.println(myAgent.getAID().getName() + " has found the next tour-guides:");
                         tourGuideAgents = new AID[result.length];
                         for (int i = 0; i < result.length; ++i) {
                             tourGuideAgents[i] = result[i].getName();
@@ -119,32 +109,32 @@ public class ProfilerAgent extends Agent {
             addSubBehaviour(new WakerBehaviour(aAgent, guideTimeDelay) {
                 @Override
                 protected void onWake() {
-                    System.out.println(myAgent.getAID().getName() + " sending request to Tour guides...");
+                    System.out.println(myAgent.getAID().getName() + " is sending requests to tour-guides...");
                     // Send the cfp to all sellers
-                    ACLMessage cfp = new ACLMessage(ACLMessage.REQUEST);
+                    ACLMessage req = new ACLMessage(ACLMessage.REQUEST);
                     for (int i = 0; i < tourGuideAgents.length; ++i) {
-                        cfp.addReceiver(tourGuideAgents[i]);
-                        System.out.println("  -> Message to: " + tourGuideAgents[i].getName());
+                        req.addReceiver(tourGuideAgents[i]);
+                        System.out.println("\tTour request to: " + tourGuideAgents[i].getName());
                     }
 
-                    cfp.setContent(age + "," + style);
-                    cfp.setConversationId("tour-request");
-                    cfp.setReplyWith("cfp" + System.currentTimeMillis()); // Unique value
-                    myAgent.send(cfp);
+                    req.setContent(age + "," + style);
+                    req.setConversationId("tour-request");
+                    req.setReplyWith(Long.toString(System.currentTimeMillis()));
+                    myAgent.send(req);
 
-                    mt = MessageTemplate.and(MessageTemplate.MatchConversationId("tour-request"),
-                            MessageTemplate.MatchInReplyTo(cfp.getReplyWith()));
+                    msgTemplate = MessageTemplate.and(MessageTemplate.MatchConversationId("tour-request"),
+                            MessageTemplate.MatchInReplyTo(req.getReplyWith()));
                 }
             });
 
             // receive artifact tour proposals
             addSubBehaviour(new Behaviour(aAgent) {
-                int tourGuideAnswers = 0;
+                int tourGuideResponses = 0;
 
                 @Override
                 public void action() {
 
-                    ACLMessage reply = myAgent.receive(mt);
+                    ACLMessage reply = myAgent.receive(msgTemplate);
                     if (reply != null) {
                         System.out.println(myAgent.getAID().getName() + ": Proposal received from: " + reply.getSender().getName());
                         if (reply.getPerformative() == ACLMessage.PROPOSE) {
@@ -157,7 +147,7 @@ public class ProfilerAgent extends Agent {
                             handleTourMessageContent(tour);
                             //System.out.println(reply.getContent());
                         }
-                        tourGuideAnswers++;
+                        tourGuideResponses++;
                     } else {
                         block();
                     }
@@ -165,7 +155,7 @@ public class ProfilerAgent extends Agent {
 
                 @Override
                 public boolean done() {
-                    return tourGuideAnswers == tourGuideAgents.length;
+                    return tourGuideResponses == tourGuideAgents.length;
                 }
             });
 
@@ -174,7 +164,7 @@ public class ProfilerAgent extends Agent {
                 @Override
                 public void action() {
 
-                    System.out.println(myAgent.getAID().getName() + " request curator about artifact info...");
+                    System.out.println(myAgent.getAID().getName() + " is requesting curator for artifact info...");
 
                     for (Entry<Long, AID> entry : artifactsToVisit.entrySet()) {
                         Long artifactItem = entry.getKey();
@@ -187,7 +177,7 @@ public class ProfilerAgent extends Agent {
                     }
 
                     // Prepare the template to get proposals
-                    mt = MessageTemplate.MatchConversationId("info-request");
+                    msgTemplate = MessageTemplate.MatchConversationId("info-request");
                 }
             });
 
@@ -197,18 +187,19 @@ public class ProfilerAgent extends Agent {
 
                 @Override
                 public void action() {
-                    ACLMessage reply = myAgent.receive(mt);
+                    ACLMessage reply = myAgent.receive(msgTemplate);
                     if (reply != null) {
                         System.out.println(myAgent.getAID().getName() + ": Artifact info received from: " + reply.getSender().getName());
                         if (reply.getPerformative() == ACLMessage.CONFIRM) {
                             try {
                                 Artifact currentArtifact = (Artifact) reply.getContentObject();
-                                System.out.println("\tReceived details information from artifact:  " + currentArtifact.getName());
-                                System.out.println("\tid:" + currentArtifact.getId());
-                                System.out.println("\tName: " + currentArtifact.getName());
-                                System.out.println("\tStyle: " + currentArtifact.getStyle());
-                                System.out.println("\tmuseum:" + currentArtifact.getMuseum());
-                                System.out.println("\tDescription: " + currentArtifact.getDescription());
+                                System.out.println("\tReceived details information from artifact: " + currentArtifact.getName());
+                                System.out.println("\t\tID:\t\t" + currentArtifact.getId());
+                                System.out.println("\t\tName:\t\t" + currentArtifact.getName());
+                                System.out.println("\t\tCreator:\t" + currentArtifact.getCreator());
+                                System.out.println("\t\tStyle:\t\t" + currentArtifact.getStyle());
+                                System.out.println("\t\tMuseum:\t\t" + currentArtifact.getMuseum());
+                                System.out.println("\t\tDescription:\t" + currentArtifact.getDescription());
                             } catch (UnreadableException uex) {
                                 uex.printStackTrace();
                             } catch (Exception ex) {
@@ -234,7 +225,6 @@ public class ProfilerAgent extends Agent {
                     if (!artifactsToVisit.containsKey(e.getKey()) && !visitedArtifacts.contains(e.getKey())) {
                         artifactsToVisit.put(e.getKey(), e.getValue());
                     }
-
                 }
             }
         }
