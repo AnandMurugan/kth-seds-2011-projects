@@ -42,7 +42,9 @@ public class ClientComm {
     
     public void addWish(String itemName, Integer limitPrice){
         try {
-            market.addItemToWishList(null, client);
+            market.addItemToWishList(itemName, limitPrice, client);
+        } catch (RemoteException ex){
+            Logger.getLogger(ClientComm.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
