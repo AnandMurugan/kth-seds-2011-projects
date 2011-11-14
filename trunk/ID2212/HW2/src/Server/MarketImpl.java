@@ -39,8 +39,11 @@ public class MarketImpl extends UnicastRemoteObject implements RemoteMarket {
     }
 
     @Override
-    public void addItemToWishList(MarketItem item, RemoteClient buyer) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public IMarketItem addItemToWishList(String itemName, Integer itemPrice, RemoteClient buyer) throws RemoteException {
+        currentItemId++;
+        MarketItem item = new MarketItem(currentItemId, itemName, itemPrice);
+        marketItems.put(item.getMarketId(), new SimpleEntry(item, buyer));
+        return item;
     }
 
     @Override
