@@ -19,9 +19,9 @@ public interface Marketplace extends Remote {
 
     public void unregisterClient(String name) throws RemoteException, RejectedException;
 
-    public void addItem(MarketItem item) throws RemoteException;
+    public void addItem(MarketItem item) throws RemoteException, RejectedException;
 
-    public void addWish(MarketItem wish) throws RemoteException;
+    public void addWish(MarketItem wish) throws RemoteException, RejectedException;
 
     public List<MarketItem> getItems() throws RemoteException;
 

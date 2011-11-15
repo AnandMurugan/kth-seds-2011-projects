@@ -34,7 +34,7 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
     @Override
     public synchronized void registerClient(String name, MarketplaceCallbackable callback, Account account) throws RemoteException, RejectedException {
         if (clients.containsKey(name)) {
-            throw new RejectedException("Marketplace: A client with name \"" + name + "\" is already registered.");
+            throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + name + "\" is already registered.");
         } else {
             clients.put(name, new ClientInfo(callback, account));
         }
@@ -43,7 +43,7 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
     @Override
     public synchronized void unregisterClient(String name) throws RemoteException, RejectedException {
         if (!clients.containsKey(name)) {
-            throw new RejectedException("Marketplace: A client with name \"" + name + "\" is not registered.");
+            throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + name + "\" is not registered.");
         } else {
             //SLOW IMPLEMENTATION (NETWORK CALLS)
             for (int i = 0; i < items.size(); i++) {
@@ -66,28 +66,72 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
     }
 
     @Override
-    public synchronized void addItem(MarketItem item) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public synchronized void addItem(MarketItem item) throws RemoteException, RejectedException {
+        String owner = item.getOwner();
+        if (!clients.containsKey(owner)) {
+            throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + owner + "\" is not registered.");
+        } else {
+            items.add(item);
+        }
     }
 
     @Override
-    public synchronized void addWish(MarketItem wish) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public synchronized void addWish(MarketItem wish) throws RemoteException, RejectedException {
+        String owner = wish.getOwner();
+        if (!clients.containsKey(owner)) {
+            throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + owner + "\" is not registered.");
+        } else {
+            wishes.add(wish);
+        }
     }
 
     @Override
     public List<MarketItem> getItems() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return items;
     }
 
     @Override
     public synchronized void buyItem(String name, MarketItem item) throws RemoteException, RejectedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (!clients.containsKey(name)) {
+            throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + name + "\" is not registered.");
+        } else {
+            if (!items.contains(item)) {
+                throw new RejectedException("MARKETPLACE(" + marketName + "): "
+                        + "Required item(" + item.getName() + ", " + item.getPrice() + ", " + item.getOwner() + ") doesn't exist.");
+            } else {
+                //Get info
+                Account buyerAccount = clients.get(name).account;
+
+                ClientInfo sellerInfo = clients.get(item.getOwner());
+                Account sellerAccount = sellerInfo.account;
+                MarketplaceCallbackable sellerCallback = sellerInfo.callback;
+
+                float price = item.getPrice();
+
+                //Remove item from the market 
+                items.remove(item);
+
+                //Withdraw money from the buyer
+                buyerAccount.withdraw(price);
+
+                //Deposit money to the seller
+                sellerAccount.deposit(price);
+
+                //Set new owner of the item
+                item.setOwner(name);
+
+                //Notify seller
+                sellerCallback.notifyPurchaseSuccessful(item);
+            }
+        }
     }
 
     @Override
     public void removeWish(MarketItem wish) throws RemoteException, RejectedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String owner = wish.getOwner();
+        if (!clients.containsKey(owner)) {
+            throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + owner + "\" is not registered.");
+        }
     }
 
     private class ClientInfo {
