@@ -15,4 +15,6 @@ public interface MarketplaceCallbackable extends Remote {
     public void notifyItemAvailable(MarketItem item) throws RemoteException;
 
     public void notifyPurchaseSuccessful(MarketItem item) throws RemoteException;
+
+    public void notifyPostedItemSold(MarketItem item) throws RemoteException;
 }
