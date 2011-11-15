@@ -15,7 +15,7 @@ public interface Trader {
 
     public void buyItem(MarketItem item);
 
-    public boolean register(Marketpalce market);
+    public boolean register(Marketplace market);
 
     public boolean unregister();
 }

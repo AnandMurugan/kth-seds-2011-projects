@@ -6,7 +6,7 @@ package client;
 
 import bank.Account;
 import bank.BankClient;
-import server.Marketpalce;
+import server.Marketplace;
 import server.MarketItem;
 import server.MarketplaceCallbackable;
 import java.rmi.RemoteException;
@@ -76,7 +76,7 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     }
 
     @Override
-    public boolean register(Marketpalce market) {
+    public boolean register(Marketplace market) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
