@@ -4,43 +4,13 @@
  */
 package server;
 
-import common.IMarketItem;
-import common.RemoteClient;
-import java.io.Serializable;
-
 /**
  *
  * @author julio
  */
-public class MarketItem implements Serializable, OwnershipModificable, IMarketItem {
-    private Integer marketId;
-    private String name;
-    private Integer price;
-    private RemoteClient owner;
-        
-    public MarketItem(Integer marketId, String name, Integer price){
-        this.marketId = marketId;
-        this.name = name;
-        this.price = price;
-    }
+public interface MarketItem {
+    public Integer getMarketId();
+    public String getName();
+    public Integer getPrice();
     
-    @Override
-    public Integer getMarketId(){
-        return marketId;
-    }
-    
-    @Override
-    public String getName(){
-        return name;
-    }
-    
-    @Override
-    public Integer getPrice(){
-        return price;
-    }
-
-    @Override
-    public void setOwner(RemoteClient newOwner) {
-        this.owner = newOwner;
-    }
 }
