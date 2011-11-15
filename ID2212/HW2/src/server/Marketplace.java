@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author julio
  */
-public interface Marketpalce extends Remote {
+public interface Marketplace extends Remote {
     public MarketItem addItemToMarket(String itemName, Integer itemPrice, MarketplaceCallbackable seller) throws RemoteException;
 
     public MarketItem addItemToWishList(String itemName, Integer itemPrice, MarketplaceCallbackable buyer) throws RemoteException;

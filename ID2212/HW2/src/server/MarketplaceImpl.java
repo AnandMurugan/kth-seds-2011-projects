@@ -15,7 +15,7 @@ import java.util.Map.Entry;
  *
  * @author julio
  */
-public class MarketplaceImpl extends UnicastRemoteObject implements Marketpalce {
+public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace {
     private List<MarketItemImpl> wishList;
     private Map<Integer, Entry<MarketItemImpl, MarketplaceCallbackable>> marketItems;
     private String marketName;

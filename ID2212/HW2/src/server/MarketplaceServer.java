@@ -18,7 +18,7 @@ public class MarketplaceServer {
     public void main(String[] args) {
         try {
             if (args.length > 0) {
-                Marketpalce market = new MarketplaceImpl(args[0]);
+                Marketplace market = new MarketplaceImpl(args[0]);
                 Naming.bind(args[0], market);
             } else {
                 System.out.println("Missing parameters");
