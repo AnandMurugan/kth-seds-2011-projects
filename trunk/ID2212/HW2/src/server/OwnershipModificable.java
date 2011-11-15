@@ -9,5 +9,5 @@ package server;
  * @author julio
  */
 public interface OwnershipModificable {
-    public void setOwner(MarketClient newOwner);
+    public void setOwner(Trader newOwner);
 }

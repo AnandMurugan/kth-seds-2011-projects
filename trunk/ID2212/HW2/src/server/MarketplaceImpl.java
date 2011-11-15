@@ -15,19 +15,19 @@ import java.util.Map.Entry;
  *
  * @author julio
  */
-public class MarketImpl extends UnicastRemoteObject implements Market {
+public class MarketplaceImpl extends UnicastRemoteObject implements Marketpalce {
     private List<MarketItemImpl> wishList;
-    private Map<Integer, Entry<MarketItemImpl, MarketClientCallbackable>> marketItems;
+    private Map<Integer, Entry<MarketItemImpl, MarketplaceCallbackable>> marketItems;
     private String marketName;
     private Integer currentItemId = 0;
 
-    public MarketImpl(String marketName) throws RemoteException {
+    public MarketplaceImpl(String marketName) throws RemoteException {
         super();
         this.marketName = marketName;
     }
 
     @Override
-    public MarketItem addItemToMarket(String itemName, Integer itemPrice, MarketClientCallbackable seller) throws RemoteException {
+    public MarketItem addItemToMarket(String itemName, Integer itemPrice, MarketplaceCallbackable seller) throws RemoteException {
         currentItemId++;
         MarketItemImpl item = new MarketItemImpl(currentItemId, itemName, itemPrice);
         marketItems.put(item.getMarketId(), new SimpleEntry(item, seller));
@@ -35,7 +35,7 @@ public class MarketImpl extends UnicastRemoteObject implements Market {
     }
 
     @Override
-    public MarketItem addItemToWishList(String itemName, Integer itemPrice, MarketClientCallbackable buyer) throws RemoteException {
+    public MarketItem addItemToWishList(String itemName, Integer itemPrice, MarketplaceCallbackable buyer) throws RemoteException {
         currentItemId++;
         MarketItemImpl item = new MarketItemImpl(currentItemId, itemName, itemPrice);
         marketItems.put(item.getMarketId(), new SimpleEntry(item, buyer));
@@ -48,7 +48,7 @@ public class MarketImpl extends UnicastRemoteObject implements Market {
     }
 
     @Override
-    public void buyItem(MarketItemImpl item, MarketClientCallbackable buyer) throws RemoteException {
+    public void buyItem(MarketItemImpl item, MarketplaceCallbackable buyer) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

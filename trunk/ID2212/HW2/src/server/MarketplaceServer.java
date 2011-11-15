@@ -14,19 +14,19 @@ import java.util.logging.Logger;
  *
  * @author julio
  */
-public class MarketServer {
+public class MarketplaceServer {
     public void main(String[] args) {
         try {
             if (args.length > 0) {
-                Market market = new MarketImpl(args[0]);
+                Marketpalce market = new MarketplaceImpl(args[0]);
                 Naming.bind(args[0], market);
             } else {
                 System.out.println("Missing parameters");
             }
         } catch (RemoteException ex) {
-            Logger.getLogger(MarketServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MarketplaceServer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (java.rmi.AlreadyBoundException ex) {
-            Logger.getLogger(MarketServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MarketplaceServer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MalformedURLException ex) {
         }
     }
