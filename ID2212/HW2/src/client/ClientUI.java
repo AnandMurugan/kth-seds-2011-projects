@@ -25,7 +25,7 @@ import utils.RejectedException;
  */
 public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
     ClientImpl client;
-    
+
     public ClientUI() {
         initComponents();
         try {
@@ -58,8 +58,8 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
         jTable2 = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
+        wishItemTxt = new javax.swing.JTextField();
+        wishPriceTxt = new javax.swing.JTextField();
         addItemBtn1 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -69,6 +69,7 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
         jPanel4 = new javax.swing.JPanel();
         label2 = new java.awt.Label();
         label1 = new java.awt.Label();
+        registerBankAcBtn = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
 
@@ -165,12 +166,9 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
 
         jLabel4.setText("Price");
 
-        jTextField3.setText("jTextField1");
-
-        jTextField4.setText("jTextField2");
-        jTextField4.addActionListener(new java.awt.event.ActionListener() {
+        wishPriceTxt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField4ActionPerformed(evt);
+                wishPriceTxtActionPerformed(evt);
             }
         });
 
@@ -197,8 +195,8 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField4)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)))
+                            .addComponent(wishPriceTxt)
+                            .addComponent(wishItemTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)))
                     .addComponent(addItemBtn1))
                 .addContainerGap(30, Short.MAX_VALUE))
         );
@@ -209,12 +207,12 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(24, 24, 24)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(wishItemTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(wishPriceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(addItemBtn1))
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -278,6 +276,13 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
 
         label1.setText("Bank Account Status");
 
+        registerBankAcBtn.setText("Create Account");
+        registerBankAcBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                registerBankAcBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -285,10 +290,12 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(registerBankAcBtn)
+                            .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(45, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
@@ -298,7 +305,9 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
                 .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(registerBankAcBtn)
+                .addContainerGap())
         );
 
         jLabel5.setText("Logged in as:");
@@ -348,33 +357,61 @@ private void priceTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
 private void addItemBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addItemBtnActionPerformed
     try {
-    if (!itemNameTxt.getText().equals("") && !priceTxt.getText().equals("")) {
-        Float price = Float.parseFloat(priceTxt.getText());
-        final MarketItem item = new MarketItemImpl(itemNameTxt.getText(), price, null);
-        
-        Runnable addItemToMarket = new Runnable() {
+        if (!itemNameTxt.getText().equals("") && !priceTxt.getText().equals("")) {
+            Float price = Float.parseFloat(priceTxt.getText());
+            final MarketItem item = new MarketItemImpl(itemNameTxt.getText(), price, null);
+
+            Runnable addItemToMarket = new Runnable() {
                 @Override
                 public void run() {
                     client.postItem(item);
                 }
             };
             (new Thread(addItemToMarket)).start();
-    }
+        }
     } catch (NumberFormatException ex) {
         JOptionPane.showConfirmDialog(null, "Price is not correctly introduced. Try again.", "Error", JOptionPane.INFORMATION_MESSAGE);
-    } catch (RemoteException ex ){
+    } catch (RemoteException ex) {
         ex.printStackTrace();
     }
-        
+
 }//GEN-LAST:event_addItemBtnActionPerformed
 
-private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+private void wishPriceTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wishPriceTxtActionPerformed
 // TODO add your handling code here:
-}//GEN-LAST:event_jTextField4ActionPerformed
+}//GEN-LAST:event_wishPriceTxtActionPerformed
 
 private void addItemBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addItemBtn1ActionPerformed
-// TODO add your handling code here:
+    try {
+        if (!wishItemTxt.getText().equals("") && !wishPriceTxt.getText().equals("")) {
+            Float price = Float.parseFloat(wishPriceTxt.getText());
+            final MarketItem item = new MarketItemImpl(wishItemTxt.getText(), price, null);
+
+            Runnable addItemToMarket = new Runnable() {
+                @Override
+                public void run() {
+                    client.postWish(item);
+                }
+            };
+            (new Thread(addItemToMarket)).start();
+        }
+    } catch (NumberFormatException ex) {
+        JOptionPane.showConfirmDialog(null, "Price is not correctly introduced. Try again.", "Error", JOptionPane.INFORMATION_MESSAGE);
+    } catch (RemoteException ex) {
+        ex.printStackTrace();
+    }
+
 }//GEN-LAST:event_addItemBtn1ActionPerformed
+
+private void registerBankAcBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBankAcBtnActionPerformed
+    Runnable createBankAccount = new Runnable() {
+                @Override
+                public void run() {
+                    client.createAccount();
+                }
+            };
+            (new Thread(createBankAccount)).start();
+}//GEN-LAST:event_registerBankAcBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -402,8 +439,8 @@ private void addItemBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
             java.util.logging.Logger.getLogger(ClientUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
-        
+
+
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -434,11 +471,12 @@ private void addItemBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     private java.awt.Label label1;
     private java.awt.Label label2;
     private javax.swing.JTextField priceTxt;
+    private javax.swing.JButton registerBankAcBtn;
+    private javax.swing.JTextField wishItemTxt;
+    private javax.swing.JTextField wishPriceTxt;
     // End of variables declaration//GEN-END:variables
 
     @Override
