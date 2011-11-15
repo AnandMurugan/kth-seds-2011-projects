@@ -4,6 +4,8 @@
  */
 package server;
 
+import java.util.List;
+
 /**
  *
  * @author Igor
@@ -14,6 +16,8 @@ public interface Trader {
     public void postWish(MarketItem wish);
 
     public void buyItem(MarketItem item);
+
+    public List<MarketItem> getItems();
 
     public boolean register(Marketplace market);
 
