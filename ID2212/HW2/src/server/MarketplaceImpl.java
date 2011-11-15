@@ -4,51 +4,99 @@
  */
 package server;
 
+import bank.Account;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.AbstractMap.SimpleEntry;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import utils.RejectedException;
 
 /**
  *
  * @author julio
  */
 public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace {
-    private List<MarketItemImpl> wishList;
-    private Map<Integer, Entry<MarketItemImpl, MarketplaceCallbackable>> marketItems;
     private String marketName;
-    private Integer currentItemId = 0;
+    private Map<String, ClientInfo> clients;
+    private List<MarketItem> items;
+    private List<MarketItem> wishes;
 
     public MarketplaceImpl(String marketName) throws RemoteException {
         super();
         this.marketName = marketName;
+        this.clients = new HashMap<String, ClientInfo>();
+        this.items = new LinkedList<MarketItem>();
+        this.wishes = new LinkedList<MarketItem>();
     }
 
     @Override
-    public MarketItem addItemToMarket(String itemName, Integer itemPrice, MarketplaceCallbackable seller) throws RemoteException {
-        currentItemId++;
-        MarketItemImpl item = new MarketItemImpl(currentItemId, itemName, itemPrice);
-        marketItems.put(item.getMarketId(), new SimpleEntry(item, seller));
-        return item;
+    public synchronized void registerClient(String name, MarketplaceCallbackable callback, Account account) throws RemoteException, RejectedException {
+        if (clients.containsKey(name)) {
+            throw new RejectedException("Marketplace: A client with name \"" + name + "\" is already registered.");
+        } else {
+            clients.put(name, new ClientInfo(callback, account));
+        }
     }
 
     @Override
-    public MarketItem addItemToWishList(String itemName, Integer itemPrice, MarketplaceCallbackable buyer) throws RemoteException {
-        currentItemId++;
-        MarketItemImpl item = new MarketItemImpl(currentItemId, itemName, itemPrice);
-        marketItems.put(item.getMarketId(), new SimpleEntry(item, buyer));
-        return item;
+    public synchronized void unregisterClient(String name) throws RemoteException, RejectedException {
+        if (!clients.containsKey(name)) {
+            throw new RejectedException("Marketplace: A client with name \"" + name + "\" is not registered.");
+        } else {
+            //SLOW IMPLEMENTATION (NETWORK CALLS)
+            for (int i = 0; i < items.size(); i++) {
+                MarketItem item = items.get(i);
+                if (item.getOwner().equals(name)) {
+                    items.remove(i);
+                }
+            }
+
+            //SLOW IMPLEMENTATION (NETWORK CALLS)
+            for (int i = 0; i < wishes.size(); i++) {
+                MarketItem wish = wishes.get(i);
+                if (wish.getOwner().equals(name)) {
+                    wishes.remove(i);
+                }
+            }
+
+            clients.remove(name);
+        }
     }
 
     @Override
-    public List<MarketItem> getAvailableItems() throws RemoteException {
+    public synchronized void addItem(MarketItem item) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void buyItem(MarketItemImpl item, MarketplaceCallbackable buyer) throws RemoteException {
+    public synchronized void addWish(MarketItem wish) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<MarketItem> getItems() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public synchronized void buyItem(String name, MarketItem item) throws RemoteException, RejectedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void removeWish(MarketItem wish) throws RemoteException, RejectedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    private class ClientInfo {
+        public MarketplaceCallbackable callback;
+        public Account account;
+
+        public ClientInfo(MarketplaceCallbackable callback, Account account) {
+            this.callback = callback;
+            this.account = account;
+        }
     }
 }
