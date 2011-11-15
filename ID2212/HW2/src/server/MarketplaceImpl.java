@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import utils.RejectedException;
 
 /**
@@ -29,6 +31,40 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
         this.clients = new HashMap<String, ClientInfo>();
         this.items = new LinkedList<MarketItem>();
         this.wishes = new LinkedList<MarketItem>();
+
+        //Start wish handler
+        Runnable wishHandlingTask = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (true) {
+                        Thread.sleep(5000);
+
+                        for (MarketItem wish : wishes) {
+                            String wishName = wish.getName();
+                            float wishPrice = wish.getPrice();
+                            String wishOwner = wish.getOwner();
+
+                            for (MarketItem item : items) {
+                                String itemName = item.getName();
+                                float itemPrice = item.getPrice();
+
+                                if ((wishName.equals(itemName)) && (wishPrice >= itemPrice)) {
+                                    MarketplaceCallbackable wisher = clients.get(wishOwner).callback;
+                                    wisher.notifyItemAvailable(item);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(MarketplaceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(MarketplaceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        };
+        new Thread(wishHandlingTask, "Wish Handler").start();
     }
 
     @Override
@@ -71,7 +107,11 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
         if (!clients.containsKey(owner)) {
             throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + owner + "\" is not registered.");
         } else {
-            items.add(item);
+            if (items.contains(item)) {
+                throw new RejectedException("MARKETPLACE(" + marketName + "): This item is already available in the market.");
+            } else {
+                items.add(item);
+            }
         }
     }
 
@@ -91,7 +131,7 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
     }
 
     @Override
-    public synchronized void buyItem(String name, MarketItem item) throws RemoteException, RejectedException {
+    public synchronized void purchaseItem(String name, MarketItem item) throws RemoteException, RejectedException {
         if (!clients.containsKey(name)) {
             throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + name + "\" is not registered.");
         } else {
@@ -104,7 +144,7 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
 
                 ClientInfo sellerInfo = clients.get(item.getOwner());
                 Account sellerAccount = sellerInfo.account;
-                MarketplaceCallbackable sellerCallback = sellerInfo.callback;
+                MarketplaceCallbackable seller = sellerInfo.callback;
 
                 float price = item.getPrice();
 
@@ -121,16 +161,24 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
                 item.setOwner(name);
 
                 //Notify seller
-                sellerCallback.notifyPurchaseSuccessful(item);
+                seller.notifyPurchaseSuccessful(item);
             }
         }
     }
 
     @Override
-    public void removeWish(MarketItem wish) throws RemoteException, RejectedException {
+    public synchronized void removeWish(MarketItem wish) throws RemoteException, RejectedException {
         String owner = wish.getOwner();
         if (!clients.containsKey(owner)) {
             throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + owner + "\" is not registered.");
+        } else {
+            if (!wishes.contains(wish)) {
+                throw new RejectedException("MARKETPLACE(" + marketName + "): "
+                        + "Required wish(" + wish.getName() + ", " + wish.getPrice() + ", " + wish.getOwner() + ") doesn't exist.");
+            } else {
+                //Remove item from the market 
+                wishes.remove(wish);
+            }
         }
     }
 

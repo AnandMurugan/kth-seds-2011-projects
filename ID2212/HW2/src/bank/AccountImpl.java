@@ -4,7 +4,6 @@ import utils.RejectedException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 
-@SuppressWarnings("serial")
 public class AccountImpl extends UnicastRemoteObject implements Account {
     private float balance = 0;
     private String name;
@@ -17,6 +16,7 @@ public class AccountImpl extends UnicastRemoteObject implements Account {
         this.name = name;
     }
 
+    @Override
     public synchronized void deposit(float value) throws RemoteException,
             RejectedException {
         if (value < 0) {
@@ -28,6 +28,7 @@ public class AccountImpl extends UnicastRemoteObject implements Account {
                 + value + ", balance: $" + balance);
     }
 
+    @Override
     public synchronized void withdraw(float value) throws RemoteException,
             RejectedException {
         if (value < 0) {
@@ -44,6 +45,7 @@ public class AccountImpl extends UnicastRemoteObject implements Account {
                 + value + ", balance: $" + balance);
     }
 
+    @Override
     public synchronized float getBalance() throws RemoteException {
         return balance;
     }

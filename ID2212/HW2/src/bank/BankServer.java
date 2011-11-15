@@ -14,8 +14,8 @@ import java.util.logging.Logger;
  * @author Igor
  */
 public class BankServer {
-    private static final String USAGE = "java bankrmi.Server <bank_rmi_url>";
-    private static final String BANK = "Nordea";
+    private static final String USAGE = "java BankServer <bank_rmi_url>";
+    private static final String BANK = "Swedbank";
 
     public BankServer(String bankName) {
         try {

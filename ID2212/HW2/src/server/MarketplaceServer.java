@@ -15,19 +15,35 @@ import java.util.logging.Logger;
  * @author julio
  */
 public class MarketplaceServer {
-    public void main(String[] args) {
+    private static final String USAGE = "java MarketplaceServer <marketplace_rmi_url>";
+    private static final String MARKETPLACE = "KistaGalleria";
+
+    public MarketplaceServer(String marketplaceName) {
         try {
-            if (args.length > 0) {
-                Marketplace market = new MarketplaceImpl(args[0]);
-                Naming.bind(args[0], market);
-            } else {
-                System.out.println("Missing parameters");
-            }
+            Marketplace marketplaceobj = new MarketplaceImpl(marketplaceName);
+            // Register the newly created object at rmiregistry.
+            Naming.rebind(marketplaceName, marketplaceobj);
+            System.out.println(marketplaceobj + " is ready.");
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(MarketplaceServer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
             Logger.getLogger(MarketplaceServer.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (java.rmi.AlreadyBoundException ex) {
-            Logger.getLogger(MarketplaceServer.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MalformedURLException ex) {
         }
+    }
+
+    public static void main(String[] args) {
+        if (args.length > 1 || (args.length > 0 && args[0].equalsIgnoreCase("-h"))) {
+            System.out.println(USAGE);
+            System.exit(1);
+        }
+
+        String marketplaceName = null;
+        if (args.length > 0) {
+            marketplaceName = args[0];
+        } else {
+            marketplaceName = MARKETPLACE;
+        }
+
+        new MarketplaceServer(marketplaceName);
     }
 }

@@ -25,7 +25,7 @@ public interface Marketplace extends Remote {
 
     public List<MarketItem> getItems() throws RemoteException;
 
-    public void buyItem(String name, MarketItem item) throws RemoteException, RejectedException;
+    public void purchaseItem(String name, MarketItem item) throws RemoteException, RejectedException;
 
     public void removeWish(MarketItem wish) throws RemoteException, RejectedException;
 }
