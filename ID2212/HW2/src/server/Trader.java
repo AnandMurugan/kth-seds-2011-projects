@@ -21,7 +21,7 @@ public interface Trader extends Remote {
 
     public List<MarketItem> getItems() throws RemoteException;
 
-    public boolean register(Marketplace market) throws RemoteException;
+    public boolean register() throws RemoteException;
 
     public boolean unregister() throws RemoteException;
 }
