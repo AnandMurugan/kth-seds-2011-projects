@@ -4,26 +4,28 @@
  */
 package server;
 
+import bank.Account;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import utils.RejectedException;
 
 /**
  *
  * @author julio
  */
 public interface Marketplace extends Remote {
-    public MarketItem addItemToMarket(String itemName, Integer itemPrice, MarketplaceCallbackable seller) throws RemoteException;
+    public void registerClient(String name, MarketplaceCallbackable callback, Account account) throws RemoteException, RejectedException;
 
-    public MarketItem addItemToWishList(String itemName, Integer itemPrice, MarketplaceCallbackable buyer) throws RemoteException;
+    public void unregisterClient(String name) throws RemoteException, RejectedException;
 
-    public List<MarketItem> getAvailableItems() throws RemoteException;
-    // TODO. analize how to match the exact item to buy. Maybe by using a market id?
+    public void addItem(MarketItem item) throws RemoteException;
 
-    public void buyItem(MarketItemImpl item, MarketplaceCallbackable buyer) throws RemoteException; // Should throw rejected reason also??
-    /* Cases to consider:
-     * What if more than 1 buyer wish the same item? what if one of them buys before the other...
-     *
-     * 
-     */
+    public void addWish(MarketItem wish) throws RemoteException;
+
+    public List<MarketItem> getItems() throws RemoteException;
+
+    public void buyItem(String name, MarketItem item) throws RemoteException, RejectedException;
+
+    public void removeWish(MarketItem wish) throws RemoteException, RejectedException;
 }

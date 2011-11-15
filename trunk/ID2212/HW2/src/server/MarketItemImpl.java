@@ -4,41 +4,42 @@
  */
 package server;
 
-import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
 /**
  *
  * @author julio
  */
-public class MarketItemImpl implements Serializable, OwnershipModificable, MarketItem {
-    private Integer marketId;
+public class MarketItemImpl extends UnicastRemoteObject implements MarketItem {
     private String name;
-    private Integer price;
-    private MarketplaceCallbackable owner;
+    private float price;
+    private String owner;
 
-    public MarketItemImpl(Integer marketId, String name, Integer price) {
-        this.marketId = marketId;
+    public MarketItemImpl(String name, float price, String owner) throws RemoteException {
+        //super();
         this.name = name;
         this.price = price;
+        this.owner = owner;
     }
 
     @Override
-    public Integer getMarketId() {
-        return marketId;
-    }
-
-    @Override
-    public String getName() {
+    public String getName() throws RemoteException {
         return name;
     }
 
     @Override
-    public Integer getPrice() {
+    public float getPrice() throws RemoteException {
         return price;
     }
 
     @Override
-    public void setOwner(Trader newOwner) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public String getOwner() throws RemoteException {
+        return owner;
+    }
+
+    @Override
+    public void setOwner(String owner) throws RemoteException {
+        this.owner = owner;
     }
 }

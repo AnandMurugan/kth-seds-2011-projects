@@ -1,5 +1,6 @@
 package bank;
 
+import utils.RejectedException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 

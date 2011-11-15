@@ -1,5 +1,6 @@
 package bank;
 
+import utils.RejectedException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
