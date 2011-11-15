@@ -6,18 +6,18 @@ package client;
 
 import bank.Account;
 import bank.BankClient;
-import server.Market;
+import server.Marketpalce;
 import server.MarketItem;
-import server.MarketClientCallbackable;
+import server.MarketplaceCallbackable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import server.MarketClient;
+import server.Trader;
 
 /**
  *
  * @author julio
  */
-public class ClientImpl extends UnicastRemoteObject implements MarketClient, MarketClientCallbackable, BankClient {
+public class ClientImpl extends UnicastRemoteObject implements Trader, MarketplaceCallbackable, BankClient {
     private String userName;
 
     public ClientImpl(String userName) throws RemoteException {
@@ -76,12 +76,17 @@ public class ClientImpl extends UnicastRemoteObject implements MarketClient, Mar
     }
 
     @Override
-    public boolean register(Market market) {
+    public boolean register(Marketpalce market) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public boolean unregister() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void buyItem(MarketItem item) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

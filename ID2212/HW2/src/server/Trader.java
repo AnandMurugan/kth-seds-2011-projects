@@ -8,12 +8,14 @@ package server;
  *
  * @author Igor
  */
-public interface MarketClient {
+public interface Trader {
     public void postItem(MarketItem item);
 
     public void postWish(MarketItem wish);
 
-    public boolean register(Market market);
+    public void buyItem(MarketItem item);
+
+    public boolean register(Marketpalce market);
 
     public boolean unregister();
 }

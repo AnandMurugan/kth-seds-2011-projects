@@ -14,7 +14,7 @@ public class MarketItemImpl implements Serializable, OwnershipModificable, Marke
     private Integer marketId;
     private String name;
     private Integer price;
-    private MarketClientCallbackable owner;
+    private MarketplaceCallbackable owner;
 
     public MarketItemImpl(Integer marketId, String name, Integer price) {
         this.marketId = marketId;
@@ -38,7 +38,7 @@ public class MarketItemImpl implements Serializable, OwnershipModificable, Marke
     }
 
     @Override
-    public void setOwner(MarketClient newOwner) {
+    public void setOwner(Trader newOwner) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }
