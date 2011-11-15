@@ -6,6 +6,7 @@ package client;
 
 import bank.Account;
 import bank.BankClient;
+import java.util.List;
 import server.Marketplace;
 import server.MarketItem;
 import server.MarketplaceCallbackable;
@@ -87,6 +88,11 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
 
     @Override
     public void buyItem(MarketItem item) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<MarketItem> getItems() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }
