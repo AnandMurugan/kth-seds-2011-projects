@@ -16,10 +16,12 @@ public class BankImpl extends UnicastRemoteObject implements Bank {
         this.bankName = bankName;
     }
 
+    @Override
     public synchronized String[] listAccounts() {
         return accounts.keySet().toArray(new String[1]);
     }
 
+    @Override
     public synchronized Account newAccount(String name) throws RemoteException,
             RejectedException {
         AccountImpl account = (AccountImpl) accounts.get(name);
@@ -35,10 +37,12 @@ public class BankImpl extends UnicastRemoteObject implements Bank {
         return account;
     }
 
+    @Override
     public synchronized Account getAccount(String name) {
         return accounts.get(name);
     }
 
+    @Override
     public synchronized boolean deleteAccount(String name) {
         if (!hasAccount(name)) {
             return false;
