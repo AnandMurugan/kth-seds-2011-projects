@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author julio
  */
 public interface MarketItem extends Serializable {
-    public long getId();
+    public long getMarketItemId();
 
     public String getName();
 
@@ -20,4 +20,6 @@ public interface MarketItem extends Serializable {
     public String getOwner();
 
     public void setOwner(String owner);
+
+    public void setMarketItemId(long id);
 }

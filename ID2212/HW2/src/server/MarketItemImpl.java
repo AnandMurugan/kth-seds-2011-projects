@@ -9,22 +9,20 @@ package server;
  * @author julio
  */
 public class MarketItemImpl implements MarketItem {
-    private static long idCounter = 1;
-    private long id;
+    private long marketItemId;
     private String name;
     private float price;
     private String owner;
 
     public MarketItemImpl(String name, float price, String owner) {
-        this.id = idCounter++;
         this.name = name;
         this.price = price;
         this.owner = owner;
     }
 
     @Override
-    public long getId() {
-        return id;
+    public long getMarketItemId() {
+        return marketItemId;
     }
 
     @Override
@@ -45,5 +43,10 @@ public class MarketItemImpl implements MarketItem {
     @Override
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    @Override
+    public void setMarketItemId(long id) {
+        this.marketItemId = id;
     }
 }

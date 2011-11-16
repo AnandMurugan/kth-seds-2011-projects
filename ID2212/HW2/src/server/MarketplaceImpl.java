@@ -22,15 +22,16 @@ import utils.RejectedException;
 public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace {
     private String marketName;
     private Map<String, ClientInfo> clients;
-    private Map<String, MarketItem> items;
-    private Map<String, MarketItem> wishes;
+    private Map<Long, MarketItem> items;
+    private Map<Long, MarketItem> wishes;
+    private static long marketItemsIdCounter;
 
     public MarketplaceImpl(String marketName) throws RemoteException {
         super();
         this.marketName = marketName;
         this.clients = new HashMap<String, ClientInfo>();
-        this.items = new HashMap<String, MarketItem>();
-        this.wishes = new HashMap<String, MarketItem>();
+        this.items = new HashMap<Long, MarketItem>();
+        this.wishes = new HashMap<Long, MarketItem>();
 
         //Start wish handler
         Runnable wishHandlingTask = new Runnable() {
@@ -48,8 +49,9 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
                             for (MarketItem item : items.values()) {
                                 String itemName = item.getName();
                                 float itemPrice = item.getPrice();
+                                String itemOwner = item.getOwner();
 
-                                if ((wishName.equals(itemName)) && (wishPrice >= itemPrice)) {
+                                if ((wishName.equals(itemName)) && (wishPrice >= itemPrice) && (!wishOwner.equals(itemOwner))) {
                                     MarketplaceCallbackable wisher = clients.get(wishOwner).callback;
                                     wisher.notifyItemAvailable(item);
                                     break;
@@ -81,17 +83,17 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
         if (!clients.containsKey(name)) {
             throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + name + "\" is not registered.");
         } else {
-            for (Entry<String, MarketItem> entry : items.entrySet()) {
+            for (Entry<Long, MarketItem> entry : items.entrySet()) {
                 MarketItem item = entry.getValue();
-                String id = entry.getKey();
+                Long id = entry.getKey();
                 if (item.getOwner().equals(name)) {
                     items.remove(id);
                 }
             }
 
-            for (Entry<String, MarketItem> entry : wishes.entrySet()) {
+            for (Entry<Long, MarketItem> entry : wishes.entrySet()) {
                 MarketItem wish = entry.getValue();
-                String id = entry.getKey();
+                Long id = entry.getKey();
                 if (wish.getOwner().equals(name)) {
                     wishes.remove(id);
                 }
@@ -110,7 +112,9 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
             if (hasItem(item)) {
                 throw new RejectedException("MARKETPLACE(" + marketName + "): This item is already available in the market.");
             } else {
-                items.put(item.getOwner() + item.getId(), item);
+                long id = marketItemsIdCounter++;
+                item.setMarketItemId(id);
+                items.put(id, item);
             }
         }
     }
@@ -121,7 +125,9 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
         if (!clients.containsKey(owner)) {
             throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + owner + "\" is not registered.");
         } else {
-            wishes.put(wish.getOwner() + wish.getId(), wish);
+            long id = marketItemsIdCounter++;
+            wish.setMarketItemId(id);
+            wishes.put(id, wish);
         }
     }
 
@@ -183,22 +189,22 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
     }
 
     private boolean hasItem(MarketItem item) {
-        String id = item.getOwner() + item.getId();
+        Long id = item.getMarketItemId();
         return items.containsKey(id);
     }
 
     private boolean hasWish(MarketItem wish) {
-        String id = wish.getOwner() + wish.getId();
+        Long id = wish.getMarketItemId();
         return wishes.containsKey(id);
     }
 
     private void removeItem(MarketItem item) {
-        String id = item.getOwner() + item.getId();
+        Long id = item.getMarketItemId();
         items.remove(id);
     }
 
     private void removeWish(MarketItem wish) {
-        String id = wish.getOwner() + wish.getId();
+        Long id = wish.getMarketItemId();
         wishes.remove(id);
     }
 
