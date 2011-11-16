@@ -27,6 +27,9 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
     ClientImpl client;
     DefaultTableModel postedItemsModel;
     DefaultTableModel wishItemsModel;
+    
+    private ConnectDialog dialog = new ConnectDialog(this, true);
+    
     public ClientUI() {
         initComponents();
         postedItemsModel = (DefaultTableModel)postedItemTable.getModel();
@@ -436,7 +439,8 @@ private void registerBankAcBtnActionPerformed(java.awt.event.ActionEvent evt) {/
 }//GEN-LAST:event_registerBankAcBtnActionPerformed
 
 private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-// TODO add your handling code here:
+    // Connect to market
+    dialog.setVisible(true);
 }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
@@ -526,5 +530,17 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
     public void showBuyConfirmationDialog() {
         JOptionPane.showMessageDialog(this, "Purchase was successfull.", "Information", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    public void ConnectToMarket(String userName) {
+        setTitle("Client registering into market...");
+        client.setUserName(userName);
+        Runnable registerTask = new Runnable() {
+            @Override
+            public void run() {
+                client.register();
+            }
+        };
+        (new Thread(registerTask)).start();
     }
 }

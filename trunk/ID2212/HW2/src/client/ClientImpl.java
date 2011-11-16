@@ -217,4 +217,8 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     public String getUserName() {
         return this.userName;
     }
+    
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 }
