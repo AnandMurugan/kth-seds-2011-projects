@@ -9,9 +9,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.RejectedException;
@@ -82,19 +81,19 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
         if (!clients.containsKey(name)) {
             throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + name + "\" is not registered.");
         } else {
-            //SLOW IMPLEMENTATION (NETWORK CALLS)
-            for (int i = 0; i < items.size(); i++) {
-                MarketItem item = items.get(i);
+            for (Entry<String, MarketItem> entry : items.entrySet()) {
+                MarketItem item = entry.getValue();
+                String id = entry.getKey();
                 if (item.getOwner().equals(name)) {
-                    items.remove(i);
+                    items.remove(id);
                 }
             }
 
-            //SLOW IMPLEMENTATION (NETWORK CALLS)
-            for (int i = 0; i < wishes.size(); i++) {
-                MarketItem wish = wishes.get(i);
+            for (Entry<String, MarketItem> entry : wishes.entrySet()) {
+                MarketItem wish = entry.getValue();
+                String id = entry.getKey();
                 if (wish.getOwner().equals(name)) {
-                    wishes.remove(i);
+                    wishes.remove(id);
                 }
             }
 
