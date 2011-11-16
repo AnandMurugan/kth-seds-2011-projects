@@ -594,7 +594,7 @@ private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
         Runnable updateUI = new Runnable() {
             @Override
             public void run() {
-                wishItemsModel.removeMarketItem(item.getId());
+                wishItemsModel.removeMarketItem(item.getMarketItemId());
             }
         };
         try {
@@ -612,7 +612,7 @@ private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
         Runnable updateUI = new Runnable() {
             @Override
             public void run() {
-                postedItemsModel.removeMarketItem(item.getId());
+                postedItemsModel.removeMarketItem(item.getMarketItemId());
                 soldItemsModel.addMarketItem(item);
             }
         };
@@ -650,7 +650,7 @@ private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
         Runnable updateUI = new Runnable() {
             @Override
             public void run() {
-                JOptionPane.showMessageDialog(c, "Posted item was sold. Item id: " + item.getId(), "Information", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(c, "Posted item was sold. Item id: " + item.getMarketItemId(), "Information", JOptionPane.INFORMATION_MESSAGE);
 
             }
         };

@@ -16,6 +16,7 @@ import server.MarketItem;
 import server.MarketplaceCallbackable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.Trader;
@@ -212,7 +213,7 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     @Override
     public List<MarketItem> getItems() {
         try {
-            this.allItems = market.getItems();
+            this.allItems = new ArrayList(market.getItems());
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
