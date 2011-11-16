@@ -32,11 +32,11 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
         postedItemsModel = (DefaultTableModel)postedItemTable.getModel();
         wishItemsModel = (DefaultTableModel)wishTable.getModel();
         
-        /*try {
+        try {
             client = new ClientImpl(this);
         } catch (RemoteException ex) {
             Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
+        }
     }
 
     /** This method is called from within the constructor to
@@ -381,12 +381,12 @@ private void addItemBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     try {
         if (!itemNameTxt.getText().equals("") && !priceTxt.getText().equals("")) {
             Float price = Float.parseFloat(priceTxt.getText());
-            final MarketItem item = new MarketItemImpl(itemNameTxt.getText(), price, "");
+            final MarketItem item = new MarketItemImpl(itemNameTxt.getText(), price, client.getUserName());
             postedItemsModel.addRow(new Object[]{item.getName(), item.getPrice()});
             Runnable addItemToMarket = new Runnable() {
                 @Override
                 public void run() {
-                    //client.postItem(item);
+                    client.postItem(item);
                 }
             };
             (new Thread(addItemToMarket)).start();
@@ -407,7 +407,7 @@ private void addItemBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
     try {
         if (!wishItemTxt.getText().equals("") && !wishPriceTxt.getText().equals("")) {
             Float price = Float.parseFloat(wishPriceTxt.getText());
-            final MarketItem item = new MarketItemImpl(wishItemTxt.getText(), price, null);
+            final MarketItem item = new MarketItemImpl(wishItemTxt.getText(), price, client.getUserName());
             wishItemsModel.addRow(new Object[]{item.getName(), item.getPrice()});
             Runnable addItemToMarket = new Runnable() {
                 @Override
