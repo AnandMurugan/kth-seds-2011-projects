@@ -5,7 +5,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 
 public class AccountImpl extends UnicastRemoteObject implements Account {
-    private float balance = 0;
+    private float balance = 100;
     private String name;
 
     /** 
