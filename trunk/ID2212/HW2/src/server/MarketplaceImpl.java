@@ -167,7 +167,7 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
                 item.setOwner(name);
 
                 //Notify seller
-                seller.notifyPurchaseSuccessful(item);
+                seller.notifyPostedItemSold(item);
             }
         }
     }
