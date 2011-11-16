@@ -60,13 +60,16 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
 
     }
 
-    @Override
+    /*@Override
     public void notifyPurchaseSuccessful(MarketItem item) throws RemoteException {
         ui.showBuyConfirmationDialog();
         this.ownedItems.add(item);
-    }
+    }*/
 
+    @Override
     public void notifyPostedItemSold(MarketItem item) throws RemoteException {
+        ui.showItemSoldNotificationMessage(item);
+        ui.updatePostedItemSold(item);
     }
 
     @Override
@@ -110,6 +113,7 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     public void deposit(float value) {
         try {
             this.account.deposit(value);
+            ui.updateBalance(this.account.getBalance());
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
@@ -121,6 +125,7 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     public void withdraw(float value) {
         try {
             this.account.withdraw(value);
+            ui.updateBalance(this.account.getBalance());
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
@@ -145,6 +150,7 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     public void postItem(MarketItem item) {
         try {
             market.addItem(item);
+            
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
@@ -199,7 +205,7 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            // TODO. handle RejectedException;
         }
     }
 

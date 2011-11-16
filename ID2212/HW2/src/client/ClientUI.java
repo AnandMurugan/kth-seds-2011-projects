@@ -10,14 +10,17 @@
  */
 package client;
 
+import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.SwingUtilities;
 import server.MarketItem;
 import server.MarketItemImpl;
+import utils.MarketTableModel;
 
 /**
  *
@@ -25,16 +28,32 @@ import server.MarketItemImpl;
  */
 public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
     ClientImpl client;
-    DefaultTableModel postedItemsModel;
-    DefaultTableModel wishItemsModel;
-    
+    MarketTableModel postedItemsModel;
+    MarketTableModel wishItemsModel;
+    MarketTableModel allItemsModel;
+    MarketTableModel soldItemsModel;
     private ConnectDialog dialog = new ConnectDialog(this, true);
-    
+    List<MarketItem> postedItemsList = new ArrayList<MarketItem>();
+    List<MarketItem> wishItemsList = new ArrayList<MarketItem>();
+    List<MarketItem> allItemsList = new ArrayList<MarketItem>();
+    List<MarketItem> soldItemsList = new ArrayList<MarketItem>();
+
     public ClientUI() {
         initComponents();
-        postedItemsModel = (DefaultTableModel)postedItemTable.getModel();
-        wishItemsModel = (DefaultTableModel)wishTable.getModel();
-        
+
+        // Init model and tables
+        postedItemsModel = new MarketTableModel(postedItemsList);
+        postedItemTable.setModel(postedItemsModel);
+
+        wishItemsModel = new MarketTableModel(wishItemsList);
+        wishTable.setModel(wishItemsModel);
+
+        allItemsModel = new MarketTableModel(allItemsList);
+        allItemsTable.setModel(allItemsModel);
+
+        soldItemsModel = new MarketTableModel(soldItemsList);
+        soldItemsTable.setModel(soldItemsModel);
+
         try {
             client = new ClientImpl(this);
         } catch (RemoteException ex) {
@@ -60,6 +79,7 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         addItemBtn = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         wishTable = new javax.swing.JTable();
@@ -70,9 +90,12 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
         addItemBtn1 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
+        allItemsTable = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        soldItemsTable = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
         label2 = new java.awt.Label();
         label1 = new java.awt.Label();
@@ -106,11 +129,18 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
 
         jLabel2.setText("Price");
 
-        addItemBtn.setText("Add Item");
+        addItemBtn.setText("Post Item");
         addItemBtn.setName("addIItemBtn"); // NOI18N
         addItemBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addItemBtnActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Unpost");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
             }
         });
 
@@ -131,8 +161,9 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(priceTxt)
                             .addComponent(itemNameTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)))
-                    .addComponent(addItemBtn))
-                .addContainerGap(30, Short.MAX_VALUE))
+                    .addComponent(addItemBtn)
+                    .addComponent(jButton3))
+                .addContainerGap(61, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -148,21 +179,22 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
                             .addComponent(jLabel2)
                             .addComponent(priceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(addItemBtn))
+                        .addComponent(addItemBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton3))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
+        addItemBtn.getAccessibleContext().setAccessibleName("Post Item");
+
         jTabbedPane1.addTab("My Posted Items", jPanel1);
 
         wishTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+
             },
             new String [] {
                 "Item", "Price"
@@ -180,7 +212,7 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
             }
         });
 
-        addItemBtn1.setText("Add Wish Item");
+        addItemBtn1.setText("Wish Item");
         addItemBtn1.setName("addIItemBtn"); // NOI18N
         addItemBtn1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -206,7 +238,7 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
                             .addComponent(wishPriceTxt)
                             .addComponent(wishItemTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)))
                     .addComponent(addItemBtn1))
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addContainerGap(61, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -231,20 +263,22 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
 
         jTabbedPane1.addTab("Wish List", jPanel2);
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        allItemsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+
             },
             new String [] {
                 "Item", "Price"
             }
         ));
-        jScrollPane3.setViewportView(jTable3);
+        jScrollPane3.setViewportView(allItemsTable);
 
         jButton1.setText("Get All");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Buy selected");
 
@@ -257,8 +291,8 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(134, 134, 134)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -277,6 +311,35 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
         );
 
         jTabbedPane1.addTab("All Items", jPanel3);
+
+        soldItemsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Item", "Price"
+            }
+        ));
+        jScrollPane4.setViewportView(soldItemsTable);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(334, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Sold Items", jPanel5);
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, new java.awt.Color(204, 204, 204)));
 
@@ -304,7 +367,7 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(registerBankAcBtn)
                             .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addContainerGap(67, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -343,32 +406,27 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(52, 52, 52)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 274, Short.MAX_VALUE)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 538, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 262, Short.MAX_VALUE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                        .addComponent(jLabel6)))
+                .addGap(11, 11, 11)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -385,7 +443,7 @@ private void addItemBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         if (!itemNameTxt.getText().equals("") && !priceTxt.getText().equals("")) {
             Float price = Float.parseFloat(priceTxt.getText());
             final MarketItem item = new MarketItemImpl(itemNameTxt.getText(), price, client.getUserName());
-            postedItemsModel.addRow(new Object[]{item.getName(), item.getPrice()});
+            postedItemsModel.addMarketItem(item);
             Runnable addItemToMarket = new Runnable() {
                 @Override
                 public void run() {
@@ -396,10 +454,7 @@ private void addItemBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         }
     } catch (NumberFormatException ex) {
         JOptionPane.showConfirmDialog(null, "Price is not correctly introduced. Try again.", "Error", JOptionPane.INFORMATION_MESSAGE);
-    } catch (RemoteException ex) {
-        ex.printStackTrace();
     }
-
 }//GEN-LAST:event_addItemBtnActionPerformed
 
 private void wishPriceTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wishPriceTxtActionPerformed
@@ -411,7 +466,7 @@ private void addItemBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
         if (!wishItemTxt.getText().equals("") && !wishPriceTxt.getText().equals("")) {
             Float price = Float.parseFloat(wishPriceTxt.getText());
             final MarketItem item = new MarketItemImpl(wishItemTxt.getText(), price, client.getUserName());
-            wishItemsModel.addRow(new Object[]{item.getName(), item.getPrice()});
+            wishItemsModel.addMarketItem(item);
             Runnable addItemToMarket = new Runnable() {
                 @Override
                 public void run() {
@@ -422,26 +477,38 @@ private void addItemBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
         }
     } catch (NumberFormatException ex) {
         JOptionPane.showConfirmDialog(null, "Price is not correctly introduced. Try again.", "Error", JOptionPane.INFORMATION_MESSAGE);
-    } catch (RemoteException ex) {
-        ex.printStackTrace();
     }
-
 }//GEN-LAST:event_addItemBtn1ActionPerformed
 
 private void registerBankAcBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBankAcBtnActionPerformed
     Runnable createBankAccount = new Runnable() {
-                @Override
-                public void run() {
-                    client.createAccount();
-                }
-            };
-            (new Thread(createBankAccount)).start();
+        @Override
+        public void run() {
+            client.createAccount();
+        }
+    };
+    (new Thread(createBankAccount)).start();
 }//GEN-LAST:event_registerBankAcBtnActionPerformed
 
 private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
     // Connect to market
     dialog.setVisible(true);
 }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    Runnable getAllItemsTask = new Runnable() {
+        @Override
+        public void run() {
+            client.getItems();
+        }
+    };
+    (new Thread(getAllItemsTask)).start();
+
+}//GEN-LAST:event_jButton1ActionPerformed
+
+private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    postedItemsModel.removeMarketItem(postedItemTable.getSelectedRow());
+}//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -481,9 +548,11 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addItemBtn;
     private javax.swing.JButton addItemBtn1;
+    private javax.swing.JTable allItemsTable;
     private javax.swing.JTextField itemNameTxt;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -498,16 +567,18 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable3;
     private java.awt.Label label1;
     private java.awt.Label label2;
     private javax.swing.JTable postedItemTable;
     private javax.swing.JTextField priceTxt;
     private javax.swing.JButton registerBankAcBtn;
+    private javax.swing.JTable soldItemsTable;
     private javax.swing.JTextField wishItemTxt;
     private javax.swing.JTextField wishPriceTxt;
     private javax.swing.JTable wishTable;
@@ -519,19 +590,83 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     }
 
     @Override
-    public void updateWishItems(List<MarketItem> items) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void alertWishItem(final MarketItem item) {
+        Runnable updateUI = new Runnable() {
+            @Override
+            public void run() {
+                wishItemsModel.removeMarketItem(item.getId());
+            }
+        };
+        try {
+            SwingUtilities.invokeAndWait(updateUI);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     @Override
-    public void updateAddedItems(MarketItem items) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void updatePostedItemSold(final MarketItem item) {
+        Runnable updateUI = new Runnable() {
+            @Override
+            public void run() {
+                postedItemsModel.removeMarketItem(item.getId());
+                soldItemsModel.addMarketItem(item);
+            }
+        };
+        try {
+            SwingUtilities.invokeAndWait(updateUI);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
+    @Override
     public void showBuyConfirmationDialog() {
-        JOptionPane.showMessageDialog(this, "Purchase was successfull.", "Information", JOptionPane.INFORMATION_MESSAGE);
+        final java.awt.Component c = this;
+        Runnable updateUI = new Runnable() {
+            @Override
+            public void run() {
+                JOptionPane.showMessageDialog(c, "Purchase was successful.", "Information", JOptionPane.INFORMATION_MESSAGE);
+
+            }
+        };
+        try {
+            SwingUtilities.invokeAndWait(updateUI);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-    
+
+    @Override
+    public void showItemSoldNotificationMessage(final MarketItem item) {
+        final java.awt.Component c = this;
+        Runnable updateUI = new Runnable() {
+            @Override
+            public void run() {
+                JOptionPane.showMessageDialog(c, "Posted item was sold. Item id: " + item.getId(), "Information", JOptionPane.INFORMATION_MESSAGE);
+
+            }
+        };
+        try {
+            SwingUtilities.invokeAndWait(updateUI);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void updateBalance(final float balance) {
+    }
+
     public void ConnectToMarket(String userName) {
         setTitle("Client registering into market...");
         client.setUserName(userName);
