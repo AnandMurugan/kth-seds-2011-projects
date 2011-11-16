@@ -26,11 +26,12 @@ import server.MarketItemImpl;
 public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
     ClientImpl client;
     DefaultTableModel postedItemsModel;
-
+    DefaultTableModel wishItemsModel;
     public ClientUI() {
         initComponents();
         postedItemsModel = (DefaultTableModel)postedItemTable.getModel();
-        //postedItemTable.setModel(postedItemsModel);
+        wishItemsModel = (DefaultTableModel)wishTable.getModel();
+        
         /*try {
             client = new ClientImpl(this);
         } catch (RemoteException ex) {
@@ -407,7 +408,7 @@ private void addItemBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
         if (!wishItemTxt.getText().equals("") && !wishPriceTxt.getText().equals("")) {
             Float price = Float.parseFloat(wishPriceTxt.getText());
             final MarketItem item = new MarketItemImpl(wishItemTxt.getText(), price, null);
-            
+            wishItemsModel.addRow(new Object[]{item.getName(), item.getPrice()});
             Runnable addItemToMarket = new Runnable() {
                 @Override
                 public void run() {
