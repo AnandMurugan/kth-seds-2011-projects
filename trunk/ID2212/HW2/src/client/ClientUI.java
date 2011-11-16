@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import server.MarketItem;
 import server.MarketItemImpl;
-import utils.RejectedException;
 
 /**
  *
@@ -25,14 +25,17 @@ import utils.RejectedException;
  */
 public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
     ClientImpl client;
+    DefaultTableModel postedItemsModel;
 
     public ClientUI() {
         initComponents();
-        try {
+        postedItemsModel = (DefaultTableModel)postedItemTable.getModel();
+        //postedItemTable.setModel(postedItemsModel);
+        /*try {
             client = new ClientImpl(this);
         } catch (RemoteException ex) {
             Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     }
 
     /** This method is called from within the constructor to
@@ -47,7 +50,7 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        postedItemTable = new javax.swing.JTable();
         priceTxt = new javax.swing.JTextField();
         itemNameTxt = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
@@ -55,7 +58,7 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
         addItemBtn = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        wishTable = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         wishItemTxt = new javax.swing.JTextField();
@@ -72,21 +75,22 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
         registerBankAcBtn = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        postedItemTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+
             },
             new String [] {
                 "Item", "Price"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(postedItemTable);
 
         priceTxt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -149,7 +153,7 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
 
         jTabbedPane1.addTab("My Posted Items", jPanel1);
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        wishTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -160,7 +164,7 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
                 "Item", "Price"
             }
         ));
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(wishTable);
 
         jLabel3.setText("Item name");
 
@@ -314,6 +318,23 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
 
         jLabel6.setText("Total Items to sell:");
 
+        jMenu1.setText("File");
+
+        jMenuItem1.setText("Connect...");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Edit");
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -359,12 +380,12 @@ private void addItemBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     try {
         if (!itemNameTxt.getText().equals("") && !priceTxt.getText().equals("")) {
             Float price = Float.parseFloat(priceTxt.getText());
-            final MarketItem item = new MarketItemImpl(itemNameTxt.getText(), price, null);
-
+            final MarketItem item = new MarketItemImpl(itemNameTxt.getText(), price, "");
+            postedItemsModel.addRow(new Object[]{item.getName(), item.getPrice()});
             Runnable addItemToMarket = new Runnable() {
                 @Override
                 public void run() {
-                    client.postItem(item);
+                    //client.postItem(item);
                 }
             };
             (new Thread(addItemToMarket)).start();
@@ -386,7 +407,7 @@ private void addItemBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
         if (!wishItemTxt.getText().equals("") && !wishPriceTxt.getText().equals("")) {
             Float price = Float.parseFloat(wishPriceTxt.getText());
             final MarketItem item = new MarketItemImpl(wishItemTxt.getText(), price, null);
-
+            
             Runnable addItemToMarket = new Runnable() {
                 @Override
                 public void run() {
@@ -412,6 +433,10 @@ private void registerBankAcBtnActionPerformed(java.awt.event.ActionEvent evt) {/
             };
             (new Thread(createBankAccount)).start();
 }//GEN-LAST:event_registerBankAcBtnActionPerformed
+
+private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -460,6 +485,10 @@ private void registerBankAcBtnActionPerformed(java.awt.event.ActionEvent evt) {/
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -468,15 +497,15 @@ private void registerBankAcBtnActionPerformed(java.awt.event.ActionEvent evt) {/
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
     private java.awt.Label label1;
     private java.awt.Label label2;
+    private javax.swing.JTable postedItemTable;
     private javax.swing.JTextField priceTxt;
     private javax.swing.JButton registerBankAcBtn;
     private javax.swing.JTextField wishItemTxt;
     private javax.swing.JTextField wishPriceTxt;
+    private javax.swing.JTable wishTable;
     // End of variables declaration//GEN-END:variables
 
     @Override
