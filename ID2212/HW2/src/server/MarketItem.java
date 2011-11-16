@@ -4,19 +4,20 @@
  */
 package server;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
+import java.io.Serializable;
 
 /**
  *
  * @author julio
  */
-public interface MarketItem extends Remote {
-    public String getName() throws RemoteException;
+public interface MarketItem extends Serializable {
+    public long getId();
 
-    public float getPrice() throws RemoteException;
+    public String getName();
 
-    public String getOwner() throws RemoteException;
+    public float getPrice();
 
-    public void setOwner(String owner) throws RemoteException;
+    public String getOwner();
+
+    public void setOwner(String owner);
 }

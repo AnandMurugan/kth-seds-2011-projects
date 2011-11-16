@@ -7,7 +7,7 @@ package server;
 import bank.Account;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
+import java.util.Collection;
 import utils.RejectedException;
 
 /**
@@ -23,9 +23,9 @@ public interface Marketplace extends Remote {
 
     public void addWish(MarketItem wish) throws RemoteException, RejectedException;
 
-    public List<MarketItem> getItems() throws RemoteException;
+    public Collection<MarketItem> getItems() throws RemoteException;
 
     public void purchaseItem(String name, MarketItem item) throws RemoteException, RejectedException;
 
-    public void removeWish(MarketItem wish) throws RemoteException, RejectedException;
+    public void deleteWish(MarketItem wish) throws RemoteException, RejectedException;
 }

@@ -7,6 +7,7 @@ package server;
 import bank.Account;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,15 +23,15 @@ import utils.RejectedException;
 public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace {
     private String marketName;
     private Map<String, ClientInfo> clients;
-    private List<MarketItem> items;
-    private List<MarketItem> wishes;
+    private Map<String, MarketItem> items;
+    private Map<String, MarketItem> wishes;
 
     public MarketplaceImpl(String marketName) throws RemoteException {
         super();
         this.marketName = marketName;
         this.clients = new HashMap<String, ClientInfo>();
-        this.items = new LinkedList<MarketItem>();
-        this.wishes = new LinkedList<MarketItem>();
+        this.items = new HashMap<String, MarketItem>();
+        this.wishes = new HashMap<String, MarketItem>();
 
         //Start wish handler
         Runnable wishHandlingTask = new Runnable() {
@@ -40,12 +41,12 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
                     while (true) {
                         Thread.sleep(5000);
 
-                        for (MarketItem wish : wishes) {
+                        for (MarketItem wish : wishes.values()) {
                             String wishName = wish.getName();
                             float wishPrice = wish.getPrice();
                             String wishOwner = wish.getOwner();
 
-                            for (MarketItem item : items) {
+                            for (MarketItem item : items.values()) {
                                 String itemName = item.getName();
                                 float itemPrice = item.getPrice();
 
@@ -107,10 +108,10 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
         if (!clients.containsKey(owner)) {
             throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + owner + "\" is not registered.");
         } else {
-            if (items.contains(item)) {
+            if (hasItem(item)) {
                 throw new RejectedException("MARKETPLACE(" + marketName + "): This item is already available in the market.");
             } else {
-                items.add(item);
+                items.put(item.getOwner() + item.getId(), item);
             }
         }
     }
@@ -121,13 +122,13 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
         if (!clients.containsKey(owner)) {
             throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + owner + "\" is not registered.");
         } else {
-            wishes.add(wish);
+            wishes.put(wish.getOwner() + wish.getId(), wish);
         }
     }
 
     @Override
-    public List<MarketItem> getItems() throws RemoteException {
-        return items;
+    public Collection<MarketItem> getItems() throws RemoteException {
+        return items.values();
     }
 
     @Override
@@ -135,7 +136,7 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
         if (!clients.containsKey(name)) {
             throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + name + "\" is not registered.");
         } else {
-            if (!items.contains(item)) {
+            if (!hasItem(item)) {
                 throw new RejectedException("MARKETPLACE(" + marketName + "): "
                         + "Required item(" + item.getName() + ", " + item.getPrice() + ", " + item.getOwner() + ") doesn't exist.");
             } else {
@@ -149,7 +150,7 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
                 float price = item.getPrice();
 
                 //Remove item from the market 
-                items.remove(item);
+                removeItem(item);
 
                 //Withdraw money from the buyer
                 buyerAccount.withdraw(price);
@@ -167,19 +168,39 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
     }
 
     @Override
-    public synchronized void removeWish(MarketItem wish) throws RemoteException, RejectedException {
+    public synchronized void deleteWish(MarketItem wish) throws RemoteException, RejectedException {
         String owner = wish.getOwner();
         if (!clients.containsKey(owner)) {
             throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + owner + "\" is not registered.");
         } else {
-            if (!wishes.contains(wish)) {
+            if (!hasWish(wish)) {
                 throw new RejectedException("MARKETPLACE(" + marketName + "): "
                         + "Required wish(" + wish.getName() + ", " + wish.getPrice() + ", " + wish.getOwner() + ") doesn't exist.");
             } else {
-                //Remove item from the market 
-                wishes.remove(wish);
+                //Remove wish from the market 
+                removeWish(wish);
             }
         }
+    }
+
+    private boolean hasItem(MarketItem item) {
+        String id = item.getOwner() + item.getId();
+        return items.containsKey(id);
+    }
+
+    private boolean hasWish(MarketItem wish) {
+        String id = wish.getOwner() + wish.getId();
+        return wishes.containsKey(id);
+    }
+
+    private void removeItem(MarketItem item) {
+        String id = item.getOwner() + item.getId();
+        items.remove(id);
+    }
+
+    private void removeWish(MarketItem wish) {
+        String id = wish.getOwner() + wish.getId();
+        wishes.remove(id);
     }
 
     private class ClientInfo {
