@@ -4,42 +4,46 @@
  */
 package server;
 
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-
 /**
  *
  * @author julio
  */
-public class MarketItemImpl extends UnicastRemoteObject implements MarketItem {
+public class MarketItemImpl implements MarketItem {
+    private static long idCounter = 1;
+    private long id;
     private String name;
     private float price;
     private String owner;
 
-    public MarketItemImpl(String name, float price, String owner) throws RemoteException {
-        //super();
+    public MarketItemImpl(String name, float price, String owner) {
+        this.id = idCounter++;
         this.name = name;
         this.price = price;
         this.owner = owner;
     }
 
     @Override
-    public String getName() throws RemoteException {
+    public long getId() {
+        return id;
+    }
+
+    @Override
+    public String getName() {
         return name;
     }
 
     @Override
-    public float getPrice() throws RemoteException {
+    public float getPrice() {
         return price;
     }
 
     @Override
-    public String getOwner() throws RemoteException {
+    public String getOwner() {
         return owner;
     }
 
     @Override
-    public void setOwner(String owner) throws RemoteException {
+    public void setOwner(String owner) {
         this.owner = owner;
     }
 }
