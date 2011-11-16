@@ -68,7 +68,7 @@ public class MarketTableModel extends AbstractTableModel {
     public void removeMarketItem(long id) {
         MarketItem tmp = null;
         for (MarketItem i : marketItemList) {
-            if (i.getId() == id) {
+            if (i.getMarketItemId() == id) {
                 tmp = i;
                 break;
             }
