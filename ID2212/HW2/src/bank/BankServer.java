@@ -5,6 +5,7 @@
 package bank;
 
 import java.net.MalformedURLException;
+import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +22,7 @@ public class BankServer {
         try {
             Bank bankobj = new BankImpl(bankName);
             // Register the newly created object at rmiregistry.
-            java.rmi.Naming.rebind(bankName, bankobj);
+            Naming.rebind(bankName, bankobj);
             System.out.println(bankobj + " is ready.");
         } catch (MalformedURLException ex) {
             Logger.getLogger(BankServer.class.getName()).log(Level.SEVERE, null, ex);
