@@ -12,10 +12,11 @@ import server.MarketItem;
  * @author julio
  */
 public interface ClientResponsiveUI {
-    void updateAllItems(List<MarketItem> items);
-    void updateWishItems(List<MarketItem> items);
-    void updateAddedItems(MarketItem items);
+    void updateAllItems(final List<MarketItem> items);
+    void alertWishItem(final MarketItem item);
+    void updatePostedItemSold(final MarketItem item);
     void showBuyConfirmationDialog();
-    
+    void showItemSoldNotificationMessage(final MarketItem item);
+    void updateBalance(final float balance);
     
 }
