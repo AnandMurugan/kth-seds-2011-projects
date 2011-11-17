@@ -120,7 +120,7 @@ public class CuratorAgent extends Agent {
                     notWaitAuction = true;
                     System.out.println(getAID().getName() + "Started new auction...");
                     msgTemplate = MessageTemplate.and(
-                            MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.CFP), MessageTemplate.MatchPerformative(ACLMessage.INFORM)),
+                            MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.CFP), MessageTemplate.MatchPerformative(ACLMessage.INFORM)),
                             MessageTemplate.MatchConversationId(initAuctionMsg.getConversationId()));
                 }
             }
@@ -167,7 +167,7 @@ public class CuratorAgent extends Agent {
                             transition = SENT_PROPOSAL_TRANSITION;
 
                             msgTemplate = MessageTemplate.and(
-                                    MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL), MessageTemplate.MatchPerformative(ACLMessage.REJECT_PROPOSAL)),
+                                    MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL), MessageTemplate.MatchPerformative(ACLMessage.REJECT_PROPOSAL)),
                                     MessageTemplate.MatchConversationId(cfpMsg.getConversationId()));
                         } else {
                             System.out.println(getAID().getName() + " not convenient price.");
@@ -179,7 +179,7 @@ public class CuratorAgent extends Agent {
                             transition = WAIT_MORE_CFP_TRANSITION;
 
                             msgTemplate = MessageTemplate.and(
-                                    MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.CFP), MessageTemplate.MatchPerformative(ACLMessage.INFORM)),
+                                    MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.CFP), MessageTemplate.MatchPerformative(ACLMessage.INFORM)),
                                     MessageTemplate.MatchConversationId(cfpMsg.getConversationId()));
                         }
                     } else if (cfpMsg.getPerformative() == ACLMessage.INFORM) {
