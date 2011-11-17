@@ -85,7 +85,6 @@ public class CuratorAgent extends Agent {
         private final int NOT_GOOD_PRICE_TRANSITION = 4;
         private final int RECEIVED_PROPOSAL_REPLY_TRANSITION = 5;
         private final int DEFAULT_ERROR_STATE = 5;
-        private final int WAIT_MORE_CFP_TRANSITION = 1;
 
         public void onStart() {
             msgTemplate = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
@@ -101,6 +100,7 @@ public class CuratorAgent extends Agent {
             registerTransition(WAIT_CFP_OR_TERMINATE_STATE, WAIT_PROPOSAL_REPLY_STATE, SENT_PROPOSAL_TRANSITION);
             registerTransition(WAIT_CFP_OR_TERMINATE_STATE, WAIT_CFP_OR_TERMINATE_STATE, NOT_GOOD_PRICE_TRANSITION);
             registerTransition(WAIT_CFP_OR_TERMINATE_STATE, END_AUCTION_STATE, DEFAULT_ERROR_STATE);
+            registerTransition(WAIT_CFP_OR_TERMINATE_STATE, END_AUCTION_STATE, NO_BIDS_TRANSITION);
             registerTransition(WAIT_PROPOSAL_REPLY_STATE, END_AUCTION_STATE, RECEIVED_PROPOSAL_REPLY_TRANSITION);
             
             
