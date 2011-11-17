@@ -54,7 +54,7 @@ public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistMana
 
     @Override
     public void log(final String msg) {
-        System.out.println(msg);
+        //System.out.println(msg);
         Runnable logTask = new Runnable() {
             @Override
             public void run() {
