@@ -233,6 +233,11 @@ public class ArtistManagerAgent extends Agent {
                 public boolean done() {
                     return responsesCount == curators.length;
                 }
+
+                @Override
+                public int onEnd() {
+                    return winner != null ? 1 : 0;
+                }
             }, "COLLECTING_PROPOSALS");
             //
             registerState(new OneShotBehaviour(agent) {
