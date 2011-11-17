@@ -19,13 +19,12 @@ public class Artifact implements Serializable {
     private String style;
     private String museum;
 
-    public Artifact(String name, String creator, String description, String style, String museum) {
+    public Artifact(String name, String creator, String description, String style) {
         this.id = idCounter++;
         this.name = name;
         this.creator = creator;
         this.description = description;
         this.style = style;
-        this.museum = museum;
     }
 
     public String getCreator() {
