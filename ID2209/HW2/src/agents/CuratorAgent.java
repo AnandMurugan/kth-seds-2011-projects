@@ -149,11 +149,12 @@ public class CuratorAgent extends Agent {
                 ACLMessage cfpMsg = myAgent.receive(msgTemplate);
                 if (cfpMsg != null) {
                     notWaitCfp = true;
+                    System.out.println(getAID().getName() + " received a message from art agent...");
                     if (cfpMsg.getPerformative() == ACLMessage.CFP) {
                         // TODO. get price and style
                         float price = Float.parseFloat(cfpMsg.getContent());
                         String style = "cubism";
-                            
+                        System.out.println(getAID().getName() + " processing CFP message.");
                         boolean satisfactoryPrice = true; //evaluate(style, price);
 
                         if (satisfactoryPrice) {
@@ -169,6 +170,7 @@ public class CuratorAgent extends Agent {
                                     MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL), MessageTemplate.MatchPerformative(ACLMessage.REJECT_PROPOSAL)),
                                     MessageTemplate.MatchConversationId(cfpMsg.getConversationId()));
                         } else {
+                            System.out.println(getAID().getName() + " not convenient price.");
                             ACLMessage proposalMsg = new ACLMessage(ACLMessage.NOT_UNDERSTOOD);
                             proposalMsg.addReceiver(cfpMsg.getSender());
                             proposalMsg.setConversationId(cfpMsg.getConversationId());
