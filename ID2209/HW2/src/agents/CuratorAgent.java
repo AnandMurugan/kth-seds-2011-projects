@@ -176,7 +176,7 @@ public class CuratorAgent extends Agent {
                             proposalMsg.setConversationId(cfpMsg.getConversationId());
                             myAgent.send(proposalMsg);
                             
-                            transition = WAIT_MORE_CFP_TRANSITION;
+                            transition = NOT_GOOD_PRICE_TRANSITION;
 
                             msgTemplate = MessageTemplate.and(
                                     MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.CFP), MessageTemplate.MatchPerformative(ACLMessage.INFORM)),
@@ -215,9 +215,9 @@ public class CuratorAgent extends Agent {
                     gotReply = true;
                     transition = RECEIVED_PROPOSAL_REPLY_TRANSITION;
                     if (replyMsg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
-                        System.out.println(getAID().getName() + "Bid accepted. ");
+                        System.out.println(getAID().getName() + " Bid accepted. ");
                     } else if (replyMsg.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
-                        System.out.println(getAID().getName() + "Bid rejected, someone else bought the item. ");
+                        System.out.println(getAID().getName() + " Bid rejected, someone else bought the item. ");
                     }
 
                     msgTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
@@ -246,6 +246,7 @@ public class CuratorAgent extends Agent {
 
             @Override
             public void action() {
+                System.out.println(getAID().getName() + " waiting for auction finished notification message.");
                 ACLMessage replyMsg = myAgent.receive(msgTemplate);
                 if (replyMsg != null) {
                     gotReply = true;
