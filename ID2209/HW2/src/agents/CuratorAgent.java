@@ -185,6 +185,9 @@ public class CuratorAgent extends Agent {
                     } else if (cfpMsg.getPerformative() == ACLMessage.INFORM) {
                         transition = NO_BIDS_TRANSITION;
                         System.out.println(getAID().getName() + " no bids.");
+                        
+                        msgTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
+                            MessageTemplate.MatchConversationId(cfpMsg.getConversationId()));
                     }
                 }
             }
@@ -246,7 +249,6 @@ public class CuratorAgent extends Agent {
 
             @Override
             public void action() {
-                System.out.println(getAID().getName() + " waiting for auction finished notification message.");
                 ACLMessage replyMsg = myAgent.receive(msgTemplate);
                 if (replyMsg != null) {
                     gotReply = true;
