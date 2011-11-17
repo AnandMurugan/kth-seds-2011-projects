@@ -91,7 +91,7 @@ public class ArtistManagerAgent extends Agent {
     }
 
     private class DutchAuctionInitiatorBehaviour extends FSMBehaviour {
-        private static final int ROUNDS = 10;
+        private static final int ROUNDS = 20;
         private String conversationId;
         private AID[] curators;
         private AID winner;
@@ -99,6 +99,7 @@ public class ArtistManagerAgent extends Agent {
         private MessageTemplate auctionTemplate;
         private float reductionRate;
         private float currentPrice;
+        private int responsesCount;
 
         public DutchAuctionInitiatorBehaviour(final Agent agent, final Artifact artifact, final float initialPrice, final float reservePrice) {
             super(agent);
@@ -108,6 +109,7 @@ public class ArtistManagerAgent extends Agent {
             auctionTemplate = MessageTemplate.MatchConversationId(conversationId);
             reductionRate = (initialPrice - reservePrice) / (ROUNDS - 1);
             currentPrice = initialPrice;
+
 
             //Discover all curators
             registerFirstState(new OneShotBehaviour(agent) {
@@ -201,12 +203,11 @@ public class ArtistManagerAgent extends Agent {
                     }
                     myAgent.send(cfpMsg);
                     gui.log("Collecting responses...");
+                    responsesCount = 0;
                 }
             }, "CFP");
             //
             registerState(new Behaviour(agent) {
-                int responsesCount = 0;
-
                 @Override
                 public void action() {
                     ACLMessage response = myAgent.receive(auctionTemplate);
@@ -249,7 +250,7 @@ public class ArtistManagerAgent extends Agent {
 
                 @Override
                 public int onEnd() {
-                    return (currentPrice < reservePrice) ? 1 : 0;
+                    return Float.compare(currentPrice + 0.0001f, reservePrice) <= 0 ? 1 : 0;
                 }
             }, "PLANNING_NEXT_ROUND");
             //

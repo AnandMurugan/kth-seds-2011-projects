@@ -2,25 +2,16 @@ package agents;
 
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.FSMBehaviour;
-import jade.core.behaviours.OneShotBehaviour;
-import jade.core.behaviours.SequentialBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
-import jade.domain.FIPANames.InteractionProtocol;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.lang.acl.UnreadableException;
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Random;
 import model.Artifact;
 
 /*
@@ -33,6 +24,7 @@ import model.Artifact;
  */
 public class CuratorAgent extends Agent {
     private String museum;
+    private String preferedStyle;
     private List<Artifact> artifacts = new ArrayList<Artifact>();
     private static long counter = 1;
 
@@ -40,8 +32,9 @@ public class CuratorAgent extends Agent {
     protected void setup() {
         //Setting the museum name
         Object[] args = getArguments();
-        if (args != null && args.length > 0) {
+        if (args != null && args.length > 1) {
             museum = (String) args[0];
+            preferedStyle = (String) args[1];
         } else {
             doDelete();
         }
@@ -61,7 +54,7 @@ public class CuratorAgent extends Agent {
             ex.printStackTrace();
         }
 
-        addBehaviour(new DutchAuctionParticipant());
+        addBehaviour(new DutchAuctionParticipantBehaviour());
     }
 
     @Override
@@ -69,15 +62,18 @@ public class CuratorAgent extends Agent {
         super.takeDown();
     }
 
-    
-
-    class DutchAuctionParticipant extends FSMBehaviour {
+    class DutchAuctionParticipantBehaviour extends FSMBehaviour {
         private MessageTemplate msgTemplate;
+        private Random rand;
+        private float price;
+        private float maxPrice;
+        private String style;
         // Define states
         private static final String WAIT_AUCTION_STATE = "wait-auction";
         private static final String WAIT_CFP_OR_TERMINATE_STATE = "wait-cfp-or-terminate";
         private static final String WAIT_PROPOSAL_REPLY_STATE = "wait-proposal-reply";
         private static final String END_AUCTION_STATE = "end-auction";
+        private static final String END_AUCTION_NO_BIDS_STATE = "end-auction-no-bids";
         // Define transitions
         private final int NEW_AUCTION_TRANSITION = 1;
         private final int NO_BIDS_TRANSITION = 2;
@@ -86,30 +82,31 @@ public class CuratorAgent extends Agent {
         private final int RECEIVED_PROPOSAL_REPLY_TRANSITION = 5;
         private final int DEFAULT_ERROR_STATE = 5;
 
+        @Override
         public void onStart() {
             msgTemplate = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
-            
+            rand = new Random(System.nanoTime());
+
             // Register states
-            registerFirstState( new waitAuction(myAgent), WAIT_AUCTION_STATE);
-            registerState(new waitCfp(myAgent), WAIT_CFP_OR_TERMINATE_STATE);
-            registerState(new waitReplyBehaviour(myAgent), WAIT_PROPOSAL_REPLY_STATE);
-            registerLastState(new waitEndAuctionBehaviour(myAgent), END_AUCTION_STATE);
-            
+            registerFirstState(new WaitAuctionBehaviour(myAgent), WAIT_AUCTION_STATE);
+            registerState(new WaitCfpBehaviour(myAgent), WAIT_CFP_OR_TERMINATE_STATE);
+            registerState(new WaitReplyBehaviour(myAgent), WAIT_PROPOSAL_REPLY_STATE);
+            registerLastState(new WaitEndAuctionBehaviour(myAgent), END_AUCTION_STATE);
+            registerLastState(new NoBidsEndAuctionBehaviour(myAgent), END_AUCTION_NO_BIDS_STATE);
+
             // Register Transitions
             registerTransition(WAIT_AUCTION_STATE, WAIT_CFP_OR_TERMINATE_STATE, NEW_AUCTION_TRANSITION);
             registerTransition(WAIT_CFP_OR_TERMINATE_STATE, WAIT_PROPOSAL_REPLY_STATE, SENT_PROPOSAL_TRANSITION);
             registerTransition(WAIT_CFP_OR_TERMINATE_STATE, WAIT_CFP_OR_TERMINATE_STATE, NOT_GOOD_PRICE_TRANSITION);
             registerTransition(WAIT_CFP_OR_TERMINATE_STATE, END_AUCTION_STATE, DEFAULT_ERROR_STATE);
-            registerTransition(WAIT_CFP_OR_TERMINATE_STATE, END_AUCTION_STATE, NO_BIDS_TRANSITION);
+            registerTransition(WAIT_CFP_OR_TERMINATE_STATE, END_AUCTION_NO_BIDS_STATE, NO_BIDS_TRANSITION);
             registerTransition(WAIT_PROPOSAL_REPLY_STATE, END_AUCTION_STATE, RECEIVED_PROPOSAL_REPLY_TRANSITION);
-            
-            
         }
 
-        private class waitAuction extends Behaviour {
+        private class WaitAuctionBehaviour extends Behaviour {
             boolean notWaitAuction = false;
 
-            waitAuction(Agent aAgent) {
+            WaitAuctionBehaviour(Agent aAgent) {
                 super(aAgent);
             }
 
@@ -118,6 +115,7 @@ public class CuratorAgent extends Agent {
                 ACLMessage initAuctionMsg = myAgent.receive(msgTemplate);
                 if (initAuctionMsg != null) {
                     notWaitAuction = true;
+                    style = initAuctionMsg.getContent();
                     System.out.println(getAID().getName() + "Started new auction...");
                     msgTemplate = MessageTemplate.and(
                             MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.CFP), MessageTemplate.MatchPerformative(ACLMessage.INFORM)),
@@ -136,11 +134,11 @@ public class CuratorAgent extends Agent {
             }
         }
 
-        private class waitCfp extends Behaviour {
+        private class WaitCfpBehaviour extends Behaviour {
             boolean notWaitCfp = false;
             int transition = DEFAULT_ERROR_STATE;
 
-            waitCfp(Agent aAgent) {
+            WaitCfpBehaviour(Agent aAgent) {
                 super(aAgent);
             }
 
@@ -151,11 +149,13 @@ public class CuratorAgent extends Agent {
                     notWaitCfp = true;
                     System.out.println(getAID().getName() + " received a message from art agent...");
                     if (cfpMsg.getPerformative() == ACLMessage.CFP) {
-                        // TODO. get price and style
-                        float price = Float.parseFloat(cfpMsg.getContent());
-                        String style = "cubism";
+                        price = Float.parseFloat(cfpMsg.getContent());
+                        if (maxPrice <= 0) {
+                            float low = 0.5f;
+                            maxPrice = price * low + rand.nextFloat() * (1.0f - low);
+                        }
                         System.out.println(getAID().getName() + " processing CFP message.");
-                        boolean satisfactoryPrice = true; //evaluate(style, price);
+                        boolean satisfactoryPrice = evaluate(style, price);
 
                         if (satisfactoryPrice) {
                             // Send proposal
@@ -163,7 +163,7 @@ public class CuratorAgent extends Agent {
                             proposalMsg.addReceiver(cfpMsg.getSender());
                             proposalMsg.setConversationId(cfpMsg.getConversationId());
                             myAgent.send(proposalMsg);
-                            
+
                             transition = SENT_PROPOSAL_TRANSITION;
 
                             msgTemplate = MessageTemplate.and(
@@ -175,7 +175,7 @@ public class CuratorAgent extends Agent {
                             proposalMsg.addReceiver(cfpMsg.getSender());
                             proposalMsg.setConversationId(cfpMsg.getConversationId());
                             myAgent.send(proposalMsg);
-                            
+
                             transition = NOT_GOOD_PRICE_TRANSITION;
 
                             msgTemplate = MessageTemplate.and(
@@ -185,9 +185,9 @@ public class CuratorAgent extends Agent {
                     } else if (cfpMsg.getPerformative() == ACLMessage.INFORM) {
                         transition = NO_BIDS_TRANSITION;
                         System.out.println(getAID().getName() + " no bids.");
-                        
+
                         msgTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-                            MessageTemplate.MatchConversationId(cfpMsg.getConversationId()));
+                                MessageTemplate.MatchConversationId(cfpMsg.getConversationId()));
                     }
                 }
             }
@@ -201,13 +201,26 @@ public class CuratorAgent extends Agent {
             public int onEnd() {
                 return transition;
             }
+
+            private boolean evaluate(String style, float price) {
+                if (!preferedStyle.equals(style)) {
+                    return false;
+                } else {
+                    if (Float.compare(maxPrice, price) > 0) {
+                        double coin = rand.nextDouble();
+                        return coin > 0.5;
+                    } else {
+                        return false;
+                    }
+                }
+            }
         }
 
-        private class waitReplyBehaviour extends Behaviour {
+        private class WaitReplyBehaviour extends Behaviour {
             boolean gotReply = false;
             int transition = DEFAULT_ERROR_STATE;
 
-            waitReplyBehaviour(Agent aAgent) {
+            WaitReplyBehaviour(Agent aAgent) {
                 super(aAgent);
             }
 
@@ -239,11 +252,10 @@ public class CuratorAgent extends Agent {
             }
         }
 
-        private class waitEndAuctionBehaviour extends Behaviour {
+        private class WaitEndAuctionBehaviour extends Behaviour {
             boolean gotReply = false;
-            int transition = DEFAULT_ERROR_STATE;
 
-            waitEndAuctionBehaviour(Agent aAgent) {
+            WaitEndAuctionBehaviour(Agent aAgent) {
                 super(aAgent);
             }
 
@@ -253,6 +265,7 @@ public class CuratorAgent extends Agent {
                 if (replyMsg != null) {
                     gotReply = true;
                     System.out.println(getAID().getName() + " Auction finished. ");
+                    myAgent.addBehaviour(new DutchAuctionParticipantBehaviour());
                 }
             }
 
@@ -260,10 +273,22 @@ public class CuratorAgent extends Agent {
             public boolean done() {
                 return gotReply;
             }
+        }
+
+        private class NoBidsEndAuctionBehaviour extends Behaviour {
+            NoBidsEndAuctionBehaviour(Agent aAgent) {
+                super(aAgent);
+            }
 
             @Override
-            public int onEnd() {
-                return transition;
+            public void action() {
+                System.out.println(getAID().getName() + " Auction finished. ");
+                myAgent.addBehaviour(new DutchAuctionParticipantBehaviour());
+            }
+
+            @Override
+            public boolean done() {
+                return true;
             }
         }
     }
