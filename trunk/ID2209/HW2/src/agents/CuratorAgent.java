@@ -120,6 +120,8 @@ public class CuratorAgent extends Agent {
                     msgTemplate = MessageTemplate.and(
                             MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.CFP), MessageTemplate.MatchPerformative(ACLMessage.INFORM)),
                             MessageTemplate.MatchConversationId(initAuctionMsg.getConversationId()));
+                } else {
+                    block();
                 }
             }
 
@@ -189,6 +191,8 @@ public class CuratorAgent extends Agent {
                         msgTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
                                 MessageTemplate.MatchConversationId(cfpMsg.getConversationId()));
                     }
+                } else {
+                    block();
                 }
             }
 
@@ -238,6 +242,8 @@ public class CuratorAgent extends Agent {
 
                     msgTemplate = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
                             MessageTemplate.MatchConversationId(replyMsg.getConversationId()));
+                } else {
+                    block();
                 }
             }
 
@@ -266,6 +272,8 @@ public class CuratorAgent extends Agent {
                     gotReply = true;
                     System.out.println(getAID().getName() + " Auction finished. ");
                     myAgent.addBehaviour(new DutchAuctionParticipantBehaviour());
+                } else {
+                    block();
                 }
             }
 
