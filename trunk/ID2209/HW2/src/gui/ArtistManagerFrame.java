@@ -26,15 +26,15 @@ public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistMana
     /** Creates new form ArtistManagerGUI */
     public ArtistManagerFrame(ArtistManagerAgent agent) {
         this.agent = agent;
-        
+
         initComponents();
     }
-    
+
     @Override
     public void open() {
         setVisible(true);
     }
-    
+
     @Override
     public void close() {
         Runnable closeTask = new Runnable() {
@@ -51,16 +51,26 @@ public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistMana
             Logger.getLogger(ArtistManagerFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    @Override
-    public void log(String msg) {
-        System.out.println(msg);
-    }
-    
-    public void sellArtifact() {
-        //Prepare args
-        final String args[] = {null, null, null, null, null};
 
+    @Override
+    public void log(final String msg) {
+        System.out.println(msg);
+        Runnable logTask = new Runnable() {
+            @Override
+            public void run() {
+                logArea.append(msg + "\n");
+            }
+        };
+        try {
+            SwingUtilities.invokeAndWait(logTask);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ArtistManagerFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(ArtistManagerFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void sellArtifact(final String[] args) {
         //Run new task
         Runnable sellTask = new Runnable() {
             @Override
@@ -80,26 +90,144 @@ public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistMana
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        nameText = new javax.swing.JTextField();
+        creatorText = new javax.swing.JTextField();
+        descriptionText = new javax.swing.JTextField();
+        styleText = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        initialPriceText = new javax.swing.JTextField();
+        reservePriceText = new javax.swing.JTextField();
+        sellButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        logArea = new javax.swing.JTextArea();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Agent Manager [" + agent.getLocalName() + "]" );
+        setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
         });
 
+        jLabel1.setText("Name:");
+
+        jLabel2.setText("Creator:");
+
+        jLabel3.setText("Description:");
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel4.setText("Style:");
+
+        nameText.setText("art item #1");
+        nameText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nameTextActionPerformed(evt);
+            }
+        });
+
+        creatorText.setText("unknown");
+
+        descriptionText.setText("statue");
+
+        styleText.setText("digital art");
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel5.setText("Initial price:");
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel6.setText("Reserve price:");
+
+        initialPriceText.setText("150");
+
+        reservePriceText.setText("50");
+
+        sellButton.setText("Sell");
+        sellButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sellButtonActionPerformed(evt);
+            }
+        });
+
+        logArea.setColumns(20);
+        logArea.setEditable(false);
+        logArea.setRows(5);
+        jScrollPane1.setViewportView(logArea);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(nameText, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+                                        .addComponent(creatorText)
+                                        .addComponent(descriptionText))
+                                    .addComponent(styleText, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(sellButton, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel5))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(reservePriceText, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE)
+                                    .addComponent(initialPriceText, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE))))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(nameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(initialPriceText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(reservePriceText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(creatorText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(descriptionText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(styleText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(sellButton, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
-        pack();
+        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        setBounds((screenSize.width-361)/2, (screenSize.height-573)/2, 361, 573);
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -111,6 +239,40 @@ public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistMana
         };
         new Thread(killAgentTask).start();
     }//GEN-LAST:event_formWindowClosing
+
+    private void sellButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sellButtonActionPerformed
+        logArea.setText("");
+
+        String[] args = new String[]{
+            nameText.getText(),
+            creatorText.getText(),
+            descriptionText.getText(),
+            styleText.getText(),
+            initialPriceText.getText(),
+            reservePriceText.getText()
+        };
+
+        sellArtifact(args);
+    }//GEN-LAST:event_sellButtonActionPerformed
+
+    private void nameTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nameTextActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField creatorText;
+    private javax.swing.JTextField descriptionText;
+    private javax.swing.JTextField initialPriceText;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea logArea;
+    private javax.swing.JTextField nameText;
+    private javax.swing.JTextField reservePriceText;
+    private javax.swing.JButton sellButton;
+    private javax.swing.JTextField styleText;
     // End of variables declaration//GEN-END:variables
 }

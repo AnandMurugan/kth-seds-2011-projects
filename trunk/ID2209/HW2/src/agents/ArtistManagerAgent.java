@@ -17,12 +17,10 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.lang.acl.UnreadableException;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Artifact;
@@ -60,12 +58,12 @@ public class ArtistManagerAgent extends Agent {
         }
 
         System.out.println("Artist Manager [" + getAID().getLocalName() + "] is ready...");
-        try {
-            Thread.sleep(1000);
-            sellArtifact(new String[]{"Art", "Artman", "Just simple art", "cubism", "150", "50"});
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ArtistManagerAgent.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            Thread.sleep(1000);
+//            sellArtifact(new String[]{"Art", "Artman", "Just simple art", "cubism", "150", "50"});
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(ArtistManagerAgent.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 
     @Override
