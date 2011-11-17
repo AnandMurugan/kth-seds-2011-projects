@@ -188,17 +188,19 @@ public class ArtistManagerAgent extends Agent {
             registerState(new OneShotBehaviour(agent) {
                 @Override
                 public void action() {
+                    //Log
+                    gui.log("Sending curators cfp [price=" + currentPrice + "]...");
+
                     //Inform all curators about artifact
                     ACLMessage cfpMsg = new ACLMessage(ACLMessage.CFP);
                     cfpMsg.setConversationId(conversationId);
                     cfpMsg.setContent(Float.toString(currentPrice));
                     for (AID aid : curators) {
                         cfpMsg.addReceiver(aid);
+                        gui.log("\tSending cfp to [" + aid.getLocalName() + "]");
                     }
                     myAgent.send(cfpMsg);
-
-                    //Log
-                    gui.log("Sending curators cfp [price=" + currentPrice + "]...");
+                    gui.log("Collecting responses...");
                 }
             }, "CFP");
             //
@@ -221,7 +223,7 @@ public class ArtistManagerAgent extends Agent {
                                 break;
                         }
                         responsesCount++;
-                        gui.log("#" + responsesCount + " [" + response.getSender().getLocalName() + "] responded with " + ACLMessage.getPerformative(response.getPerformative()));
+                        gui.log("\t#" + responsesCount + " [" + response.getSender().getLocalName() + "] responded with " + ACLMessage.getPerformative(response.getPerformative()));
                     } else {
                         block();
                     }
