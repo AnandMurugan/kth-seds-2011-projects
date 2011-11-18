@@ -107,7 +107,7 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
     }
 
     @Override
-    public synchronized void addItem(String name, MarketItem item) throws RemoteException, RejectedException {
+    public synchronized long addItem(String name, MarketItem item) throws RemoteException, RejectedException {
         if (!clients.containsKey(name)) {
             throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + name + "\" is not registered.");
         } else {
@@ -118,12 +118,13 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
                 item.setMarketItemId(id);
                 items.put(id, item);
                 System.out.println("Item [" + item.getMarketItemId() + ", " + item.getName() + ", " + item.getPrice() + ", " + item.getOwner() + "] has been added to the marketplace!");
+                return id;
             }
         }
     }
 
     @Override
-    public synchronized void addWish(String name, MarketItem wish) throws RemoteException, RejectedException {
+    public synchronized long addWish(String name, MarketItem wish) throws RemoteException, RejectedException {
         if (!clients.containsKey(name)) {
             throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + name + "\" is not registered.");
         } else {
@@ -131,6 +132,7 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
             wish.setMarketItemId(id);
             wishes.put(id, wish);
             System.out.println("Wish [" + wish.getMarketItemId() + ", " + wish.getName() + ", " + wish.getPrice() + ", " + wish.getOwner() + "] has been added to the marketplace!");
+            return id;
         }
     }
 

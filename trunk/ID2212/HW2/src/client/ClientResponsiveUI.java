@@ -12,12 +12,29 @@ import server.MarketItem;
  * @author julio
  */
 public interface ClientResponsiveUI {
-    void updateAllItems(final List<MarketItem> items);
-    void alertWishItem(final MarketItem item);
-    void updatePostedItemSold(final MarketItem item);
+    void updateAllItems(List<MarketItem> items);
+
+    void alertWishItem(MarketItem item);
+
+    void updateOnPostedItemSold(MarketItem item);
+
+    void updateOnItemBought(MarketItem item);
+
+    void updateOnPostItem(MarketItem item);
+
+    void updateOnPostWish(MarketItem wish);
+
+    void updateOnUnpostItem(MarketItem item);
+
+    void updateOnUnpostWish(MarketItem wish);
+
     void showBuyConfirmationDialog();
-    void showItemSoldNotificationMessage(final MarketItem item);
-    void updateBalance(final float balance);
+
+    void showItemSoldNotificationMessage(MarketItem item);
+
+    void updateBalance(float balance);
+
     void showBuyWishItemDialog(MarketItem item);
-    
+
+    void updateTitle(String msg);
 }
