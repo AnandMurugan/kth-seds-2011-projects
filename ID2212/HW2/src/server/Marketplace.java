@@ -19,13 +19,15 @@ public interface Marketplace extends Remote {
 
     public void unregisterClient(String name) throws RemoteException, RejectedException;
 
-    public void addItem(MarketItem item) throws RemoteException, RejectedException;
+    public void addItem(String name, MarketItem item) throws RemoteException, RejectedException;
 
-    public void addWish(MarketItem wish) throws RemoteException, RejectedException;
+    public void addWish(String name, MarketItem wish) throws RemoteException, RejectedException;
 
     public Collection<MarketItem> getItems() throws RemoteException;
 
     public void purchaseItem(String name, MarketItem item) throws RemoteException, RejectedException;
+    
+    public void deleteItem(String name, MarketItem item) throws RemoteException, RejectedException;
 
-    public void deleteWish(MarketItem wish) throws RemoteException, RejectedException;
+    public void deleteWish(String name, MarketItem wish) throws RemoteException, RejectedException;
 }
