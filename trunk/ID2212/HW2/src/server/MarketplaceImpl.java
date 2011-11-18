@@ -7,8 +7,9 @@ package server;
 import bank.Account;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -134,9 +135,9 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
     }
 
     @Override
-    public Collection<MarketItem> getItems() throws RemoteException {
+    public List<MarketItem> getItems() throws RemoteException {
         System.out.println("Someone asks for items!");
-        return items.values();
+        return new ArrayList<MarketItem>(items.values());
     }
 
     @Override
