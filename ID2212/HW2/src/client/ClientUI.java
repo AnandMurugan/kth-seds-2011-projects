@@ -88,6 +88,7 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
         wishItemTxt = new javax.swing.JTextField();
         wishPriceTxt = new javax.swing.JTextField();
         addItemBtn1 = new javax.swing.JButton();
+        addItemBtn2 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         allItemsTable = new javax.swing.JTable();
@@ -220,6 +221,14 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
             }
         });
 
+        addItemBtn2.setText("Unpost Wish");
+        addItemBtn2.setName("addIItemBtn"); // NOI18N
+        addItemBtn2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addItemBtn2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -237,7 +246,9 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(wishPriceTxt)
                             .addComponent(wishItemTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)))
-                    .addComponent(addItemBtn1))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(addItemBtn1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(addItemBtn2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(61, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -254,7 +265,9 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
                             .addComponent(jLabel4)
                             .addComponent(wishPriceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(addItemBtn1))
+                        .addComponent(addItemBtn1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addItemBtn2))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)))
@@ -510,6 +523,10 @@ private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     postedItemsModel.removeMarketItem(postedItemTable.getSelectedRow());
 }//GEN-LAST:event_jButton3ActionPerformed
 
+private void addItemBtn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addItemBtn2ActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_addItemBtn2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -548,6 +565,7 @@ private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addItemBtn;
     private javax.swing.JButton addItemBtn1;
+    private javax.swing.JButton addItemBtn2;
     private javax.swing.JTable allItemsTable;
     private javax.swing.JTextField itemNameTxt;
     private javax.swing.JButton jButton1;
@@ -680,5 +698,38 @@ private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
             }
         };
         (new Thread(registerTask)).start();
+    }
+
+    @Override
+    public void showBuyWishItemDialog(final MarketItem item) {
+        final java.awt.Frame c = this;
+
+        Runnable updateUI = new Runnable() {
+            @Override
+            public void run() {
+                BuyWishDialog buyDlg = new BuyWishDialog(c, true, item);
+                buyDlg.setVisible(true);
+            }
+        };
+        try {
+            SwingUtilities.invokeAndWait(updateUI);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void buyItem(final MarketItem item) {
+
+        Runnable buyItem = new Runnable() {
+            @Override
+            public void run() {
+                client.buyItem(item);
+            }
+        };
+        
+        (new Thread(buyItem)).start();
     }
 }

@@ -18,5 +18,6 @@ public interface ClientResponsiveUI {
     void showBuyConfirmationDialog();
     void showItemSoldNotificationMessage(final MarketItem item);
     void updateBalance(final float balance);
+    void showBuyWishItemDialog(MarketItem item);
     
 }

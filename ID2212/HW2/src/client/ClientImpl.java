@@ -59,8 +59,7 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
 
     @Override
     public void notifyItemAvailable(MarketItem item) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet.");
-
+        ui.showBuyWishItemDialog(item);
     }
 
     /*@Override
@@ -151,7 +150,7 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     @Override
     public void postItem(MarketItem item) {
         try {
-            market.addItem(item);
+            market.addItem(this.userName, item);
 
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -163,7 +162,7 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     @Override
     public void postWish(MarketItem wish) {
         try {
-            market.addWish(wish);
+            market.addWish(this.userName, wish);
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
