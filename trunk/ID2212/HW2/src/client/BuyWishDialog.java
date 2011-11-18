@@ -18,11 +18,13 @@ import server.MarketItem;
  * @author Igor
  */
 public class BuyWishDialog extends javax.swing.JDialog {
+    MarketItem item;
+    
     /** Creates new form ConnectDialog */
     public BuyWishDialog(java.awt.Frame parent, boolean modal, MarketItem item) {
         super(parent, modal);
         initComponents();
-        
+        this.item = item;
         // Load data from item.
         itemNameTxt.setText(item.getName());
         priceTxt.setText(Float.toString(item.getPrice()));
@@ -149,7 +151,7 @@ private void buyWishButonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
             String userName = itemNameTxt.getText();
             try {
                 setVisible(false);
-                //((ClientUI) getParent()).(userName);
+                ((ClientUI) getParent()).buyItem(item);
                 
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(dialog, "Please enter valid port number", "Error", JOptionPane.ERROR_MESSAGE);
