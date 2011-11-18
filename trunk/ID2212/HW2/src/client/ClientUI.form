@@ -252,7 +252,10 @@
                                   <Component id="wishItemTxt" alignment="0" pref="106" max="32767" attributes="1"/>
                               </Group>
                           </Group>
-                          <Component id="addItemBtn1" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="addItemBtn1" alignment="1" max="32767" attributes="1"/>
+                              <Component id="addItemBtn2" alignment="1" max="32767" attributes="1"/>
+                          </Group>
                       </Group>
                       <EmptySpace pref="61" max="32767" attributes="0"/>
                   </Group>
@@ -275,6 +278,8 @@
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="addItemBtn1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="addItemBtn2" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
@@ -347,6 +352,15 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addItemBtn1ActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="addItemBtn2">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Unpost Wish"/>
+                <Property name="name" type="java.lang.String" value="addIItemBtn" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addItemBtn2ActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

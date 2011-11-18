@@ -34,7 +34,7 @@ public class ConnectDialog extends javax.swing.JDialog {
 
         jLabel1 = new javax.swing.JLabel();
         userNameTxt = new javax.swing.JTextField();
-        connectButon = new javax.swing.JButton();
+        connectButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Connection");
@@ -42,10 +42,10 @@ public class ConnectDialog extends javax.swing.JDialog {
 
         jLabel1.setText("User Name:");
 
-        connectButon.setText("Connect");
+        connectButton.setText("Connect");
 
         userNameTxt.addActionListener(connectListener);
-        connectButon.addActionListener(connectListener);
+        connectButton.addActionListener(connectListener);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -56,7 +56,7 @@ public class ConnectDialog extends javax.swing.JDialog {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(connectButon, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(connectButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(userNameTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -68,7 +68,7 @@ public class ConnectDialog extends javax.swing.JDialog {
                     .addComponent(jLabel1)
                     .addComponent(userNameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(connectButon)
+                .addComponent(connectButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -78,7 +78,7 @@ public class ConnectDialog extends javax.swing.JDialog {
         setBounds((screenSize.width-228)/2, (screenSize.height-109)/2, 228, 109);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton connectButon;
+    private javax.swing.JButton connectButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField userNameTxt;
     // End of variables declaration//GEN-END:variables
