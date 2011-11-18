@@ -121,7 +121,7 @@ public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistMana
 
         jLabel3.setText("Description:");
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11));
         jLabel4.setText("Style:");
 
         nameText.setText("art item #1");
@@ -135,16 +135,19 @@ public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistMana
 
         descriptionText.setText("statue");
 
+        styleText.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         styleText.setText("digital art");
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11));
         jLabel5.setText("Initial price:");
 
-        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11));
         jLabel6.setText("Reserve price:");
 
+        initialPriceText.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         initialPriceText.setText("150");
 
+        reservePriceText.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         reservePriceText.setText("50");
 
         sellButton.setText("Sell");
