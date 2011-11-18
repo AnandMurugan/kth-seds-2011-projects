@@ -667,12 +667,15 @@ private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     public void updateBalance(final float balance) {
     }
 
-    public void ConnectToMarket(String userName) {
+    public void connectToMarket(String userName) {
         setTitle("Client registering into market...");
         client.setUserName(userName);
         Runnable registerTask = new Runnable() {
             @Override
             public void run() {
+                if (client.getAccount() == null) {
+                    client.createAccount();
+                } 
                 client.register();
             }
         };
