@@ -15,6 +15,7 @@ public class MarketItemImpl implements MarketItem {
     private String owner;
 
     public MarketItemImpl(String name, float price, String owner) {
+        this.marketItemId = -1;
         this.name = name;
         this.price = price;
         this.owner = owner;
