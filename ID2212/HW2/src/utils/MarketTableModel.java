@@ -15,7 +15,7 @@ import server.MarketItem;
 public class MarketTableModel extends AbstractTableModel {
     List<MarketItem> marketItemList;
     String headerList[] = new String[]{
-        "Item", "Price"
+        "Name", "Price", "Owner"
     };
 
     public MarketTableModel(List<MarketItem> list) {
@@ -24,7 +24,7 @@ public class MarketTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -43,19 +43,34 @@ public class MarketTableModel extends AbstractTableModel {
                 return item.getName();
             case 1:
                 return item.getPrice();
+            case 2:
+                return item.getOwner();
             default:
                 return "";
         }
     }
 
     //This method will be used to display the name of columns
+    @Override
     public String getColumnName(int col) {
         return headerList[col];
+    }
+
+    public void setMarketItemList(List<MarketItem> list) {
+        marketItemList = list;
+        fireTableChanged(null);
     }
 
     public void addMarketItem(MarketItem item) {
         marketItemList.add(item);
         fireTableChanged(null);
+    }
+
+    public MarketItem getMarketItem(int row) {
+        if (row > -1) {
+            return marketItemList.get(row);
+        }
+        return null;
     }
 
     public void removeMarketItem(int row) {

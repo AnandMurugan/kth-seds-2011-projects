@@ -32,18 +32,18 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     private static final String MARKETPLACE = "KistaGalleria";
     private static final String BANK = "Swedbank";
     private String userName;
-    ClientResponsiveUI ui;
-    private List<MarketItem> postedItems;
-    private List<MarketItem> wishedItems;
-    private List<MarketItem> ownedItems;
-    private List<MarketItem> allItems;
+    private ClientResponsiveUI ui;
+//    private List<MarketItem> postedItems;
+//    private List<MarketItem> wishedItems;
+//    private List<MarketItem> ownedItems;
+//    private List<MarketItem> allItems;
     private Marketplace market;
     private Account account;
     private Bank bank;
 
     public ClientImpl(ClientResponsiveUI ui) throws RemoteException {
         super();
-        this.userName = "";
+        //this.userName = "";
         this.ui = ui;
         try {
             market = (Marketplace) Naming.lookup("//" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/" + MARKETPLACE);
@@ -70,13 +70,16 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     @Override
     public void notifyPostedItemSold(MarketItem item) throws RemoteException {
         ui.showItemSoldNotificationMessage(item);
-        ui.updatePostedItemSold(item);
+        ui.updateOnPostedItemSold(item);
+        ui.updateAllItems(market.getItems());
+        ui.updateBalance(account.getBalance());
     }
 
     @Override
     public Account createAccount() {
         try {
             this.account = bank.newAccount(this.userName);
+            ui.updateBalance(account.getBalance());
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
@@ -87,14 +90,14 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
 
     @Override
     public Account getAccount() {
-        if (this.account == null) {
-            try {
-                this.account = bank.getAccount(this.userName);
-            } catch (RemoteException ex) {
-                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
 
+        //        if (this.account == null) {
+        //            try {
+        //                this.account = bank.getAccount(this.userName);
+        //            } catch (RemoteException ex) {
+        //                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        //            }
+        //        }        
         return this.account;
     }
 
@@ -150,8 +153,10 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     @Override
     public void postItem(MarketItem item) {
         try {
-            market.addItem(this.userName, item);
-
+            long marketItemId = market.addItem(this.userName, item);
+            item.setMarketItemId(marketItemId);
+            ui.updateOnPostItem(item);
+            ui.updateAllItems(market.getItems());
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
@@ -162,7 +167,10 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     @Override
     public void postWish(MarketItem wish) {
         try {
-            market.addWish(this.userName, wish);
+            long marketItemId = market.addWish(this.userName, wish);
+            wish.setMarketItemId(marketItemId);
+            ui.updateOnPostWish(wish);
+            ui.updateAllItems(market.getItems());
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
@@ -171,23 +179,47 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     }
 
     @Override
-    public boolean register() {
-        boolean result = false;
+    public void unpostItem(MarketItem item) {
+        try {
+            market.deleteItem(this.userName, item);
+            ui.updateOnUnpostItem(item);
+            ui.updateAllItems(market.getItems());
+        } catch (RemoteException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RejectedException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
+    @Override
+    public void unpostWish(MarketItem wish) {
+        try {
+            market.deleteWish(this.userName, wish);
+            ui.updateOnUnpostWish(wish);
+            ui.updateAllItems(market.getItems());
+        } catch (RemoteException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RejectedException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void register() {
         try {
             // TODO. Modify register client to return result
             market.registerClient(userName, this, this.account);
+            ui.updateTitle("Connected to " + MARKETPLACE);
+            ui.updateAllItems(market.getItems());
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        return result;
     }
 
     @Override
-    public boolean unregister() {
+    public void unregister() {
         try {
             market.unregisterClient(this.userName);
         } catch (RemoteException ex) {
@@ -195,14 +227,15 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
         } catch (RejectedException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        return false;
     }
 
     @Override
     public void buyItem(MarketItem item) {
         try {
             market.purchaseItem(this.userName, item);
+            ui.updateBalance(account.getBalance());
+            ui.updateOnItemBought(item);
+            ui.updateAllItems(market.getItems());
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
@@ -210,15 +243,12 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
         }
     }
 
-    @Override
-    public List<MarketItem> getItems() {
+    public void getItems() {
         try {
-            this.allItems = market.getItems();
+            ui.updateAllItems(market.getItems());
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        return this.allItems;
     }
 
     public String getUserName() {

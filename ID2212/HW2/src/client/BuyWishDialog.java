@@ -10,7 +10,6 @@
  */
 package client;
 
-import javax.swing.JOptionPane;
 import server.MarketItem;
 
 /**
@@ -19,7 +18,7 @@ import server.MarketItem;
  */
 public class BuyWishDialog extends javax.swing.JDialog {
     MarketItem item;
-    
+
     /** Creates new form ConnectDialog */
     public BuyWishDialog(java.awt.Frame parent, boolean modal, MarketItem item) {
         super(parent, modal);
@@ -50,29 +49,32 @@ public class BuyWishDialog extends javax.swing.JDialog {
         cancelBuyWishButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Connection");
+        setTitle("Match found");
         setResizable(false);
 
         jLabel1.setText("Item:");
 
         itemNameTxt.setEditable(false);
+        itemNameTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         buyWishButon.setText("Buy");
-        buyWishButon.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buyWishButonActionPerformed(evt);
-            }
-        });
 
         priceTxt.setEditable(false);
+        priceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         jLabel2.setText("Price:");
 
         ownerTxt.setEditable(false);
+        ownerTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         jLabel3.setText("Owner:");
 
         cancelBuyWishButton.setText("Cancel");
+        cancelBuyWishButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelBuyWishButtonActionPerformed(evt);
+            }
+        });
 
         itemNameTxt.addActionListener(buyWishItemListener);
         buyWishButon.addActionListener(buyWishItemListener);
@@ -129,10 +131,9 @@ public class BuyWishDialog extends javax.swing.JDialog {
         setBounds((screenSize.width-269)/2, (screenSize.height-199)/2, 269, 199);
     }// </editor-fold>//GEN-END:initComponents
 
-private void buyWishButonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyWishButonActionPerformed
-    
-}//GEN-LAST:event_buyWishButonActionPerformed
-
+    private void cancelBuyWishButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBuyWishButtonActionPerformed
+        dispose();
+    }//GEN-LAST:event_cancelBuyWishButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buyWishButon;
     private javax.swing.JButton cancelBuyWishButton;
@@ -147,15 +148,8 @@ private void buyWishButonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     java.awt.event.ActionListener buyWishItemListener = new java.awt.event.ActionListener() {
         @Override
         public void actionPerformed(java.awt.event.ActionEvent evt) {
-            java.awt.Container dialog = ((javax.swing.JComponent) evt.getSource()).getTopLevelAncestor();
-            String userName = itemNameTxt.getText();
-            try {
-                setVisible(false);
-                ((ClientUI) getParent()).buyItem(item);
-                
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(dialog, "Please enter valid port number", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            dispose();//setVisible(false);
+            ((ClientUI) getParent()).buyItem(item);
         }
     };
 }

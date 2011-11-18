@@ -6,22 +6,23 @@ package server;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
 
 /**
  *
  * @author Igor
  */
 public interface Trader extends Remote {
-    public void postItem(MarketItem item) throws RemoteException;
+    void postItem(MarketItem item) throws RemoteException;
 
-    public void postWish(MarketItem wish) throws RemoteException;
+    void postWish(MarketItem wish) throws RemoteException;
 
-    public void buyItem(MarketItem item) throws RemoteException;
+    void buyItem(MarketItem item) throws RemoteException;
 
-    public List<MarketItem> getItems() throws RemoteException;
+    void unpostWish(MarketItem wish) throws RemoteException;
 
-    public boolean register() throws RemoteException;
+    void unpostItem(MarketItem item) throws RemoteException;
 
-    public boolean unregister() throws RemoteException;
+    void register() throws RemoteException;
+
+    void unregister() throws RemoteException;
 }

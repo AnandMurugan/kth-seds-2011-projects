@@ -86,14 +86,9 @@ public class ConnectDialog extends javax.swing.JDialog {
     java.awt.event.ActionListener connectListener = new java.awt.event.ActionListener() {
         @Override
         public void actionPerformed(java.awt.event.ActionEvent evt) {
-            java.awt.Container dialog = ((javax.swing.JComponent) evt.getSource()).getTopLevelAncestor();
             String userName = userNameTxt.getText();
-            try {
-                setVisible(false);
-                ((ClientUI) getParent()).connectToMarket(userName);
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(dialog, "Please enter valid port number", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            dispose();//setVisible(false);
+            ((ClientUI) getParent()).connectToMarket(userName);
         }
     };
 }
