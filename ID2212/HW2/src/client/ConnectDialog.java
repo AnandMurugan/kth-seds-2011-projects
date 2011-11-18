@@ -90,7 +90,7 @@ public class ConnectDialog extends javax.swing.JDialog {
             String userName = userNameTxt.getText();
             try {
                 setVisible(false);
-                ((ClientUI) getParent()).ConnectToMarket(userName);
+                ((ClientUI) getParent()).connectToMarket(userName);
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(dialog, "Please enter valid port number", "Error", JOptionPane.ERROR_MESSAGE);
             }
