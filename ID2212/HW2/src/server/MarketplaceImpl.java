@@ -24,7 +24,7 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
     private Map<String, ClientInfo> clients;
     private Map<Long, MarketItem> items;
     private Map<Long, MarketItem> wishes;
-    private static long marketItemsIdCounter;
+    private static long marketItemsIdCounter = 1;
 
     public MarketplaceImpl(String marketName) throws RemoteException {
         super();
@@ -72,9 +72,10 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
     @Override
     public synchronized void registerClient(String name, MarketplaceCallbackable callback, Account account) throws RemoteException, RejectedException {
         if (clients.containsKey(name)) {
-            throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + name + "\" is already registered.");
+            throw new RejectedException("MARKETPLACE(" + marketName + "): A client [" + name + "] is already registered.");
         } else {
             clients.put(name, new ClientInfo(callback, account));
+            System.out.println("Client [" + name + "] has been registered!");
         }
     }
 
@@ -100,6 +101,7 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
             }
 
             clients.remove(name);
+            System.out.println("Client [" + name + "] has been unregistered!");
         }
     }
 
@@ -115,6 +117,7 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
                 long id = marketItemsIdCounter++;
                 item.setMarketItemId(id);
                 items.put(id, item);
+                System.out.println("Item [" + item.getMarketItemId() + ", " + item.getName() + ", " + item.getPrice() + ", " + item.getOwner() + "] has been added to the marketplace!");
             }
         }
     }
@@ -128,11 +131,13 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
             long id = marketItemsIdCounter++;
             wish.setMarketItemId(id);
             wishes.put(id, wish);
+            System.out.println("Wish [" + wish.getMarketItemId() + ", " + wish.getName() + ", " + wish.getPrice() + ", " + wish.getOwner() + "] has been added to the marketplace!");
         }
     }
 
     @Override
     public Collection<MarketItem> getItems() throws RemoteException {
+        System.out.println("Someone asks for items!");
         return items.values();
     }
 
@@ -168,6 +173,8 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
 
                 //Notify seller
                 seller.notifyPostedItemSold(item);
+
+                System.out.println("Client [" + name + "] has bought item [" + item.getMarketItemId() + ", " + item.getName() + ", " + item.getPrice() + ", " + item.getOwner() + "]!");
             }
         }
     }
@@ -184,6 +191,7 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
             } else {
                 //Remove wish from the market 
                 removeWish(wish);
+                System.out.println("Wish [" + wish.getMarketItemId() + ", " + wish.getName() + ", " + wish.getPrice() + ", " + wish.getOwner() + "] has been deleted from the marketplace!");
             }
         }
     }
