@@ -9,9 +9,12 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Artifact;
 
 /*
@@ -235,6 +238,11 @@ public class CuratorAgent extends Agent {
                     gotReply = true;
                     transition = RECEIVED_PROPOSAL_REPLY_TRANSITION;
                     if (replyMsg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
+                        try {
+                            artifacts.add((Artifact) replyMsg.getContentObject());
+                        } catch (UnreadableException ex) {
+                            Logger.getLogger(CuratorAgent.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                         System.out.println(getAID().getName() + " Bid accepted. ");
                     } else if (replyMsg.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
                         System.out.println(getAID().getName() + " Bid rejected, someone else bought the item. ");
