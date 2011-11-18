@@ -154,7 +154,7 @@ public class CuratorAgent extends Agent {
                         price = Float.parseFloat(cfpMsg.getContent());
                         if (maxPrice <= 0) {
                             float low = 0.5f;
-                            maxPrice = price * low + rand.nextFloat() * (1.0f - low);
+                            maxPrice = price * (low + rand.nextFloat() * (1.0f - low));
                         }
                         System.out.println(getAID().getName() + " processing CFP message.");
                         boolean satisfactoryPrice = evaluate(style, price);
