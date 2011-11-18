@@ -213,7 +213,7 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     @Override
     public List<MarketItem> getItems() {
         try {
-            this.allItems = new ArrayList(market.getItems());
+            this.allItems = market.getItems();
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
