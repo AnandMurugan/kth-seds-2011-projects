@@ -9,8 +9,8 @@ package common;
  * @author julio
  */
 public interface IContainerFile {
-    void loadFile();
+    void loadFile(String path);
     byte getNextByte();
-    void setByte();
+    void setByte(byte newByte);
     int getSize();
 }
