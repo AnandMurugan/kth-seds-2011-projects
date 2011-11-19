@@ -11,4 +11,6 @@ package common;
 public interface IContainerFile {
     void loadFile();
     byte getNextByte();
+    void setByte();
+    int getSize();
 }
