@@ -49,7 +49,7 @@ public class BmpFileContainer implements IContainerFile {
     }
 
     @Override
-    public byte getNextByte() {
+    public byte getNextByte() throws IndexOutOfBoundsException {
         byte result = 0;
 
         if (currentY >= height) {
@@ -59,7 +59,7 @@ public class BmpFileContainer implements IContainerFile {
         int pixelColor = image.getRGB(currentX, currentY);
         currentIndex++;  // update the current index after getting the pixel color
         int currentColor = currentIndex % PIXEL_SIZE_IN_BYTES; // determine the correspondant RGB
-
+        
         switch (currentColor) {
             case 1:
                 result = (byte) ((pixelColor & 0x00ff0000) >> 16);
@@ -69,10 +69,9 @@ public class BmpFileContainer implements IContainerFile {
                 break; // green
             case 0:
                 result = (byte) ((pixelColor & 0x000000ff));
+                currentX++;
                 break; // blue
         }
-
-        currentX++;
 
         if (currentX >= width) {
             currentX = 0;
@@ -110,4 +109,24 @@ public class BmpFileContainer implements IContainerFile {
     public boolean hasMoreBytes() {
         return (imageByteSize > currentIndex);
     }
+    
+    // TODO. Remove test code
+    /*public static void main(String args[]) {
+        BmpFileContainer fileContainer = new BmpFileContainer();
+        try {
+            fileContainer.getNextByte();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        
+        fileContainer.loadFile("C:\\Users\\julio\\Pictures\\flower.bmp");
+        System.out.println("File size in bytes: " + fileContainer.getSize());
+        int i= 0;
+        while (fileContainer.hasMoreBytes()) {            
+            fileContainer.getNextByte();
+            //System.out.println(fileContainer.getNextByte());
+            //i++;
+            //System.out.println("current byte: " + i);
+        }
+    } */
 }
