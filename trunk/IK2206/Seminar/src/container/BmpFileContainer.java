@@ -29,7 +29,7 @@ public class BmpFileContainer implements IContainerFile {
 
     public BmpFileContainer() {
         currentIndex = 0;
-        currentX = 0;
+        currentX = -1;
         currentY = 0;
         imageByteSize = 0;
         height = 0;
