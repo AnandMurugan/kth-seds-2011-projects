@@ -20,7 +20,6 @@ public class SimpleLSB implements IStegoStrategy {
 		while(cover.hasMoreBytes() && stego.hasMoreBits()) {
 			byte coverByte = cover.getNextByte();
 			byte stegoByte = stego.getNextBits(nrOfBits);
-			System.out.println(stegoByte);
 			st.setNextBits(stegoByte, nrOfBits);
 			coverByte = (byte) (coverByte >> nrOfBits);
 			coverByte = (byte) (coverByte << nrOfBits);
@@ -40,12 +39,10 @@ public class SimpleLSB implements IStegoStrategy {
 			short mask = ByteHelper.getMask(nrOfBits-1, nrOfBits);
 			byte stegoByte = (byte)(coverByte & mask);
 			stego.setNextBits(stegoByte, nrOfBits);
-			System.out.println(stegoByte);
 		}
 		if(stego.hasMoreBits()) {
 			System.out.println("Couldn't decode the whole message, container was too small");
 		}
-		System.out.println("it should be\n" + new String(st.getMessage()) + "\n");
 	}
 
 }
