@@ -16,11 +16,9 @@ public class WriteStegoFileImpl implements IWriteStegoFile{
 	}
 
 	public void setNextBits(byte writeByte, int nrOfBits) {
-		System.out.println(byteIndex + " " + bitIndex + " " + messageBytes[byteIndex]);
 		if( nrOfBits <= bitIndex + 1) {
 			writeByte = (byte) (writeByte << (bitIndex - nrOfBits + 1));
 			byte b = messageBytes[byteIndex];
-			System.out.println(b + " " + writeByte);
 			b = (byte) (b | writeByte);
 			messageBytes[byteIndex] = b;
 			bitIndex = bitIndex - nrOfBits;
