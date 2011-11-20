@@ -19,6 +19,9 @@ import javax.imageio.ImageIO;
 public class BmpFileContainer implements IContainerFile {
     final int PIXEL_SIZE_IN_BYTES = 3;
     final String BMP_FORMAT_STRING = "bmp";
+    final int RED_COLOR = 1;
+    final int GREEN_COLOR = 2;
+    final int BLUE_COLOR = 0;
     int currentIndex = -1;
     int currentX;
     int currentY;
@@ -60,7 +63,7 @@ public class BmpFileContainer implements IContainerFile {
         currentIndex++;  // update the current index after getting the pixel color
         int currentColor = currentIndex % PIXEL_SIZE_IN_BYTES; // determine the correspondant RGB
         
-        if( currentColor == 1) {
+        if( currentColor == RED_COLOR) {
             currentX++; // every time its red we updated the currentX
         }
         
@@ -72,13 +75,13 @@ public class BmpFileContainer implements IContainerFile {
         int pixelColor = image.getRGB(currentX, currentY);
 
         switch (currentColor) {
-            case 1:
+            case RED_COLOR:
                 result = (byte) ((pixelColor & 0x00ff0000) >> 16);
                 break; // red
-            case 2:
+            case GREEN_COLOR:
                 result = (byte) ((pixelColor & 0x0000ff00) >> 8);
                 break; // green
-            case 0:
+            case BLUE_COLOR:
                 result = (byte) ((pixelColor & 0x000000ff));
                 break; // blue
         }
