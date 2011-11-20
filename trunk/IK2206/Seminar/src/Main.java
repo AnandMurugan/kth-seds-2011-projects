@@ -36,7 +36,7 @@ public class Main {
 		cover.loadFile("src/resources/test.bmp");
 		String secretMessage = "this is a secret message";
 		IReadStegoFile readStego = new ReadStegoFileImpl(secretMessage.getBytes());
-		IStegoStrategy lsb = new SimpleLSB(1);
+		IStegoStrategy lsb = new SimpleLSB(2);
 		lsb.encode(cover, readStego);
 		cover.saveFile("src/resources/testStego.bmp");
 		IContainerFile modifiedCover = new BmpFileContainer();

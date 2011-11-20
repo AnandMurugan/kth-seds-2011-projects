@@ -39,7 +39,6 @@ public class BmpFileContainer implements IContainerFile {
         width = 0;
     }
 
-    @Override
     public void loadFile(String path) {
         File imageFile = new File(path);
         try {
@@ -52,7 +51,6 @@ public class BmpFileContainer implements IContainerFile {
         }
     }
 
-    @Override
     public byte getNextByte() throws IndexOutOfBoundsException {
         byte result = 0;
 
@@ -62,7 +60,6 @@ public class BmpFileContainer implements IContainerFile {
 
         currentIndex++;  // update the current index after getting the pixel color
         int currentColor = currentIndex % PIXEL_SIZE_IN_BYTES; // determine the correspondant RGB
-        
         if( currentColor == RED_COLOR) {
             currentX++; // every time its red we updated the currentX
         }
@@ -85,31 +82,33 @@ public class BmpFileContainer implements IContainerFile {
                 result = (byte) ((pixelColor & 0x000000ff));
                 break; // blue
         }
-
+        
         return result;
     }
 
-    @Override
     public void setByte(byte newByte) {
         int currentColor = currentIndex % PIXEL_SIZE_IN_BYTES; // determine the correspondant RGB
         int oldPixelColor = image.getRGB(currentX, currentY);
         int newPixelColor = oldPixelColor;
+        int newIntByte = (newByte & 0x000000FF);
         switch (currentColor) {
             case RED_COLOR:
-                newPixelColor = newPixelColor | (newByte << 16); // red
+            	newPixelColor = newPixelColor & (0xFF00FFFF);
+                newPixelColor = newPixelColor | (newIntByte << 16); // red
                 break;
             case GREEN_COLOR:
-                newPixelColor = newPixelColor | (newByte << 8); // green
+            	newPixelColor = newPixelColor & (0xFFFF00FF);
+            	newPixelColor = newPixelColor | (newIntByte << 8); // green
                 break;
             case BLUE_COLOR:
-                newPixelColor = newPixelColor | newByte; // blue
+            	newPixelColor = newPixelColor & (0xFFFFFF00);
+                newPixelColor = newPixelColor | newIntByte; // blue
                 break;
         }
-
+        
         image.setRGB(currentX, currentY, newPixelColor);
     }
 
-    @Override
     public int getSize() {
         return imageByteSize;
     }
