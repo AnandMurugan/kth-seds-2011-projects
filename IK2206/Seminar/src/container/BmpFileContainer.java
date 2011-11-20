@@ -29,7 +29,7 @@ public class BmpFileContainer implements IContainerFile {
 
     public BmpFileContainer() {
         currentIndex = 0;
-        currentX = 0;
+        currentX = -1;
         currentY = 0;
         imageByteSize = 0;
         height = 0;
@@ -60,7 +60,12 @@ public class BmpFileContainer implements IContainerFile {
         int pixelColor = image.getRGB(currentX, currentY);
         currentIndex++;  // update the current index after getting the pixel color
         int currentColor = currentIndex % PIXEL_SIZE_IN_BYTES; // determine the correspondant RGB
-        
+
+        if (currentX >= width) {
+            currentX = 0;
+            currentY++;
+        }
+
         switch (currentColor) {
             case 1:
                 result = (byte) ((pixelColor & 0x00ff0000) >> 16);
@@ -72,11 +77,6 @@ public class BmpFileContainer implements IContainerFile {
                 result = (byte) ((pixelColor & 0x000000ff));
                 currentX++;
                 break; // blue
-        }
-
-        if (currentX >= width) {
-            currentX = 0;
-            currentY++;
         }
 
         return result;
@@ -110,35 +110,32 @@ public class BmpFileContainer implements IContainerFile {
     public boolean hasMoreBytes() {
         return (imageByteSize > currentIndex);
     }
-    
-    public void saveFile(String path){
+
+    public void saveFile(String path) {
         try {
             File outputfile = new File(path);
             ImageIO.write(image, BMP_FORMAT_STRING, outputfile);
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(BmpFileContainer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
     // TODO. Remove test code
     /*public static void main(String args[]) {
-        BmpFileContainer fileContainer = new BmpFileContainer();
-        try {
-            fileContainer.getNextByte();
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
-        
-        fileContainer.loadFile("C:\\Users\\julio\\Pictures\\flower.bmp");
-        System.out.println("File size in bytes: " + fileContainer.getSize());
-        int i= 0;
-        while (fileContainer.hasMoreBytes()) {            
-            fileContainer.getNextByte();
-            //System.out.println(fileContainer.getNextByte());
-            //i++;
-            //System.out.println("current byte: " + i);
-        }
+    BmpFileContainer fileContainer = new BmpFileContainer();
+    try {
+    fileContainer.getNextByte();
+    } catch(Exception ex) {
+    ex.printStackTrace();
+    }
+    
+    fileContainer.loadFile("C:\\Users\\julio\\Pictures\\flower.bmp");
+    System.out.println("File size in bytes: " + fileContainer.getSize());
+    int i= 0;
+    while (fileContainer.hasMoreBytes()) {            
+    fileContainer.getNextByte();
+    //System.out.println(fileContainer.getNextByte());
+    //i++;
+    //System.out.println("current byte: " + i);
+    }
     } */
 }
