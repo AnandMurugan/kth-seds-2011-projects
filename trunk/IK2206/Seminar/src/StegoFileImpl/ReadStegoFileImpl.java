@@ -1,7 +1,6 @@
 package StegoFileImpl;
 
 import common.IReadStegoFile;
-import common.IWriteStegoFile;
 
 public class ReadStegoFileImpl implements IReadStegoFile {
 	private byte[] messageBytes;
@@ -19,11 +18,14 @@ public class ReadStegoFileImpl implements IReadStegoFile {
 	 * works for chunks of bits of 1,2,4,8 
 	 * for chuncks of 3,5,6,7 i need to take parts of different bytes when i return 
 	 */
-	public byte getNextBits(int nrOfBits) {
+	public byte getNextBits(int nrOfBits) throws IndexOutOfBoundsException{
+		if(hasMoreBits() == false) {
+			throw new IndexOutOfBoundsException();
+		}
 		byte b = messageBytes[byteIndex];
 		short aux = 0;
 		if(nrOfBits <= bitIndex + 1) {
-			short mask = getMask(bitIndex, nrOfBits);
+			short mask = ByteHelper.getMask(bitIndex, nrOfBits);
 			aux = (short) (b & mask);
 			byte returnByte = (byte) (aux >> (bitIndex - nrOfBits + 1));
 			bitIndex = bitIndex - nrOfBits;
@@ -35,21 +37,6 @@ public class ReadStegoFileImpl implements IReadStegoFile {
 		}
 		return 0;
 	}
-	
-	/*
-	 * the bits are numbered from right to left and the startBit is the one mostly to the left
-	 *  to get this mask 00011100, the call would be getMask(4, 3)
-	 */
-	private short getMask(int startBit, int nrOfBits) {
-		short b = 0x0001;
-		b = (short) (b << (startBit-nrOfBits+1));
-		short mask = 0x0000;
-		for(int i = 0; i < nrOfBits; i++) {
-			mask = (short) (mask | b);
-			b = (short) (b << 1);
-		}
-		return mask;
-	}
 
 	public boolean hasMoreBits() {
 		if(byteIndex >= messageBytes.length) {
@@ -57,19 +44,4 @@ public class ReadStegoFileImpl implements IReadStegoFile {
 		}
 		return true;
 	}
-	
-	/*
-	public static void main(String args[]) {
-		byte[] test = "some one is going out tonight and will not work tomorow".getBytes();
-		IReadStegoFile r = new ReadStegoFileImpl(test);
-		IWriteStegoFile w = new WriteStegoFileImpl();
-		
-		while(r.hasMoreBits()) {
-			w.setNextBits(r.getNextBits(2), 2);
-		}
-		
-		System.out.println("Result");
-		System.out.println(new String(w.getMessage()));		
-	}
-*/
 }

@@ -1,6 +1,6 @@
 package common;
 
 public interface IStegoStrategy {
-	public IContainerFile encode(IContainerFile cover, IReadStegoFile stego);
-	public IWriteStegoFile decode(IContainerFile cover);
+	public void encode(IContainerFile cover, IReadStegoFile stego);
+	public void decode(IContainerFile cover, IWriteStegoFile stego);
 }

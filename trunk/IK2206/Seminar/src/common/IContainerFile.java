@@ -9,8 +9,10 @@ package common;
  * @author julio
  */
 public interface IContainerFile {
-    void loadFile(String path);
-    byte getNextByte() throws IndexOutOfBoundsException;
-    void setByte(byte newByte);
-    int getSize();
+    public void loadFile(String path);
+    public void saveFile(String path);
+    public byte getNextByte() throws IndexOutOfBoundsException;
+    public void setByte(byte newByte);
+    public int getSize();
+    public boolean hasMoreBytes();
 }
