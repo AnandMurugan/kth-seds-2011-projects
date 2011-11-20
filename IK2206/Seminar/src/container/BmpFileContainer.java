@@ -60,7 +60,7 @@ public class BmpFileContainer implements IContainerFile {
         currentIndex++;  // update the current index after getting the pixel color
         int currentColor = currentIndex % PIXEL_SIZE_IN_BYTES; // determine the correspondant RGB
         
-        if( currentColor == 0) {
+        if( currentColor == 1) {
             currentX++;
         }
         
@@ -80,7 +80,6 @@ public class BmpFileContainer implements IContainerFile {
                 break; // green
             case 0:
                 result = (byte) ((pixelColor & 0x000000ff));
-                
                 break; // blue
         }
 
