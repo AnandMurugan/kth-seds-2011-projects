@@ -18,6 +18,7 @@ import javax.imageio.ImageIO;
  */
 public class BmpFileContainer implements IContainerFile {
     final int PIXEL_SIZE_IN_BYTES = 3;
+    final String BMP_FORMAT_STRING = "bmp";
     int currentIndex = -1;
     int currentX;
     int currentY;
@@ -109,6 +110,17 @@ public class BmpFileContainer implements IContainerFile {
     public boolean hasMoreBytes() {
         return (imageByteSize > currentIndex);
     }
+    
+    public void saveFile(String path){
+        try {
+            File outputfile = new File(path);
+            ImageIO.write(image, BMP_FORMAT_STRING, outputfile);
+        }
+        catch (IOException ex) {
+            Logger.getLogger(BmpFileContainer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     
     // TODO. Remove test code
     /*public static void main(String args[]) {
