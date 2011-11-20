@@ -29,7 +29,7 @@ public class BmpFileContainer implements IContainerFile {
 
     public BmpFileContainer() {
         currentIndex = 0;
-        currentX = -1;
+        currentX = 0;
         currentY = 0;
         imageByteSize = 0;
         height = 0;
@@ -57,14 +57,19 @@ public class BmpFileContainer implements IContainerFile {
             throw new IndexOutOfBoundsException();
         }
 
-        int pixelColor = image.getRGB(currentX, currentY);
         currentIndex++;  // update the current index after getting the pixel color
         int currentColor = currentIndex % PIXEL_SIZE_IN_BYTES; // determine the correspondant RGB
-
+        
+        if( currentColor == 0) {
+            currentX++;
+        }
+        
         if (currentX >= width) {
             currentX = 0;
             currentY++;
         }
+
+        int pixelColor = image.getRGB(currentX, currentY);
 
         switch (currentColor) {
             case 1:
@@ -75,7 +80,7 @@ public class BmpFileContainer implements IContainerFile {
                 break; // green
             case 0:
                 result = (byte) ((pixelColor & 0x000000ff));
-                currentX++;
+                
                 break; // blue
         }
 
