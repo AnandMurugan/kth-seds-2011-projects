@@ -7,15 +7,28 @@ public class WriteStegoFileImpl implements IWriteStegoFile{
 	private int byteIndex;
 	private int bitIndex;
 	private int maxByteIndex;
+	public boolean knownSizeStegoText;
+	
+	public WriteStegoFileImpl(int messageSize) {
+		byteIndex = 0;
+		bitIndex = 7;
+		maxByteIndex = messageSize;
+		messageBytes = new byte[maxByteIndex];
+		knownSizeStegoText = true;
+	}
 	
 	public WriteStegoFileImpl() {
 		byteIndex = 0;
 		bitIndex = 7;
 		maxByteIndex = 20;
-		messageBytes = new byte[20];
+		messageBytes = new byte[maxByteIndex];
+		knownSizeStegoText = false;
 	}
 
-	public void setNextBits(byte writeByte, int nrOfBits) {
+	public void setNextBits(byte writeByte, int nrOfBits) throws IndexOutOfBoundsException{
+		if(hasMoreBits() == false) {
+			throw new IndexOutOfBoundsException();
+		}
 		if( nrOfBits <= bitIndex + 1) {
 			writeByte = (byte) (writeByte << (bitIndex - nrOfBits + 1));
 			byte b = messageBytes[byteIndex];
@@ -23,7 +36,7 @@ public class WriteStegoFileImpl implements IWriteStegoFile{
 			messageBytes[byteIndex] = b;
 			bitIndex = bitIndex - nrOfBits;
 			if(bitIndex < 0) {
-				if(byteIndex == maxByteIndex - 1) {
+				if(byteIndex == (maxByteIndex - 1) && knownSizeStegoText == false) {
 					increaseMessageSize();
 				}
 				byteIndex = byteIndex + 1;
@@ -41,5 +54,14 @@ public class WriteStegoFileImpl implements IWriteStegoFile{
 
 	public byte[] getMessage() {
 		return messageBytes;
+	}
+	
+	public boolean hasMoreBits() {
+		if(knownSizeStegoText) {
+			if(byteIndex == maxByteIndex) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

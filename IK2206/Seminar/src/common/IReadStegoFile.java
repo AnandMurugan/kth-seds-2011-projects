@@ -10,5 +10,5 @@ package common;
  */
 public interface IReadStegoFile {
 	public boolean hasMoreBits();
-    public byte getNextBits(int nrOfBits);
+    public byte getNextBits(int nrOfBits) throws IndexOutOfBoundsException;
 }
