@@ -50,19 +50,26 @@ public class ReadStegoFileImpl implements IReadStegoFile {
 		}
 		return mask;
 	}
+
+	public boolean hasMoreBits() {
+		if(byteIndex >= messageBytes.length) {
+			return false;
+		}
+		return true;
+	}
 	
-	
-	/*public static void main(String args[]) {
-		byte[] test = "some".getBytes();
+	/*
+	public static void main(String args[]) {
+		byte[] test = "some one is going out tonight and will not work tomorow".getBytes();
 		IReadStegoFile r = new ReadStegoFileImpl(test);
 		IWriteStegoFile w = new WriteStegoFileImpl();
 		
-		for(int i = 0; i < (4*8/2); i++) {
+		while(r.hasMoreBits()) {
 			w.setNextBits(r.getNextBits(2), 2);
 		}
 		
 		System.out.println("Result");
 		System.out.println(new String(w.getMessage()));		
-	}*/
-
+	}
+*/
 }

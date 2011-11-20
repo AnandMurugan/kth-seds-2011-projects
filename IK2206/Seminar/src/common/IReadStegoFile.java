@@ -9,5 +9,6 @@ package common;
  * @author julio
  */
 public interface IReadStegoFile {
+	public boolean hasMoreBits();
     public byte getNextBits(int nrOfBits);
 }
