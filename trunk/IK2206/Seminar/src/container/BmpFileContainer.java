@@ -61,11 +61,11 @@ public class BmpFileContainer implements IContainerFile {
         int currentColor = currentIndex % PIXEL_SIZE_IN_BYTES; // determine the correspondant RGB
         
         if( currentColor == 1) {
-            currentX++;
+            currentX++; // every time its red we updated the currentX
         }
         
-        if (currentX >= width) {
-            currentX = 0;
+        if (currentX >= width) { // in case currentX is bigget than width we go to next pixel row.
+            currentX = 0; 
             currentY++;
         }
 
