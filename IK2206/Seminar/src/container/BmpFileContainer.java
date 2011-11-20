@@ -95,13 +95,13 @@ public class BmpFileContainer implements IContainerFile {
         int oldPixelColor = image.getRGB(currentX, currentY);
         int newPixelColor = oldPixelColor;
         switch (currentColor) {
-            case 1:
+            case RED_COLOR:
                 newPixelColor = newPixelColor | (newByte << 16); // red
                 break;
-            case 2:
+            case GREEN_COLOR:
                 newPixelColor = newPixelColor | (newByte << 8); // green
                 break;
-            case 0:
+            case BLUE_COLOR:
                 newPixelColor = newPixelColor | newByte; // blue
                 break;
         }
