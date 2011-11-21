@@ -11,15 +11,15 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.util.List;
-import server.Marketplace;
-import server.MarketItem;
-import server.MarketplaceCallbackable;
+import market.Marketplace;
+import market.MarketItem;
+import market.MarketplaceCallbackable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.Trader;
+import market.Trader;
 import utils.RejectedException;
 
 /**
@@ -79,7 +79,6 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     public Account createAccount() {
         try {
             this.account = bank.newAccount(this.userName);
-            ui.updateBalance(account.getBalance());
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
@@ -90,14 +89,13 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
 
     @Override
     public Account getAccount() {
-
-        //        if (this.account == null) {
-        //            try {
-        //                this.account = bank.getAccount(this.userName);
-        //            } catch (RemoteException ex) {
-        //                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
-        //            }
-        //        }        
+        if (this.account == null) {
+            try {
+                this.account = bank.getAccount(this.userName);
+            } catch (RemoteException ex) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         return this.account;
     }
 
@@ -160,7 +158,14 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                //Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+                ui.showRejectedNotificationMessage(ex.getMessage());
+                ui.updateAllItems(market.getItems());
+                ui.updateBalance(account.getBalance());
+            } catch (RemoteException ex1) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
     }
 
@@ -174,7 +179,14 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                //Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+                ui.showRejectedNotificationMessage(ex.getMessage());
+                ui.updateAllItems(market.getItems());
+                ui.updateBalance(account.getBalance());
+            } catch (RemoteException ex1) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
     }
 
@@ -187,7 +199,14 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                //Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+                ui.showRejectedNotificationMessage(ex.getMessage());
+                ui.updateAllItems(market.getItems());
+                ui.updateBalance(account.getBalance());
+            } catch (RemoteException ex1) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
     }
 
@@ -200,7 +219,14 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                //Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+                ui.showRejectedNotificationMessage(ex.getMessage());
+                ui.updateAllItems(market.getItems());
+                ui.updateBalance(account.getBalance());
+            } catch (RemoteException ex1) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
     }
 
@@ -211,10 +237,18 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
             market.registerClient(userName, this, this.account);
             ui.updateTitle("Connected to " + MARKETPLACE);
             ui.updateAllItems(market.getItems());
+            ui.updateBalance(account.getBalance());
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                //Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+                ui.showRejectedNotificationMessage(ex.getMessage());
+                ui.updateAllItems(market.getItems());
+                ui.updateBalance(account.getBalance());
+            } catch (RemoteException ex1) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
     }
 
@@ -225,7 +259,14 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                //Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+                ui.showRejectedNotificationMessage(ex.getMessage());
+                ui.updateAllItems(market.getItems());
+                ui.updateBalance(account.getBalance());
+            } catch (RemoteException ex1) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
     }
 
@@ -239,7 +280,14 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
         } catch (RemoteException ex) {
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
-            // TODO. handle RejectedException;
+            try {
+                //Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+                ui.showRejectedNotificationMessage(ex.getMessage());
+                ui.updateAllItems(market.getItems());
+                ui.updateBalance(account.getBalance());
+            } catch (RemoteException ex1) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
     }
 

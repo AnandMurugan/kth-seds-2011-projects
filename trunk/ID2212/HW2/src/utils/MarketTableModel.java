@@ -6,7 +6,7 @@ package utils;
 
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import server.MarketItem;
+import market.MarketItem;
 
 /**
  *

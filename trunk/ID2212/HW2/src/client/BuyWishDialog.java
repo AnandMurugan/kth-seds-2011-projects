@@ -10,7 +10,7 @@
  */
 package client;
 
-import server.MarketItem;
+import market.MarketItem;
 
 /**
  *
