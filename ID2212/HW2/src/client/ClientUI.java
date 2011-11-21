@@ -18,8 +18,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import server.MarketItem;
-import server.MarketItemImpl;
+import market.MarketItem;
+import market.MarketItemImpl;
 import utils.MarketTableModel;
 
 /**
@@ -170,12 +170,6 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
 
         jScrollPane1.setViewportView(postedItemTable);
 
-        priceTxt.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                priceTxtActionPerformed(evt);
-            }
-        });
-
         jLabel1.setText("Item name:");
 
         jLabel2.setText("Price:");
@@ -319,7 +313,11 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
 
         jTabbedPane1.addTab("Wish List", jPanel2);
 
+        jPanel5.setLayout(new java.awt.GridLayout());
+
         jScrollPane4.setViewportView(boughtItemsTable);
+
+        jPanel5.add(jScrollPane4);
 
         soldItemsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -331,32 +329,7 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
         ));
         jScrollPane5.setViewportView(soldItemsTable);
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap(276, Short.MAX_VALUE)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel5Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(285, Short.MAX_VALUE)))
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel5Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
+        jPanel5.add(jScrollPane5);
 
         jTabbedPane1.addTab("Sold&Bought Items", jPanel5);
 
@@ -364,13 +337,13 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
 
         jLabel6.setText("Balance:");
 
-        userNameLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        userNameLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
 
-        balanceLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        balanceLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
 
         marketMenu.setText("Market");
 
-        connectMenuItem.setText("Connect...");
+        connectMenuItem.setText("Register...");
         connectMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 connectMenuItemActionPerformed(evt);
@@ -416,10 +389,6 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         setBounds((screenSize.width-578)/2, (screenSize.height-399)/2, 578, 399);
     }// </editor-fold>//GEN-END:initComponents
-
-private void priceTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_priceTxtActionPerformed
-// TODO add your handling code here:
-}//GEN-LAST:event_priceTxtActionPerformed
 
 private void postItemBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_postItemBtnActionPerformed
     try {
@@ -846,6 +815,24 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
             @Override
             public void run() {
                 postedItemsModel.removeMarketItem(wish.getMarketItemId());
+            }
+        };
+        try {
+            SwingUtilities.invokeAndWait(updateUI);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void showRejectedNotificationMessage(final String message) {
+        final java.awt.Component c = this;
+        Runnable updateUI = new Runnable() {
+            @Override
+            public void run() {
+                JOptionPane.showMessageDialog(c, message, "Exception", JOptionPane.ERROR_MESSAGE);
             }
         };
         try {

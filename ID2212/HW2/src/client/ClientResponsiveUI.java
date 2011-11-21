@@ -5,7 +5,7 @@
 package client;
 
 import java.util.List;
-import server.MarketItem;
+import market.MarketItem;
 
 /**
  *
@@ -37,4 +37,6 @@ public interface ClientResponsiveUI {
     void showBuyWishItemDialog(MarketItem item);
 
     void updateTitle(String msg);
+
+    void showRejectedNotificationMessage(String message);
 }
