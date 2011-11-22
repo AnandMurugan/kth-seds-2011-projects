@@ -1,7 +1,5 @@
 package agents;
 
-import jade.content.lang.sl.SLCodec;
-import jade.content.onto.basic.Action;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
@@ -9,15 +7,11 @@ import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
-import jade.domain.mobility.MobilityOntology;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.lang.acl.UnreadableException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Artifact;
 
 /*
@@ -51,6 +45,7 @@ public class CuratorAgent extends Agent {
         //Cloning
         //if (original) {
         doClone(here(), "clone-" + getLocalName());
+        //doClone(here(), "clone2-" + getLocalName());
         //}
 
         System.out.println("Hello! Curator " + getAID().getName() + " in museum " + museum + " is ready...");
@@ -77,13 +72,8 @@ public class CuratorAgent extends Agent {
     protected void afterClone() {
         //original = false;
         registerService();
-        addBehaviour(new DutchAuctionParticipantBehaviour());
+        //addBehaviour(new DutchAuctionParticipantBehaviour());
         System.out.println("Hello! Curator " + getAID().getName() + " in museum " + museum + " is ready (after cloning)...");
-    }
-
-    @Override
-    protected void beforeClone() {
-        super.beforeClone();
     }
 
     class DutchAuctionParticipantBehaviour extends FSMBehaviour {
@@ -259,11 +249,11 @@ public class CuratorAgent extends Agent {
                     gotReply = true;
                     transition = RECEIVED_PROPOSAL_REPLY_TRANSITION;
                     if (replyMsg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
-                        try {
-                            artifacts.add((Artifact) replyMsg.getContentObject());
-                        } catch (UnreadableException ex) {
-                            Logger.getLogger(CuratorAgent.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+//                        try {
+//                            artifacts.add((Artifact) replyMsg.getContentObject());
+//                        } catch (UnreadableException ex) {
+//                            Logger.getLogger(CuratorAgent.class.getName()).log(Level.SEVERE, null, ex);
+//                        }
                         System.out.println(getAID().getName() + " Bid accepted. ");
                     } else if (replyMsg.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
                         System.out.println(getAID().getName() + " Bid rejected, someone else bought the item. ");
