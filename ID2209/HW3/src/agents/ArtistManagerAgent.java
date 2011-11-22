@@ -108,7 +108,7 @@ public class ArtistManagerAgent extends GuiAgent {
     }
 
     private class DutchAuctionInitiatorBehaviour extends FSMBehaviour {
-        private static final int ROUNDS = 200;
+        private static final int ROUNDS = 20;
         private String conversationId;
         private AID[] curators;
         private AID winner;

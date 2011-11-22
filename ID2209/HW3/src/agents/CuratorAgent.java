@@ -1,5 +1,7 @@
 package agents;
 
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.basic.Action;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
@@ -7,6 +9,7 @@ import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
+import jade.domain.mobility.MobilityOntology;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
@@ -28,41 +31,59 @@ import model.Artifact;
 public class CuratorAgent extends Agent {
     private String museum;
     private String preferedStyle;
+    //private boolean original = true;
     private List<Artifact> artifacts = new ArrayList<Artifact>();
-    private static long counter = 1;
 
     @Override
     protected void setup() {
         //Setting the museum name
         Object[] args = getArguments();
-        if (args != null && args.length > 1) {
+        if (args != null && args.length > 2) {
             museum = (String) args[0];
             preferedStyle = (String) args[1];
+            //original = Boolean.parseBoolean((String) args[2]);
         } else {
             doDelete();
         }
 
+        registerService();
+
+        //Cloning
+        //if (original) {
+        doClone(here(), "clone-" + getLocalName());
+        //}
+
         System.out.println("Hello! Curator " + getAID().getName() + " in museum " + museum + " is ready...");
 
+        addBehaviour(new DutchAuctionParticipantBehaviour());
+    }
+
+    private void registerService() {
         //Register service in DF
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(getAID());
         ServiceDescription sd = new ServiceDescription();
-        sd.setType("curator");
-        sd.setName(museum + "_curator" + (counter++));
+        sd.setType(here().getName() + "_curator");
+        sd.setName(museum + "_curator_" + getLocalName());
         dfd.addServices(sd);
         try {
             DFService.register(this, dfd);
         } catch (FIPAException ex) {
             ex.printStackTrace();
         }
-
-        addBehaviour(new DutchAuctionParticipantBehaviour());
     }
 
     @Override
-    protected void takeDown() {
-        super.takeDown();
+    protected void afterClone() {
+        //original = false;
+        registerService();
+        addBehaviour(new DutchAuctionParticipantBehaviour());
+        System.out.println("Hello! Curator " + getAID().getName() + " in museum " + museum + " is ready (after cloning)...");
+    }
+
+    @Override
+    protected void beforeClone() {
+        super.beforeClone();
     }
 
     class DutchAuctionParticipantBehaviour extends FSMBehaviour {
