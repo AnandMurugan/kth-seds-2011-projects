@@ -11,6 +11,9 @@
 package gui;
 
 import agents.ArtistManagerAgent;
+import jade.gui.GuiEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +23,7 @@ import javax.swing.SwingUtilities;
  *
  * @author Igor
  */
-public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistManagerResponsiveGUI {
+public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistManagerResponsiveGUI, ActionListener {
     private ArtistManagerAgent agent;
 
     /** Creates new form ArtistManagerGUI */
@@ -40,6 +43,7 @@ public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistMana
         Runnable closeTask = new Runnable() {
             @Override
             public void run() {
+                setVisible(false);
                 dispose();
             }
         };
@@ -54,7 +58,7 @@ public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistMana
 
     @Override
     public void log(final String msg) {
-        //System.out.println(msg);
+//        System.out.println(msg);
         Runnable logTask = new Runnable() {
             @Override
             public void run() {
@@ -68,17 +72,6 @@ public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistMana
         } catch (InvocationTargetException ex) {
             Logger.getLogger(ArtistManagerFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    public void sellArtifact(final String[] args) {
-        //Run new task
-        Runnable sellTask = new Runnable() {
-            @Override
-            public void run() {
-                agent.sellArtifact(args);
-            }
-        };
-        new Thread(sellTask).start();
     }
 
     /** This method is called from within the constructor to
@@ -125,17 +118,12 @@ public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistMana
         jLabel4.setText("Style:");
 
         nameText.setText("art item #1");
-        nameText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nameTextActionPerformed(evt);
-            }
-        });
 
         creatorText.setText("unknown");
 
         descriptionText.setText("statue");
 
-        styleText.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        styleText.setFont(new java.awt.Font("Tahoma", 1, 11));
         styleText.setText("digital art");
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11));
@@ -144,18 +132,14 @@ public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistMana
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11));
         jLabel6.setText("Reserve price:");
 
-        initialPriceText.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        initialPriceText.setFont(new java.awt.Font("Tahoma", 1, 11));
         initialPriceText.setText("150");
 
-        reservePriceText.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        reservePriceText.setFont(new java.awt.Font("Tahoma", 1, 11));
         reservePriceText.setText("50");
 
         sellButton.setText("Sell");
-        sellButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sellButtonActionPerformed(evt);
-            }
-        });
+        sellButton.addActionListener(this);
 
         logArea.setColumns(20);
         logArea.setEditable(false);
@@ -234,33 +218,9 @@ public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistMana
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        Runnable killAgentTask = new Runnable() {
-            @Override
-            public void run() {
-                agent.doDelete();
-            }
-        };
-        new Thread(killAgentTask).start();
+        GuiEvent ge = new GuiEvent(this, ArtistManagerAgent.QUIT);
+        agent.postGuiEvent(ge);
     }//GEN-LAST:event_formWindowClosing
-
-    private void sellButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sellButtonActionPerformed
-        logArea.setText("");
-
-        String[] args = new String[]{
-            nameText.getText(),
-            creatorText.getText(),
-            descriptionText.getText(),
-            styleText.getText(),
-            initialPriceText.getText(),
-            reservePriceText.getText()
-        };
-
-        sellArtifact(args);
-    }//GEN-LAST:event_sellButtonActionPerformed
-
-    private void nameTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameTextActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_nameTextActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField creatorText;
     private javax.swing.JTextField descriptionText;
@@ -278,4 +238,25 @@ public class ArtistManagerFrame extends javax.swing.JFrame implements ArtistMana
     private javax.swing.JButton sellButton;
     private javax.swing.JTextField styleText;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == sellButton) {
+            logArea.setText("");
+
+            String[] args = new String[]{
+                nameText.getText(),
+                creatorText.getText(),
+                descriptionText.getText(),
+                styleText.getText(),
+                initialPriceText.getText(),
+                reservePriceText.getText()
+            };
+
+            //sellArtifact(args);
+            GuiEvent ge = new GuiEvent(this, ArtistManagerAgent.START_AUCTION);
+            ge.addParameter(args);
+            agent.postGuiEvent(ge);
+        }
+    }
 }
