@@ -15,6 +15,8 @@ import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
+import jade.gui.GuiAgent;
+import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import java.awt.EventQueue;
@@ -29,8 +31,10 @@ import model.Artifact;
  *
  * @author Igor
  */
-public class ArtistManagerAgent extends Agent {
-    private ArtistManagerResponsiveGUI gui;
+public class ArtistManagerAgent extends GuiAgent {
+    private transient ArtistManagerResponsiveGUI gui;
+    public static final int QUIT = 0;
+    public static final int START_AUCTION = 1;
 
     @Override
     protected void setup() {
@@ -71,7 +75,6 @@ public class ArtistManagerAgent extends Agent {
         try {
             System.out.println("Artist Manager [" + getAID().getLocalName() + "] is terminating...");
             DFService.deregister(this);
-            gui.close();
         } catch (FIPAException ex) {
             Logger.getLogger(ArtistManagerAgent.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -90,8 +93,22 @@ public class ArtistManagerAgent extends Agent {
         addBehaviour(new DutchAuctionInitiatorBehaviour(this, a, initialPrice, reservePrice));
     }
 
+    @Override
+    protected void onGuiEvent(GuiEvent ge) {
+        switch (ge.getType()) {
+            case QUIT:
+                gui.close();
+                doDelete();
+                break;
+            case START_AUCTION:
+                String[] args = (String[]) ge.getParameter(0);
+                sellArtifact(args);
+                break;
+        }
+    }
+
     private class DutchAuctionInitiatorBehaviour extends FSMBehaviour {
-        private static final int ROUNDS = 20;
+        private static final int ROUNDS = 200;
         private String conversationId;
         private AID[] curators;
         private AID winner;

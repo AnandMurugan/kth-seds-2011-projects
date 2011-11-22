@@ -119,7 +119,7 @@ public class CuratorAgent extends Agent {
                 if (initAuctionMsg != null) {
                     notWaitAuction = true;
                     style = initAuctionMsg.getContent();
-                    System.out.println(getAID().getName() + "Started new auction...");
+                    System.out.println(getAID().getName() + " Started new auction...");
                     msgTemplate = MessageTemplate.and(
                             MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.CFP), MessageTemplate.MatchPerformative(ACLMessage.INFORM)),
                             MessageTemplate.MatchConversationId(initAuctionMsg.getConversationId()));
@@ -163,7 +163,7 @@ public class CuratorAgent extends Agent {
                         boolean satisfactoryPrice = evaluate(style, price);
 
                         if (satisfactoryPrice) {
-                            // Send proposal
+                            System.out.println(getAID().getName() + " good price.");
                             ACLMessage proposalMsg = new ACLMessage(ACLMessage.PROPOSE);
                             proposalMsg.addReceiver(cfpMsg.getSender());
                             proposalMsg.setConversationId(cfpMsg.getConversationId());
