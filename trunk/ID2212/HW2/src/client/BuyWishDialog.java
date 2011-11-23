@@ -76,10 +76,6 @@ public class BuyWishDialog extends javax.swing.JDialog {
             }
         });
 
-        itemNameTxt.addActionListener(buyWishItemListener);
-        buyWishButon.addActionListener(buyWishItemListener);
-        itemNameTxt.addActionListener(buyWishItemListener);
-        itemNameTxt.addActionListener(buyWishItemListener);
         buyWishButon.addActionListener(buyWishItemListener);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
