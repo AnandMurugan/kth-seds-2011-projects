@@ -39,4 +39,6 @@ public interface ClientResponsiveUI {
     void updateTitle(String msg);
 
     void showRejectedNotificationMessage(String message);
+
+    void showExceptionNotificationMessage(String message);
 }
