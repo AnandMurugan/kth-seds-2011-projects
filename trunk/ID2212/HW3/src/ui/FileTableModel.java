@@ -62,24 +62,24 @@ public class FileTableModel extends AbstractTableModel {
         return headerList[col];
     }
 
-    public void setMarketItemList(List<CatalogFile> list) {
+    public void setCatalogFileList(List<CatalogFile> list) {
         catalogFileList = list;
         fireTableChanged(null);
     }
 
-    public void addMarketItem(CatalogFile item) {
+    public void addCatalogFile(CatalogFile item) {
         catalogFileList.add(item);
         fireTableChanged(null);
     }
 
-    public CatalogFile getMarketItem(int row) {
+    public CatalogFile getCatalogFile(int row) {
         if (row > -1) {
             return catalogFileList.get(row);
         }
         return null;
     }
 
-    public void removeMarketItem(int row) {
+    public void removeCatalogFile(int row) {
         if (row > -1) {
             catalogFileList.remove(catalogFileList.get(row));
             fireTableChanged(null);
