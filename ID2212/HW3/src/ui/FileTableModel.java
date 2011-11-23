@@ -86,7 +86,7 @@ public class FileTableModel extends AbstractTableModel {
         }
     }
 
-    public void removeMarketItem(long id) {
+    public void removeCatalogFile(long id) {
         CatalogFile tmp = null;
         for (CatalogFile i : catalogFileList) {
             if (i.getId() == id) {
