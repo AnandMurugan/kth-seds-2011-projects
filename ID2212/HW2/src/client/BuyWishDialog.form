@@ -92,26 +92,17 @@
         <Property name="editable" type="boolean" value="false"/>
         <Property name="horizontalAlignment" type="int" value="0"/>
       </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="itemNameTxt.addActionListener(buyWishItemListener);"/>
-      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="buyWishButon">
       <Properties>
         <Property name="text" type="java.lang.String" value="Buy"/>
       </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="buyWishButon.addActionListener(buyWishItemListener);"/>
-      </AuxValues>
     </Component>
     <Component class="javax.swing.JTextField" name="priceTxt">
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
         <Property name="horizontalAlignment" type="int" value="0"/>
       </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="itemNameTxt.addActionListener(buyWishItemListener);"/>
-      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
@@ -123,9 +114,6 @@
         <Property name="editable" type="boolean" value="false"/>
         <Property name="horizontalAlignment" type="int" value="0"/>
       </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="itemNameTxt.addActionListener(buyWishItemListener);"/>
-      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
