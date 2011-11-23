@@ -843,4 +843,22 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
             Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    @Override
+    public void showExceptionNotificationMessage(final String message) {
+        final java.awt.Component c = this;
+        Runnable updateUI = new Runnable() {
+            @Override
+            public void run() {
+                JOptionPane.showMessageDialog(c, message, "Exception", JOptionPane.ERROR_MESSAGE);
+            }
+        };
+        try {
+            SwingUtilities.invokeAndWait(updateUI);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

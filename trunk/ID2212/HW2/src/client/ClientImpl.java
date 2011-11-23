@@ -27,7 +27,7 @@ import utils.RejectedException;
  * @author julio
  */
 public class ClientImpl extends UnicastRemoteObject implements Trader, MarketplaceCallbackable, BankClient {
-    private static final String DEFAULT_HOST = "localhost";
+    private static final String DEFAULT_HOST = "130.229.129.151";
     private static final int DEFAULT_PORT = 1099;
     private static final String MARKETPLACE = "KistaGalleria";
     private static final String BANK = "Swedbank";
@@ -45,16 +45,6 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
         super();
         //this.userName = "";
         this.ui = ui;
-        try {
-            market = (Marketplace) Naming.lookup("//" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/" + MARKETPLACE);
-            bank = (Bank) Naming.lookup("//" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/" + BANK);
-        } catch (NotBoundException ex) {
-            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (RemoteException ex) {
-            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     @Override
@@ -89,13 +79,21 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
 
     @Override
     public Account getAccount() {
-        if (this.account == null) {
-            try {
-                this.account = bank.getAccount(this.userName);
-            } catch (RemoteException ex) {
-                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+        try {
+//            if (bank == null) {
+            bank = (Bank) Naming.lookup("//" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/" + BANK);
+//            }
+            if (this.account == null) {
+                try {
+                    this.account = bank.getAccount(this.userName);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
+        } catch (Exception ex) {
+            ui.showExceptionNotificationMessage(ex.getMessage());
         }
+
         return this.account;
     }
 
@@ -233,13 +231,12 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
     @Override
     public void register() {
         try {
+            market = (Marketplace) Naming.lookup("//" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/" + MARKETPLACE);
             // TODO. Modify register client to return result
             market.registerClient(userName, this, this.account);
             ui.updateTitle("Connected to " + MARKETPLACE);
             ui.updateAllItems(market.getItems());
             ui.updateBalance(account.getBalance());
-        } catch (RemoteException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
             try {
                 //Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -249,6 +246,8 @@ public class ClientImpl extends UnicastRemoteObject implements Trader, Marketpla
             } catch (RemoteException ex1) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex1);
             }
+        } catch (Exception ex) {
+            ui.showExceptionNotificationMessage(ex.getMessage());
         }
     }
 
