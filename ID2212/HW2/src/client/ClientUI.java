@@ -814,7 +814,7 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         Runnable updateUI = new Runnable() {
             @Override
             public void run() {
-                postedItemsModel.removeMarketItem(wish.getMarketItemId());
+                wishItemsModel.removeMarketItem(wish.getMarketItemId());
             }
         };
         try {

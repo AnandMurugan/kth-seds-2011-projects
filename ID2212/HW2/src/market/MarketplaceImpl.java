@@ -38,6 +38,8 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
         Runnable wishHandlingTask = new Runnable() {
             @Override
             public void run() {
+                MarketItem bestItem = null;
+                float bestPrice = Float.MAX_VALUE;
                 try {
                     while (true) {
                         Thread.sleep(5000);
@@ -53,10 +55,21 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
                                 String itemOwner = item.getOwner();
 
                                 if ((wishName.equals(itemName)) && (wishPrice >= itemPrice) && (!wishOwner.equals(itemOwner))) {
-                                    MarketplaceCallbackable wisher = clients.get(wishOwner).callback;
-                                    wisher.notifyItemAvailable(item);
-                                    break;
+                                    if (itemPrice < bestPrice) {
+                                        bestItem = item;
+                                        bestPrice = itemPrice;
+                                    }
+                                    //MarketplaceCallbackable wisher = clients.get(wishOwner).callback;
+                                    //wisher.notifyItemAvailable(item);
+                                    //break;
                                 }
+                            }
+                            if (bestItem != null) {
+                                MarketplaceCallbackable wisher = clients.get(wishOwner).callback;
+                                wisher.notifyItemAvailable(bestItem);
+
+                                bestItem = null;
+                                bestPrice = Float.MAX_VALUE;
                             }
                         }
                     }
