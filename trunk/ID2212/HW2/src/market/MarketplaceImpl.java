@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry; 
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.RejectedException;
@@ -150,7 +150,7 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
     }
 
     @Override
-    public synchronized void purchaseItem(String name, MarketItem item) throws RemoteException, RejectedException {
+    public synchronized void purchaseItem(String name, final MarketItem item) throws RemoteException, RejectedException {
         if (!clients.containsKey(name)) {
             throw new RejectedException("MARKETPLACE(" + marketName + "): A client with name \"" + name + "\" is not registered.");
         }
@@ -164,7 +164,7 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
 
         ClientInfo sellerInfo = clients.get(item.getOwner());
         Account sellerAccount = sellerInfo.account;
-        MarketplaceCallbackable seller = sellerInfo.callback;
+        final MarketplaceCallbackable seller = sellerInfo.callback;
 
         float price = item.getPrice();
 
@@ -181,7 +181,17 @@ public class MarketplaceImpl extends UnicastRemoteObject implements Marketplace 
         item.setOwner(name);
 
         //Notify seller
-        seller.notifyPostedItemSold(item);
+        Runnable notifySellerTask = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    seller.notifyPostedItemSold(item);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(MarketplaceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        };
+        new Thread(notifySellerTask).start();
 
         System.out.println("Client [" + name + "] has bought item [" + item.getMarketItemId() + ", " + item.getName() + ", " + item.getPrice() + ", " + item.getOwner() + "]!");
     }
