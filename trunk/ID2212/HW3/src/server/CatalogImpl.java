@@ -278,7 +278,8 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
                     || (file.getAccessPermission() == AccessPermission.PUBLIC && file.getWriteReadPermission() == WriteReadPermission.READ)) {
                 throw new RejectedException("Not allowed action!");
             }
-
+            
+            new File(file.getFilePath()).delete();
             em.remove(file);
         } finally {
             commitTransaction(transaction);
