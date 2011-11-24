@@ -12,11 +12,14 @@ package ui;
 
 import client.CatalogClient;
 import client.CatalogClientImp;
+import java.awt.Component;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import model.CatalogFile;
 
@@ -24,18 +27,19 @@ import model.CatalogFile;
  *
  * @author julio
  */
-public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatResponsiveUI{
+public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatResponsiveUI {
     private FileTableModel allFilesModel;
     private FileTableModel myFilesModel;
     private CatalogClient client;
+
     /** Creates new form FileCatalogClientUI */
     public FileCatalogClientUI() {
         initComponents();
         client = new CatalogClientImp(this);
-        
+
         allFilesModel = new FileTableModel(new ArrayList<CatalogFile>());
         allFilesTable.setModel(allFilesModel);
-        
+
         myFilesModel = new FileTableModel(new ArrayList<CatalogFile>());
         myFilesTable.setModel(myFilesModel);
     }
@@ -60,10 +64,15 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         allFilesTable = new javax.swing.JTable();
-        catReadBtn = new javax.swing.JButton();
+        downloadAllBtn = new javax.swing.JButton();
         catUpdateBtn = new javax.swing.JButton();
         catDeleteBtn = new javax.swing.JButton();
         refreshAllBtn = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        userNameLbl = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        loginMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -96,11 +105,11 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(myUploadBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(myDownloadBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(myUpdateBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(myDeleteBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(63, Short.MAX_VALUE))
+                    .addComponent(myDeleteBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(myUploadBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -136,13 +145,23 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
         ));
         jScrollPane1.setViewportView(allFilesTable);
 
-        catReadBtn.setText("Download");
+        downloadAllBtn.setText("Download");
+        downloadAllBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downloadAllBtnActionPerformed(evt);
+            }
+        });
 
         catUpdateBtn.setText("Update");
 
         catDeleteBtn.setText("Delete");
 
         refreshAllBtn.setText("Refresh List");
+        refreshAllBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshAllBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -156,7 +175,7 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(catUpdateBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
                         .addComponent(catDeleteBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
-                        .addComponent(catReadBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)))
+                        .addComponent(downloadAllBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)))
                 .addGap(56, 56, 56))
         );
         jPanel1Layout.setVerticalGroup(
@@ -166,7 +185,7 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
                 .addContainerGap()
                 .addComponent(refreshAllBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(catReadBtn)
+                .addComponent(downloadAllBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(catUpdateBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -176,21 +195,70 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
 
         jTabbedPane2.addTab("Catalog Files", jPanel1);
 
+        jLabel1.setText("User:");
+
+        jMenu1.setText("Catalog");
+
+        loginMenuItem.setText("Login...");
+        loginMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loginMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(loginMenuItem);
+
+        jMenuBar1.add(jMenu1);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 537, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(10, 10, 10)
+                .addComponent(userNameLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(60, Short.MAX_VALUE)
+                .addGap(19, 19, 19)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(userNameLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+private void refreshAllBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshAllBtnActionPerformed
+    Runnable getFilesTask = new Runnable() {
+        @Override
+        public void run() {
+            client.getAllFiles();
+        }
+    };
+    (new Thread(getFilesTask)).start();
+}//GEN-LAST:event_refreshAllBtnActionPerformed
+
+private void downloadAllBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadAllBtnActionPerformed
+    Runnable getFilesTask = new Runnable() {
+        @Override
+        public void run() {
+            client.downloadFile(null);
+        }
+    };
+    (new Thread(getFilesTask)).start();
+}//GEN-LAST:event_downloadAllBtnActionPerformed
+
+private void loginMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginMenuItemActionPerformed
+    (new ConnectDialog(this, true)).setVisible(true);
+}//GEN-LAST:event_loginMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -229,19 +297,24 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable allFilesTable;
     private javax.swing.JButton catDeleteBtn;
-    private javax.swing.JButton catReadBtn;
     private javax.swing.JButton catUpdateBtn;
+    private javax.swing.JButton downloadAllBtn;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JMenuItem loginMenuItem;
     private javax.swing.JButton myDeleteBtn;
     private javax.swing.JButton myDownloadBtn;
     private javax.swing.JTable myFilesTable;
     private javax.swing.JButton myUpdateBtn;
     private javax.swing.JButton myUploadBtn;
     private javax.swing.JButton refreshAllBtn;
+    private javax.swing.JLabel userNameLbl;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -280,7 +353,7 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
 
     @Override
     public void deleteFile(final CatalogFile file) {
-          Runnable updateUI = new Runnable() {
+        Runnable updateUI = new Runnable() {
             @Override
             public void run() {
                 allFilesModel.removeCatalogFile(file.getId());
@@ -301,8 +374,8 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
     }
 
     @Override
-    public void deleteMyFile(final CatalogFile file){
-            Runnable updateUI = new Runnable() {
+    public void deleteMyFile(final CatalogFile file) {
+        Runnable updateUI = new Runnable() {
             @Override
             public void run() {
                 myFilesModel.removeCatalogFile(file.getId());
@@ -316,17 +389,44 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
             Logger.getLogger(FileCatalogClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     @Override
     public void login(final String name, final String pwd) {
         Runnable loginTask = new Runnable() {
-
             @Override
             public void run() {
                 client.login(name, pwd);
             }
         };
-        
+
         (new Thread(loginTask)).start();
+    }
+
+    @Override
+    public void saveFile(File file) {
+        JFileChooser saveFileDlg = new JFileChooser();
+        int retrieval = saveFileDlg.showSaveDialog((Component) this);
+
+        if (retrieval == JFileChooser.APPROVE_OPTION) {
+            String fileName = saveFileDlg.getSelectedFile().getName();
+
+        }
+    }
+
+    @Override
+    public void setUserName(final String name) {
+         Runnable updateUI = new Runnable() {
+            @Override
+            public void run() {
+                userNameLbl.setText(name);
+            }
+        };
+        try {
+            SwingUtilities.invokeAndWait(updateUI);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FileCatalogClientUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(FileCatalogClientUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

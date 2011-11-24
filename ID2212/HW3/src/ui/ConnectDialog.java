@@ -102,7 +102,7 @@ public class ConnectDialog extends javax.swing.JDialog {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             String userName = userNameTxt.getText();
             String pwd = pwdTxt.getText();
-            dispose();//setVisible(false);
+            dispose();
             ((FileCatalogClientUI) getParent()).login(userName, pwd);
         }
     };
