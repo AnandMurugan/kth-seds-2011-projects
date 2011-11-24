@@ -35,7 +35,7 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
     MarketTableModel boughtItemsModel;
     //private ConnectDialog dialog = new ConnectDialog(this, true);
 
-    public ClientUI() {
+    public ClientUI(String[] args) {
         initComponents();
 
         // Init model and tables
@@ -55,7 +55,7 @@ public class ClientUI extends javax.swing.JFrame implements ClientResponsiveUI {
         boughtItemsTable.setModel(boughtItemsModel);
 
         try {
-            client = new ClientImpl(this);
+            client = new ClientImpl(this, args);
         } catch (RemoteException ex) {
             Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -499,7 +499,7 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(final String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -528,7 +528,7 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new ClientUI().setVisible(true);
+                new ClientUI(args).setVisible(true);
             }
         });
     }
@@ -582,9 +582,9 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         try {
             SwingUtilities.invokeAndWait(updateUI);
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -599,9 +599,9 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         try {
             SwingUtilities.invokeAndWait(updateUI);
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -617,9 +617,9 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         try {
             SwingUtilities.invokeAndWait(updateUI);
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -636,9 +636,9 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         try {
             SwingUtilities.invokeAndWait(updateUI);
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -654,9 +654,9 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         try {
             SwingUtilities.invokeAndWait(updateUI);
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -671,9 +671,9 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         try {
             SwingUtilities.invokeAndWait(updateUI);
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -707,9 +707,9 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         try {
             SwingUtilities.invokeAndWait(updateUI);
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -735,9 +735,9 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         try {
             SwingUtilities.invokeAndWait(updateUI);
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -752,9 +752,9 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         try {
             SwingUtilities.invokeAndWait(updateUI);
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -769,9 +769,9 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         try {
             SwingUtilities.invokeAndWait(updateUI);
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -786,9 +786,9 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         try {
             SwingUtilities.invokeAndWait(updateUI);
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -803,9 +803,9 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         try {
             SwingUtilities.invokeAndWait(updateUI);
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -820,9 +820,9 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         try {
             SwingUtilities.invokeAndWait(updateUI);
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -838,9 +838,9 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         try {
             SwingUtilities.invokeAndWait(updateUI);
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -856,9 +856,9 @@ private void unpostWishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         try {
             SwingUtilities.invokeAndWait(updateUI);
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
