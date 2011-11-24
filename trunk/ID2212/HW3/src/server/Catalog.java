@@ -17,7 +17,7 @@ import utils.RejectedException;
  *
  * @author julio
  */
-public interface FileCatalog extends Remote {
+public interface Catalog extends Remote {
     void registerUser(String name, String pwd) throws RejectedException, RemoteException;
 
     void unregisterUser(int id) throws RejectedException, RemoteException;
