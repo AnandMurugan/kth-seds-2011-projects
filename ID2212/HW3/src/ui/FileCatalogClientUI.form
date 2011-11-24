@@ -19,7 +19,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="registerMenuItem">
               <Properties>
-                <Property name="label" type="java.lang.String" value="Register"/>
+                <Property name="text" type="java.lang.String" value="Register..."/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="registerMenuItemActionPerformed"/>
@@ -30,6 +30,15 @@
                 <Property name="enabled" type="boolean" value="false"/>
                 <Property name="label" type="java.lang.String" value="Unregister"/>
               </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="logoutMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="logout"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="logoutMenuItemActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -274,6 +283,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Update"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="catUpdateBtnActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="catDeleteBtn">
               <Properties>

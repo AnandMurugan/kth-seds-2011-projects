@@ -17,6 +17,7 @@ import model.CatalogFile;
 import model.WriteReadPermission;
 import server.Catalog;
 import ui.FileCatResponsiveUI;
+import utils.AlreadyLoggedInException;
 import utils.RejectedException;
 
 /**
@@ -56,8 +57,8 @@ public class CatalogClientImp implements CatalogClient {
     public List<CatalogFile> getMyFiles() {
         List<CatalogFile> myFiles = null;
         try {
-            myFiles = catalog.getAllFiles(this.currentUserId);
-            ui.updateAllFiles(myFiles);
+            myFiles = catalog.getMyFiles(this.currentUserId);
+            ui.updateMyFiles(myFiles);
         } catch (RejectedException ex) {
             Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
@@ -70,7 +71,7 @@ public class CatalogClientImp implements CatalogClient {
     @Override
     public byte[] downloadFile(CatalogFile selectedFile) {
         byte[] downloadedFile = null;
-        
+
         try {
             downloadedFile = catalog.downloadFile(this.currentUserId, selectedFile.getId());
             ui.saveFile(downloadedFile);
@@ -87,6 +88,8 @@ public class CatalogClientImp implements CatalogClient {
     public void updateFile(CatalogFile selectedFile, byte[] file) {
         try {
             catalog.updateFile(this.currentUserId, selectedFile.getId(), file);
+            getAllFiles();
+            getMyFiles();
         } catch (RejectedException ex) {
             Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
@@ -99,6 +102,7 @@ public class CatalogClientImp implements CatalogClient {
         try {
             catalog.uploadFile(this.currentUserId, fileName, accessPerm, writeReadPerm, file);
             getMyFiles();
+            getAllFiles();
         } catch (RejectedException ex) {
             Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
@@ -110,6 +114,8 @@ public class CatalogClientImp implements CatalogClient {
     public void deleteFile(CatalogFile selectedFile) {
         try {
             catalog.deleteFile(this.currentUserId, selectedFile.getId());
+            getAllFiles();
+            getMyFiles();
         } catch (RejectedException ex) {
             Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
@@ -150,11 +156,18 @@ public class CatalogClientImp implements CatalogClient {
         try {
             catalog = (Catalog) Naming.lookup("//" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/" + CATALOG);
             this.currentUserId = catalog.login(userName, pwd);
+            getMyFiles();
+            getAllFiles();
             ui.updateAfterLogin(userName);
         } catch (NotBoundException ex) {
             Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MalformedURLException ex) {
             Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (AlreadyLoggedInException ex) {
+            this.currentUserId = ex.getId();
+            getMyFiles();
+            getAllFiles();
+            ui.updateAfterLogin(userName);
         } catch (RejectedException ex) {
             Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {

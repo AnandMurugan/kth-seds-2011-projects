@@ -39,12 +39,12 @@ public class ConnectDialog extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Connection");
+        setTitle("Log in");
         setResizable(false);
 
         jLabel1.setText("User Name:");
 
-        connectButton.setText("Connect");
+        connectButton.setText("Log in");
 
         jLabel2.setText("Password:");
 

@@ -45,7 +45,7 @@ public class FileTableModel extends AbstractTableModel {
             case 1:
                 return item.getFileSize();
             case 2:
-                return item.getOwner();
+                return item.getOwner().getName();
             case 3:
                 if (item.getAccessPermission() == AccessPermission.PUBLIC)
                     return "Public";
