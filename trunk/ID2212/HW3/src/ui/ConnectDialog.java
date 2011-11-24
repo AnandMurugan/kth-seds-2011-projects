@@ -48,9 +48,7 @@ public class ConnectDialog extends javax.swing.JDialog {
 
         jLabel2.setText("Password:");
 
-        userNameTxt.addActionListener(connectListener);
         connectButton.addActionListener(connectListener);
-        userNameTxt.addActionListener(connectListener);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

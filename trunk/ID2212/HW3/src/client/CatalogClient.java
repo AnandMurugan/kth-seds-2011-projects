@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.List;
 import model.AccessPermission;
 import model.CatalogFile;
+import model.WriteReadPermission;
 
 /**
  *
@@ -19,7 +20,7 @@ public interface CatalogClient {
     List<CatalogFile> getMyFiles();
     File downloadFile(CatalogFile selectedFile);
     void updateFile(CatalogFile selectedFile, File file);
-    void uploadFile(CatalogFile fileDesc, File file); // server should create the CatalogFile object and return it
+    void uploadFile(String fileName, AccessPermission accessPerm, WriteReadPermission writeReadPerm, File file);
     void deleteFile(CatalogFile selectedFile);
     void register(String userName, String pwd); // should throw an exception when the user already exists             // should validate the length of the pwd.
     void unregister(String pwd);

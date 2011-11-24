@@ -74,9 +74,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="userNameTxt">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="userNameTxt.addActionListener(connectListener);"/>
-      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="connectButton">
       <Properties>
@@ -87,9 +84,6 @@
       </AuxValues>
     </Component>
     <Component class="javax.swing.JTextField" name="pwdTxt">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="userNameTxt.addActionListener(connectListener);"/>
-      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
