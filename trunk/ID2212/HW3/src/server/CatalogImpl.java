@@ -4,7 +4,6 @@
  */
 package server;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -21,8 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
@@ -278,7 +275,7 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
                     || (file.getAccessPermission() == AccessPermission.PUBLIC && file.getWriteReadPermission() == WriteReadPermission.READ)) {
                 throw new RejectedException("Not allowed action!");
             }
-            
+
             new File(file.getFilePath()).delete();
             em.remove(file);
         } finally {
