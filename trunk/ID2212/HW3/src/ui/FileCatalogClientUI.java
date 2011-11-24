@@ -13,7 +13,15 @@ package ui;
 import client.CatalogClient;
 import client.CatalogClientImp;
 import java.awt.Component;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,8 +109,18 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
         });
 
         myUpdateBtn.setText("Update");
+        myUpdateBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                myUpdateBtnActionPerformed(evt);
+            }
+        });
 
         myDeleteBtn.setText("Delete");
+        myDeleteBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                myDeleteBtnActionPerformed(evt);
+            }
+        });
 
         myUploadBtn.setText("Upload");
         myUploadBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -169,6 +187,11 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
         catUpdateBtn.setText("Update");
 
         catDeleteBtn.setText("Delete");
+        catDeleteBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                catDeleteBtnActionPerformed(evt);
+            }
+        });
 
         refreshAllBtn.setText("Refresh List");
         refreshAllBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -273,13 +296,15 @@ private void refreshAllBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 }//GEN-LAST:event_refreshAllBtnActionPerformed
 
 private void downloadAllBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadAllBtnActionPerformed
-    Runnable getFilesTask = new Runnable() {
+    final CatalogFile catalogDesc = allFilesModel.getCatalogFile(allFilesTable.getSelectedRow());
+
+    Runnable downloadTask = new Runnable() {
         @Override
         public void run() {
-            client.downloadFile(null);
+            client.downloadFile(catalogDesc);
         }
     };
-    (new Thread(getFilesTask)).start();
+    (new Thread(downloadTask)).start();
 }//GEN-LAST:event_downloadAllBtnActionPerformed
 
 private void loginMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginMenuItemActionPerformed
@@ -291,11 +316,49 @@ private void myUploadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
 }//GEN-LAST:event_myUploadBtnActionPerformed
 
 private void myDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myDownloadBtnActionPerformed
-// TODO add your handling code here:
+    final CatalogFile catalogDesc = myFilesModel.getCatalogFile(myFilesTable.getSelectedRow());
+
+    Runnable downloadTask = new Runnable() {
+        @Override
+        public void run() {
+            client.downloadFile(catalogDesc);
+        }
+    };
+    (new Thread(downloadTask)).start();
 }//GEN-LAST:event_myDownloadBtnActionPerformed
 
 private void registerMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerMenuItemActionPerformed
+    (new RegisterDlg(this, true)).setVisible(true);
 }//GEN-LAST:event_registerMenuItemActionPerformed
+
+private void myUpdateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myUpdateBtnActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_myUpdateBtnActionPerformed
+
+private void myDeleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myDeleteBtnActionPerformed
+    final CatalogFile selectedFile = myFilesModel.getCatalogFile(myFilesTable.getSelectedRow());
+
+    Runnable deleteTask = new Runnable() {
+        @Override
+        public void run() {
+            client.deleteFile(selectedFile);
+        }
+    };
+    (new Thread(deleteTask)).start();
+
+}//GEN-LAST:event_myDeleteBtnActionPerformed
+
+private void catDeleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_catDeleteBtnActionPerformed
+    final CatalogFile selectedFile = allFilesModel.getCatalogFile(allFilesTable.getSelectedRow());
+
+    Runnable deleteTask = new Runnable() {
+        @Override
+        public void run() {
+            client.deleteFile(selectedFile);
+        }
+    };
+    (new Thread(deleteTask)).start();
+}//GEN-LAST:event_catDeleteBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -412,10 +475,25 @@ private void registerMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
         Runnable uploadFileTask = new Runnable() {
             @Override
             public void run() {
-                if (accessPerm == AccessPermission.PRIVATE) {
-                    client.uploadFile(fileName, accessPerm, null, file);
-                } else if (accessPerm == AccessPermission.PUBLIC) {
-                    client.uploadFile(fileName, accessPerm, writeReadPerm, file);
+                BufferedInputStream input = null;
+                try {
+                    byte fileBuffer[] = new byte[(int) file.length()];
+                    input = new BufferedInputStream(new FileInputStream(fileName));
+                    input.read(fileBuffer, 0, fileBuffer.length);
+                    input.close();
+                    if (accessPerm == AccessPermission.PRIVATE) {
+                        client.uploadFile(fileName, accessPerm, null, fileBuffer);
+                    } else if (accessPerm == AccessPermission.PUBLIC) {
+                        client.uploadFile(fileName, accessPerm, writeReadPerm, fileBuffer);
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(FileCatalogClientUI.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    try {
+                        input.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(FileCatalogClientUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         };
@@ -453,13 +531,32 @@ private void registerMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
     }
 
     @Override
-    public void saveFile(File file) {
+    public void saveFile(byte[] file) {        
         JFileChooser saveFileDlg = new JFileChooser();
         int retrieval = saveFileDlg.showSaveDialog((Component) this);
 
         if (retrieval == JFileChooser.APPROVE_OPTION) {
-            String fileName = saveFileDlg.getSelectedFile().getPath();
-            // TODO. Write file
+            OutputStream out = null;
+            try {
+                String filePath = saveFileDlg.getSelectedFile().getPath();
+                InputStream in = new ByteArrayInputStream(file);
+                out = new FileOutputStream(new File(filePath));
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                in.close();
+                out.close();
+            } catch (IOException ex) {
+                Logger.getLogger(FileCatalogClientUI.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    out.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(FileCatalogClientUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
     }
 
@@ -481,7 +578,7 @@ private void registerMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
     }
 
     @Override
-    public void register(final String name,final String pwd) {
+    public void register(final String name, final String pwd) {
         Runnable loginTask = new Runnable() {
             @Override
             public void run() {
@@ -491,10 +588,10 @@ private void registerMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
 
         (new Thread(loginTask)).start();
     }
-    
+
     @Override
     public void updateAfterLogin(final String userName) {
-            Runnable updateUI = new Runnable() {
+        Runnable updateUI = new Runnable() {
             @Override
             public void run() {
                 userNameLbl.setText(userName);

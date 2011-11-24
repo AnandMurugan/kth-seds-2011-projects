@@ -24,7 +24,7 @@ import utils.RejectedException;
  * @author julio
  */
 public class CatalogClientImp implements CatalogClient {
-    private static final String DEFAULT_HOST = "localhost";
+    private static final String DEFAULT_HOST = "130.229.129.151";
     private static final int DEFAULT_PORT = 1099;
     private static final String CATALOG = "Catalog";
     private String currentUser;
@@ -68,8 +68,9 @@ public class CatalogClientImp implements CatalogClient {
     }
 
     @Override
-    public File downloadFile(CatalogFile selectedFile) {
-        File downloadedFile = null;
+    public byte[] downloadFile(CatalogFile selectedFile) {
+        byte[] downloadedFile = null;
+        
         try {
             downloadedFile = catalog.downloadFile(this.currentUserId, selectedFile.getId());
             ui.saveFile(downloadedFile);
@@ -83,7 +84,7 @@ public class CatalogClientImp implements CatalogClient {
     }
 
     @Override
-    public void updateFile(CatalogFile selectedFile, File file) {
+    public void updateFile(CatalogFile selectedFile, byte[] file) {
         try {
             catalog.updateFile(this.currentUserId, selectedFile.getId(), file);
         } catch (RejectedException ex) {
@@ -94,7 +95,7 @@ public class CatalogClientImp implements CatalogClient {
     }
 
     @Override
-    public void uploadFile(String fileName, AccessPermission accessPerm, WriteReadPermission writeReadPerm, File file) {
+    public void uploadFile(String fileName, AccessPermission accessPerm, WriteReadPermission writeReadPerm, byte[] file) {
         try {
             catalog.uploadFile(this.currentUserId, fileName, accessPerm, writeReadPerm, file);
             getMyFiles();
@@ -147,10 +148,8 @@ public class CatalogClientImp implements CatalogClient {
     @Override
     public void login(String userName, String pwd) {
         try {
-            if (catalog == null) {
-                catalog = (Catalog) Naming.lookup("//" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/" + CATALOG);
-            }
-            catalog.login(userName, pwd);
+            catalog = (Catalog) Naming.lookup("//" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/" + CATALOG);
+            this.currentUserId = catalog.login(userName, pwd);
             ui.updateAfterLogin(userName);
         } catch (NotBoundException ex) {
             Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
@@ -173,5 +172,4 @@ public class CatalogClientImp implements CatalogClient {
             Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
 }

@@ -210,6 +210,7 @@ private void publicRdbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
         readRdbtn.setEnabled(true);
         writeRdbtn.setEnabled(true);
         access = AccessPermission.PUBLIC;
+        readRdbtn.setSelected(true);
     }
 }//GEN-LAST:event_publicRdbtnActionPerformed
 
@@ -225,13 +226,15 @@ private void privateRdbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 
 private void okBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okBtnActionPerformed
     // Validate UI data
-    if (!fileNameTxt.getText().equals("") && !filePathTxt.getText().equals("")) {
+    if (!fileNameTxt.getText().isEmpty() && !filePathTxt.getText().isEmpty()) {
         File file = new File(filePathTxt.getText());
         
         if (file.exists()) {
             ((FileCatResponsiveUI) getParent()).uploadFile(fileNameTxt.getText(), access, writeRead, file);
         }
     }
+    
+    dispose();
 }//GEN-LAST:event_okBtnActionPerformed
 
 private void readRdbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readRdbtnActionPerformed

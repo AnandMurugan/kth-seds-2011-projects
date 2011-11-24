@@ -20,7 +20,7 @@ public interface FileCatResponsiveUI {
     void deleteMyFile(CatalogFile file);
     void deleteFile(CatalogFile file);
     void uploadFile(String fileName, AccessPermission accessPerm, WriteReadPermission writeReadPerm, File file);
-    void saveFile(File file);
+    void saveFile(byte[] file);
     void login(String name, String pwd); // called by the login dialog
     void setUserName(String name);
     void register(String name, String pwd);
