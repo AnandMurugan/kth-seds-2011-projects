@@ -15,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -22,35 +24,76 @@ import javax.persistence.TemporalType;
  *
  * @author julio
  */
-@Entity(name = "Files")
+@NamedQueries({
+    @NamedQuery(name = CatalogFile.GET_USER_FILES_QUERY,
+    query = "SELECT f "
+    + "FROM CatalogFile f "
+    + "WHERE f.owner = :owner"),
+    @NamedQuery(name = CatalogFile.GET_USER_PRIVATE_FILES_QUERY,
+    query = "SELECT f "
+    + "FROM CatalogFile f "
+    + "WHERE f.owner = :owner AND f.accessPermission = model.AccessPermission.PRIVATE"),
+    @NamedQuery(name = CatalogFile.GET_PUBLIC_FILES_QUERY,
+    query = "SELECT f "
+    + "FROM CatalogFile f "
+    + "WHERE f.accessPermission = model.AccessPermission.PUBLIC"),
+    @NamedQuery(name = CatalogFile.GET_AVAILABLE_FILES_QUERY,
+    query = "SELECT f "
+    + "FROM CatalogFile f "
+    + "WHERE "
+    + "(f.accessPermission = model.AccessPermission.PUBLIC AND NOT (f.owner = :owner))"
+    + "OR"
+    + "(f.owner = :owner)"),
+    @NamedQuery(name = CatalogFile.GET_FILE_BY_ID_QUERY,
+    query = "SELECT f "
+    + "FROM CatalogFile f "
+    + "WHERE f.id = :id"),
+    @NamedQuery(name = CatalogFile.UPDATE_FILE_QUERY,
+    query = "UPDATE CatalogFile f "
+    + "SET "
+    + "f.lastModifiedTime = :newTime "
+    + "WHERE f.id = :id"),
+    @NamedQuery(name = CatalogFile.DELETE_FILE_QUERY,
+    query = "DELETE "
+    + "FROM CatalogFile f "
+    + "WHERE f.id = :id")
+})
+@Entity
 public class CatalogFile implements Serializable {
+    public static final String GET_USER_FILES_QUERY = "CatalogFile_getUserFiles";
+    public static final String GET_USER_PRIVATE_FILES_QUERY = "CatalogFile_getUserPrivateFiles";
+    public static final String GET_PUBLIC_FILES_QUERY = "CatalogFile_getPublicFiles";
+    public static final String GET_AVAILABLE_FILES_QUERY = "CatalogFile_getAvailableFiles";
+    public static final String GET_FILE_BY_ID_QUERY = "CatalogFile_getFile";
+    public static final String UPDATE_FILE_QUERY = "CatalogFile_updateFile";
+    public static final String DELETE_FILE_QUERY = "CatalogFile_deleteFile";
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     private int id;
-    @Column(name = "FILE_NAME", nullable = false)
+    @Column(name = "flie_name", nullable = false)
     private String fileName;
-    @Column(name = "FILE_SIZE", nullable = false)
-    private int fileSize;
+    @Column(name = "file_size", nullable = false)
+    private long fileSize;
     @ManyToOne
-    @JoinColumn(name = "OWNER_ID", nullable = false)
+    @JoinColumn(name = "owner_id", nullable = false)
     private CatalogUser owner;
     @Enumerated(EnumType.STRING)
-    @Column(name = "ACCESS", nullable = false)
+    @Column(name = "access", nullable = false)
     private AccessPermission accessPermission;
     @Temporal(TemporalType.DATE)
-    @Column(name = "LAST_MODIFICATION_TIME", nullable = false)
+    @Column(name = "last_modification_time", nullable = false)
     private Date lastModifiedTime;
     @Enumerated(EnumType.STRING)
-    @Column(name = "WRITE_READ", nullable = false)
+    @Column(name = "write_read")
     private WriteReadPermission writeReadPermission;
-    @Column(name = "FILE_PATH", nullable = false)
+    @Column(name = "file_path", nullable = false)
     private String filePath;
 
     public CatalogFile() {
     }
 
-    public CatalogFile(String fileName, int fileSize, CatalogUser owner, AccessPermission accessPermission, Date lastModifiedTime, WriteReadPermission writeReadPermission, String filePath) {
+    public CatalogFile(String fileName, long fileSize, CatalogUser owner, AccessPermission accessPermission, Date lastModifiedTime, WriteReadPermission writeReadPermission, String filePath) {
         this.fileName = fileName;
         this.fileSize = fileSize;
         this.owner = owner;
@@ -72,7 +115,7 @@ public class CatalogFile implements Serializable {
         return filePath;
     }
 
-    public int getFileSize() {
+    public long getFileSize() {
         return fileSize;
     }
 
@@ -104,7 +147,7 @@ public class CatalogFile implements Serializable {
         this.filePath = filePath;
     }
 
-    public void setFileSize(int fileSize) {
+    public void setFileSize(long fileSize) {
         this.fileSize = fileSize;
     }
 
@@ -135,27 +178,23 @@ public class CatalogFile implements Serializable {
 //        try {
 //            transaction = beginTransaction(em);
 //
-//
-//            // create account.
 //            CatalogUser user = new CatalogUser("igor", "pass".hashCode());
 //            em.persist(user);
-//            //List<CatalogFile> userFiles = new ArrayList<CatalogFile>();
-//            for (int i = 0; i < 1; i++) {
+//
+//            for (int i = 0; i < 10; i++) {
 //                CatalogFile file = new CatalogFile(
 //                        "file.fil",
-//                        100,
+//                        i,
 //                        user,
 //                        AccessPermission.PUBLIC,
 //                        new Date(System.currentTimeMillis()),
 //                        WriteReadPermission.WRITE,
 //                        "file.fil");
 //                em.persist(file);
-//            }
-//            //user.setMyCatalogFiles(userFiles);
-//            //CatalogFile file = new CatalogFile("file.fil", 100, user, AccessPermission.PUBLIC, new Date(System.currentTimeMillis()), WriteReadPermission.WRITE, "file.fil");
-//            //em.persist(file);
-//            //em.persist(user);
 //
+//                List<CatalogFile> files = em.createNamedQuery("getAllPublicFiles", CatalogFile.class).getResultList();
+//                System.out.println(files.toArray(new CatalogFile[1]).toString());
+//            }
 //        } finally {
 //            commitTransaction(transaction);
 //        }

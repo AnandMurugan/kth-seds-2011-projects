@@ -18,15 +18,15 @@ import utils.RejectedException;
  * @author julio
  */
 public interface Catalog extends Remote {
-    void registerUser(String name, String pwd) throws RejectedException, RemoteException;
+    void registerUser(String name, String password) throws RejectedException, RemoteException;
 
     void unregisterUser(int id) throws RejectedException, RemoteException;
 
-    int login(String name, String pwd) throws RejectedException, RemoteException;
+    int login(String name, String password) throws RejectedException, RemoteException;
 
     void logout(int id) throws RejectedException, RemoteException;
 
-    int uploadFile(int id, String name, AccessPermission access, WriteReadPermission writeRead, File file) throws RejectedException, RemoteException;
+    void uploadFile(int id, String name, AccessPermission access, WriteReadPermission writeRead, File file) throws RejectedException, RemoteException;
 
     File downloadFile(int id, int fileId) throws RejectedException, RemoteException;
 
@@ -36,5 +36,5 @@ public interface Catalog extends Remote {
 
     List<CatalogFile> getAllFiles(int id) throws RejectedException, RemoteException;
 
-    List<CatalogFile> getMyFiles(String userName) throws RejectedException, RemoteException;
+    List<CatalogFile> getMyFiles(int id) throws RejectedException, RemoteException;
 }
