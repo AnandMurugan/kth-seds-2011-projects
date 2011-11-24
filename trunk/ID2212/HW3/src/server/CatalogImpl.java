@@ -4,6 +4,9 @@
  */
 package server;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,8 +21,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import model.AccessPermission;
 import model.CatalogFile;
@@ -74,10 +80,14 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
         try {
             transaction = beginTransaction();
 
-            CatalogUser user = em.createNamedQuery(CatalogUser.GET_USER_BY_ID_QUERY, CatalogUser.class).
-                    setParameter("id", id).
-                    getSingleResult();
-            em.remove(user);
+            CatalogUser user;
+            try {
+                user = em.createNamedQuery(CatalogUser.GET_USER_BY_ID_QUERY, CatalogUser.class).
+                        setParameter("id", id).
+                        getSingleResult();
+            } catch (NoResultException ex) {
+                user = null;
+            }
 
             if (user != null) {
                 List<CatalogFile> privateFiles = em.createNamedQuery(CatalogFile.GET_USER_PRIVATE_FILES_QUERY, CatalogFile.class).
@@ -87,6 +97,7 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
                 for (CatalogFile privateFile : privateFiles) {
                     em.remove(privateFile);
                 }
+                em.remove(user);
             }
         } finally {
             commitTransaction(transaction);
@@ -98,9 +109,14 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
 //        EntityTransaction transaction = null;
 //        try {
 //            transaction = beginTransaction();
-        CatalogUser user = em.createNamedQuery(CatalogUser.GET_USER_BY_NAME_QUERY, CatalogUser.class).
-                setParameter("name", name).
-                getSingleResult();
+        CatalogUser user;
+        try {
+            user = em.createNamedQuery(CatalogUser.GET_USER_BY_NAME_QUERY, CatalogUser.class).
+                    setParameter("name", name).
+                    getSingleResult();
+        } catch (NoResultException ex) {
+            user = null;
+        }
 
         if ((user == null) || (user.getPassword() != password.hashCode())) {
             throw new RejectedException("Wrong user name or password");
@@ -132,7 +148,7 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
     }
 
     @Override
-    public void uploadFile(int id, String name, AccessPermission access, WriteReadPermission writeRead, File file) throws RejectedException, RemoteException {
+    public void uploadFile(int id, String name, AccessPermission access, WriteReadPermission writeRead, byte[] file) throws RejectedException, RemoteException {
         if (!loggedInUsers.contains(id)) {
             throw new RejectedException("Not logged in!");
         }
@@ -141,7 +157,7 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
         try {
             transaction = beginTransaction();
 
-            if ((name == null) || (access == null) || (writeRead == null) || (file == null)) {
+            if ((name == null) || (access == null) || (file == null)) {
                 throw new RejectedException("Something is NULL!");
             }
 
@@ -150,14 +166,20 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
 
             saveFile(file, filePath);
 
-            CatalogUser user = em.createNamedQuery(CatalogUser.GET_USER_BY_ID_QUERY, CatalogUser.class).
-                    setParameter("id", id).
-                    getSingleResult();
+            CatalogUser user;
+            try {
+                user = em.createNamedQuery(CatalogUser.GET_USER_BY_ID_QUERY, CatalogUser.class).
+                        setParameter("id", id).
+                        getSingleResult();
+            } catch (NoResultException ex) {
+                user = null;
+            }
+
             if (user == null) {
                 throw new RejectedException("User not found!");
             }
 
-            CatalogFile catalogFile = new CatalogFile(file.getName(), file.length(), user, access,
+            CatalogFile catalogFile = new CatalogFile(name, file.length, user, access,
                     new Date(System.currentTimeMillis()), writeRead, filePath);
             em.persist(catalogFile);
         } catch (IOException ex) {
@@ -168,7 +190,7 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
     }
 
     @Override
-    public File downloadFile(int id, int fileId) throws RejectedException, RemoteException {
+    public byte[] downloadFile(int id, int fileId) throws RejectedException, RemoteException {
         if (!loggedInUsers.contains(id)) {
             throw new RejectedException("Not logged in!");
         }
@@ -176,12 +198,23 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
 //        EntityTransaction transaction = null;
 //        try {
 //            transaction = beginTransaction();
-        CatalogUser user = em.createNamedQuery(CatalogUser.GET_USER_BY_ID_QUERY, CatalogUser.class).
-                setParameter("id", id).
-                getSingleResult();
-        CatalogFile file = em.createNamedQuery(CatalogFile.GET_FILE_BY_ID_QUERY, CatalogFile.class).
-                setParameter("id", fileId).
-                getSingleResult();
+        CatalogUser user;
+        try {
+            user = em.createNamedQuery(CatalogUser.GET_USER_BY_ID_QUERY, CatalogUser.class).
+                    setParameter("id", id).
+                    getSingleResult();
+        } catch (NoResultException ex) {
+            user = null;
+        }
+
+        CatalogFile file;
+        try {
+            file = em.createNamedQuery(CatalogFile.GET_FILE_BY_ID_QUERY, CatalogFile.class).
+                    setParameter("id", fileId).
+                    getSingleResult();
+        } catch (NoResultException ex) {
+            file = null;
+        }
 
         if (user == null) {
             throw new RejectedException("User not found!");
@@ -193,15 +226,21 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
             throw new RejectedException("Not allowed action!");
         }
 
-        File actualFile = new File(file.getFilePath());
-        return actualFile;
+
+        try {
+            byte[] res = loadFile(file.getFilePath());
+            return res;
+        } catch (IOException ex) {
+            throw new RejectedException("File not found!");
+        }
 //        } finally {
 //            commitTransaction(transaction);
 //        }
     }
 
     @Override
-    public void deleteFile(int id, int fileId) throws RejectedException, RemoteException {
+    public void deleteFile(int id,
+            int fileId) throws RejectedException, RemoteException {
         if (!loggedInUsers.contains(id)) {
             throw new RejectedException("Not logged in!");
         }
@@ -210,12 +249,23 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
         try {
             transaction = beginTransaction();
 
-            CatalogUser user = em.createNamedQuery(CatalogUser.GET_USER_BY_ID_QUERY, CatalogUser.class).
-                    setParameter("id", id).
-                    getSingleResult();
-            CatalogFile file = em.createNamedQuery(CatalogFile.GET_FILE_BY_ID_QUERY, CatalogFile.class).
-                    setParameter("id", fileId).
-                    getSingleResult();
+            CatalogUser user;
+            try {
+                user = em.createNamedQuery(CatalogUser.GET_USER_BY_ID_QUERY, CatalogUser.class).
+                        setParameter("id", id).
+                        getSingleResult();
+            } catch (NoResultException ex) {
+                user = null;
+            }
+
+            CatalogFile file;
+            try {
+                file = em.createNamedQuery(CatalogFile.GET_FILE_BY_ID_QUERY, CatalogFile.class).
+                        setParameter("id", fileId).
+                        getSingleResult();
+            } catch (NoResultException ex) {
+                file = null;
+            }
 
             if (user == null) {
                 throw new RejectedException("User not found!");
@@ -235,7 +285,9 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
     }
 
     @Override
-    public void updateFile(int id, int fileId, File actualFile) throws RejectedException, RemoteException {
+    public void updateFile(int id,
+            int fileId,
+            byte[] actualFile) throws RejectedException, RemoteException {
         if (!loggedInUsers.contains(id)) {
             throw new RejectedException("Not logged in!");
         }
@@ -244,12 +296,23 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
         try {
             transaction = beginTransaction();
 
-            CatalogUser user = em.createNamedQuery(CatalogUser.GET_USER_BY_ID_QUERY, CatalogUser.class).
-                    setParameter("id", id).
-                    getSingleResult();
-            CatalogFile file = em.createNamedQuery(CatalogFile.GET_FILE_BY_ID_QUERY, CatalogFile.class).
-                    setParameter("id", fileId).
-                    getSingleResult();
+            CatalogUser user;
+            try {
+                user = em.createNamedQuery(CatalogUser.GET_USER_BY_ID_QUERY, CatalogUser.class).
+                        setParameter("id", id).
+                        getSingleResult();
+            } catch (NoResultException ex) {
+                user = null;
+            }
+
+            CatalogFile file;
+            try {
+                file = em.createNamedQuery(CatalogFile.GET_FILE_BY_ID_QUERY, CatalogFile.class).
+                        setParameter("id", fileId).
+                        getSingleResult();
+            } catch (NoResultException ex) {
+                file = null;
+            }
 
             if (user == null) {
                 throw new RejectedException("User not found!");
@@ -284,9 +347,14 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
 //        EntityTransaction transaction = null;
 //        try {
 //            transaction = beginTransaction();
-        CatalogUser user = em.createNamedQuery(CatalogUser.GET_USER_BY_ID_QUERY, CatalogUser.class).
-                setParameter("id", id).
-                getSingleResult();
+        CatalogUser user;
+        try {
+            user = em.createNamedQuery(CatalogUser.GET_USER_BY_ID_QUERY, CatalogUser.class).
+                    setParameter("id", id).
+                    getSingleResult();
+        } catch (NoResultException ex) {
+            user = null;
+        }
 
         if (user == null) {
             throw new RejectedException("User not found!");
@@ -311,9 +379,14 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
 //        EntityTransaction transaction = null;
 //        try {
 //            transaction = beginTransaction();
-        CatalogUser user = em.createNamedQuery(CatalogUser.GET_USER_BY_ID_QUERY, CatalogUser.class).
-                setParameter("id", id).
-                getSingleResult();
+        CatalogUser user;
+        try {
+            user = em.createNamedQuery(CatalogUser.GET_USER_BY_ID_QUERY, CatalogUser.class).
+                    setParameter("id", id).
+                    getSingleResult();
+        } catch (NoResultException ex) {
+            user = null;
+        }
 
         if (user == null) {
             throw new RejectedException("User not found!");
@@ -339,8 +412,8 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
         transaction.commit();
     }
 
-    private void saveFile(File file, String filePath) throws FileNotFoundException, IOException {
-        InputStream in = new FileInputStream(file);
+    private void saveFile(byte[] file, String filePath) throws FileNotFoundException, IOException {
+        InputStream in = new ByteArrayInputStream(file);
         OutputStream out = new FileOutputStream(new File(filePath));
         byte[] buf = new byte[1024];
         int len;
@@ -349,5 +422,20 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
         }
         in.close();
         out.close();
+    }
+
+    private byte[] loadFile(String filePath) throws FileNotFoundException, IOException {
+        InputStream in = new FileInputStream(filePath);
+        OutputStream out = new ByteArrayOutputStream();
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        byte[] res = ((ByteArrayOutputStream) out).toByteArray();
+        in.close();
+        out.close();
+
+        return res;
     }
 }
