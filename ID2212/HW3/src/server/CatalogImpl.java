@@ -106,7 +106,7 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
     }
 
     @Override
-    public int login(String name, String password) throws RejectedException, RemoteException {
+    public int login(String name, String password) throws AlreadyLoggedInException, RejectedException, RemoteException {
 //        EntityTransaction transaction = null;
 //        try {
 //            transaction = beginTransaction();
