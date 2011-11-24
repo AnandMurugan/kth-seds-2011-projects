@@ -10,20 +10,38 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  *
  * @author julio
  */
-@Entity(name = "Users")
+@NamedQueries({
+    @NamedQuery(name = CatalogUser.GET_USER_BY_ID_QUERY,
+    query = "SELECT u "
+    + "FROM CatalogUser u "
+    + "WHERE u.id = :id"),
+    @NamedQuery(name = CatalogUser.GET_USER_BY_NAME_QUERY,
+    query = "SELECT u "
+    + "FROM CatalogUser u "
+    + "WHERE u.name = :name"),
+    @NamedQuery(name = CatalogUser.DELETE_USER_QUERY,
+    query = "DELETE "
+    + "FROM CatalogUser u "
+    + "WHERE u.id = :id"),})
+@Entity
 public class CatalogUser implements Serializable {
+    public static final String GET_USER_BY_ID_QUERY = "CatalogUser_getUserById";
+    public static final String GET_USER_BY_NAME_QUERY = "CatalogUser_getUserByName";
+    public static final String DELETE_USER_QUERY = "CatalogUser_deleteUser";
     @Id
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
-    @Column(name = "NAME", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "PASSWORD", nullable = false)
+    @Column(name = "password", nullable = false)
     private int password;
 
     /*Constructors*/
