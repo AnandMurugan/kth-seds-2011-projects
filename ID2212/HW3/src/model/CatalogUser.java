@@ -25,16 +25,17 @@ import javax.persistence.NamedQuery;
     @NamedQuery(name = CatalogUser.GET_USER_BY_NAME_QUERY,
     query = "SELECT u "
     + "FROM CatalogUser u "
-    + "WHERE u.name = :name"),
-    @NamedQuery(name = CatalogUser.DELETE_USER_QUERY,
-    query = "DELETE "
-    + "FROM CatalogUser u "
-    + "WHERE u.id = :id"),})
+    + "WHERE u.name = :name")
+//    @NamedQuery(name = CatalogUser.DELETE_USER_QUERY,
+//    query = "DELETE "
+//    + "FROM CatalogUser u "
+//    + "WHERE u.id = :id")
+})
 @Entity
 public class CatalogUser implements Serializable {
     public static final String GET_USER_BY_ID_QUERY = "CatalogUser_getUserById";
     public static final String GET_USER_BY_NAME_QUERY = "CatalogUser_getUserByName";
-    public static final String DELETE_USER_QUERY = "CatalogUser_deleteUser";
+    //public static final String DELETE_USER_QUERY = "CatalogUser_deleteUser";
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
