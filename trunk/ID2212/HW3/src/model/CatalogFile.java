@@ -53,11 +53,11 @@ import javax.persistence.TemporalType;
     + "SET "
     + "f.lastModifiedTime = :newTime, "
     + "f.fileSize = :newSize " 
-    + "WHERE f.id = :id"),
-    @NamedQuery(name = CatalogFile.DELETE_FILE_QUERY,
-    query = "DELETE "
-    + "FROM CatalogFile f "
     + "WHERE f.id = :id")
+//    @NamedQuery(name = CatalogFile.DELETE_FILE_QUERY,
+//    query = "DELETE "
+//    + "FROM CatalogFile f "
+//    + "WHERE f.id = :id")
 })
 @Entity
 public class CatalogFile implements Serializable {
@@ -67,7 +67,7 @@ public class CatalogFile implements Serializable {
     public static final String GET_AVAILABLE_FILES_QUERY = "CatalogFile_getAvailableFiles";
     public static final String GET_FILE_BY_ID_QUERY = "CatalogFile_getFile";
     public static final String UPDATE_FILE_QUERY = "CatalogFile_updateFile";
-    public static final String DELETE_FILE_QUERY = "CatalogFile_deleteFile";
+    //public static final String DELETE_FILE_QUERY = "CatalogFile_deleteFile";
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
