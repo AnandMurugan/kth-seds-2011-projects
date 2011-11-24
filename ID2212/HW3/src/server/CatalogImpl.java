@@ -8,6 +8,8 @@ import java.io.File;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
 import model.AccessPermission;
 import model.CatalogFile;
 import model.WriteReadPermission;
@@ -18,6 +20,8 @@ import utils.RejectedException;
  * @author Igor
  */
 public class CatalogImpl extends UnicastRemoteObject implements Catalog {
+    private static final EntityManager em = Persistence.createEntityManagerFactory("model").createEntityManager();
+
     public CatalogImpl() throws RemoteException {
         super();
     }
