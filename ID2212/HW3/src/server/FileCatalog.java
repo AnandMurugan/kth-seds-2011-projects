@@ -6,9 +6,11 @@ package server;
 
 import java.io.File;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.List;
+import model.AccessPermission;
 import model.CatalogFile;
-import model.CatalogUser;
+import model.WriteReadPermission;
 import utils.RejectedException;
 
 /**
@@ -16,16 +18,23 @@ import utils.RejectedException;
  * @author julio
  */
 public interface FileCatalog extends Remote {
-    void registerUser(String name, String pwd) throws RejectedException;
-    void unRegisterUser(String name, String pwd);
-    CatalogUser login(String name, String pwd) throws RejectedException;
-    void logout( String name);
-    // TODO. Add parameters 
-    void uploadFile(String userName, CatalogFile fileDescription, File file);
-    File downloadFile(long fileId, String userName) throws RejectedException;
-    void deleteFile(long fileId, String userName) throws RejectedException;
-    void updateFile(long fileId, File file, String userName) throws RejectedException;
-    
-    List<CatalogFile> getAllFiles();
-    List<CatalogFile> getMyFiles(String userName);
+    void registerUser(String name, String pwd) throws RejectedException, RemoteException;
+
+    void unregisterUser(int id) throws RejectedException, RemoteException;
+
+    int login(String name, String pwd) throws RejectedException, RemoteException;
+
+    void logout(int id) throws RejectedException, RemoteException;
+
+    int uploadFile(int id, String name, AccessPermission access, WriteReadPermission writeRead, File file) throws RejectedException, RemoteException;
+
+    File downloadFile(int id, int fileId) throws RejectedException, RemoteException;
+
+    void deleteFile(int id, int fileId) throws RejectedException, RemoteException;
+
+    void updateFile(int id, int fileId, File file) throws RejectedException, RemoteException;
+
+    List<CatalogFile> getAllFiles(int id) throws RejectedException, RemoteException;
+
+    List<CatalogFile> getMyFiles(String userName) throws RejectedException, RemoteException;
 }
