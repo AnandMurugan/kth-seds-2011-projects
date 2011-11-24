@@ -25,4 +25,5 @@ public interface FileCatResponsiveUI {
     void setUserName(String name);
     void register(String name, String pwd);
     void updateAfterLogin(String userName);
+    void updateAfterlogout();
 }

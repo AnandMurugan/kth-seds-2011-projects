@@ -16,6 +16,7 @@ import java.awt.Component;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -85,6 +86,7 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
         loginMenuItem = new javax.swing.JMenuItem();
         registerMenuItem = new javax.swing.JMenuItem();
         unregisterMenuItem = new javax.swing.JMenuItem();
+        logoutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -185,6 +187,11 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
         });
 
         catUpdateBtn.setText("Update");
+        catUpdateBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                catUpdateBtnActionPerformed(evt);
+            }
+        });
 
         catDeleteBtn.setText("Delete");
         catDeleteBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -244,7 +251,7 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
         });
         jMenu1.add(loginMenuItem);
 
-        registerMenuItem.setLabel("Register");
+        registerMenuItem.setText("Register...");
         registerMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 registerMenuItemActionPerformed(evt);
@@ -255,6 +262,15 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
         unregisterMenuItem.setEnabled(false);
         unregisterMenuItem.setLabel("Unregister");
         jMenu1.add(unregisterMenuItem);
+
+        logoutMenuItem.setText("logout");
+        logoutMenuItem.setEnabled(false);
+        logoutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(logoutMenuItem);
 
         jMenuBar1.add(jMenu1);
 
@@ -332,7 +348,20 @@ private void registerMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
 }//GEN-LAST:event_registerMenuItemActionPerformed
 
 private void myUpdateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myUpdateBtnActionPerformed
-// TODO add your handling code here:
+    CatalogFile fileToUpdate = myFilesModel.getCatalogFile(myFilesTable.getSelectedRow());
+
+    if (fileToUpdate != null) {
+        JFileChooser browseDlg = new JFileChooser();
+        int result = browseDlg.showOpenDialog((Component) this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String filePath = browseDlg.getSelectedFile().getPath();
+            File file = new File(filePath);
+            if (file.exists()) {
+                updateFile(file, fileToUpdate);
+            }
+        }
+    }
 }//GEN-LAST:event_myUpdateBtnActionPerformed
 
 private void myDeleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myDeleteBtnActionPerformed
@@ -359,6 +388,34 @@ private void catDeleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     };
     (new Thread(deleteTask)).start();
 }//GEN-LAST:event_catDeleteBtnActionPerformed
+
+private void catUpdateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_catUpdateBtnActionPerformed
+    CatalogFile fileToUpdate = allFilesModel.getCatalogFile(allFilesTable.getSelectedRow());
+
+    if (fileToUpdate != null) {
+        JFileChooser browseDlg = new JFileChooser();
+        int result = browseDlg.showOpenDialog((Component) this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String filePath = browseDlg.getSelectedFile().getPath();
+            File file = new File(filePath);
+            if (file.exists()) {
+                updateFile(file, fileToUpdate);
+            }
+        }
+    }
+}//GEN-LAST:event_catUpdateBtnActionPerformed
+
+private void logoutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutMenuItemActionPerformed
+    Runnable logoutTask = new Runnable() {
+        @Override
+        public void run() {
+            client.logout();
+        }
+    };
+
+    (new Thread(logoutTask)).start();
+}//GEN-LAST:event_logoutMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -408,6 +465,7 @@ private void catDeleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JMenuItem loginMenuItem;
+    private javax.swing.JMenuItem logoutMenuItem;
     private javax.swing.JButton myDeleteBtn;
     private javax.swing.JButton myDownloadBtn;
     private javax.swing.JTable myFilesTable;
@@ -478,7 +536,7 @@ private void catDeleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
                 BufferedInputStream input = null;
                 try {
                     byte fileBuffer[] = new byte[(int) file.length()];
-                    input = new BufferedInputStream(new FileInputStream(fileName));
+                    input = new BufferedInputStream(new FileInputStream(file.getPath()));
                     input.read(fileBuffer, 0, fileBuffer.length);
                     input.close();
                     if (accessPerm == AccessPermission.PRIVATE) {
@@ -531,7 +589,7 @@ private void catDeleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     }
 
     @Override
-    public void saveFile(byte[] file) {        
+    public void saveFile(byte[] file) {
         JFileChooser saveFileDlg = new JFileChooser();
         int retrieval = saveFileDlg.showSaveDialog((Component) this);
 
@@ -596,6 +654,52 @@ private void catDeleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
             public void run() {
                 userNameLbl.setText(userName);
                 unregisterMenuItem.setEnabled(true);
+                logoutMenuItem.setEnabled(true);
+            }
+        };
+        try {
+            SwingUtilities.invokeAndWait(updateUI);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FileCatalogClientUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(FileCatalogClientUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void updateFile(final File file, final CatalogFile fileDescription) {
+        Runnable uploadFileTask = new Runnable() {
+            @Override
+            public void run() {
+                BufferedInputStream input = null;
+                try {
+                    byte fileBuffer[] = new byte[(int) file.length()];
+                    input = new BufferedInputStream(new FileInputStream(file.getPath()));
+                    input.read(fileBuffer, 0, fileBuffer.length);
+                    input.close();
+                    client.updateFile(fileDescription, fileBuffer);
+                } catch (IOException ex) {
+                    Logger.getLogger(FileCatalogClientUI.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    try {
+                        input.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(FileCatalogClientUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        };
+
+        (new Thread(uploadFileTask)).start();
+    }
+    
+    @Override
+    public void updateAfterlogout(){
+        Runnable updateUI = new Runnable() {
+            @Override
+            public void run() {
+                userNameLbl.setText("");
+                unregisterMenuItem.setEnabled(false);
+                logoutMenuItem.setEnabled(false);
             }
         };
         try {
