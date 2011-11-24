@@ -23,4 +23,6 @@ public interface FileCatResponsiveUI {
     void saveFile(File file);
     void login(String name, String pwd); // called by the login dialog
     void setUserName(String name);
+    void register(String name, String pwd);
+    void updateAfterLogin(String userName);
 }

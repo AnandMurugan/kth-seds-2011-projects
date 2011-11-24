@@ -75,6 +75,8 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         loginMenuItem = new javax.swing.JMenuItem();
+        registerMenuItem = new javax.swing.JMenuItem();
+        unregisterMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -219,6 +221,18 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
         });
         jMenu1.add(loginMenuItem);
 
+        registerMenuItem.setLabel("Register");
+        registerMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                registerMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(registerMenuItem);
+
+        unregisterMenuItem.setEnabled(false);
+        unregisterMenuItem.setLabel("Unregister");
+        jMenu1.add(unregisterMenuItem);
+
         jMenuBar1.add(jMenu1);
 
         setJMenuBar(jMenuBar1);
@@ -280,6 +294,9 @@ private void myDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 // TODO add your handling code here:
 }//GEN-LAST:event_myDownloadBtnActionPerformed
 
+private void registerMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerMenuItemActionPerformed
+}//GEN-LAST:event_registerMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -334,6 +351,8 @@ private void myDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     private javax.swing.JButton myUpdateBtn;
     private javax.swing.JButton myUploadBtn;
     private javax.swing.JButton refreshAllBtn;
+    private javax.swing.JMenuItem registerMenuItem;
+    private javax.swing.JMenuItem unregisterMenuItem;
     private javax.swing.JLabel userNameLbl;
     // End of variables declaration//GEN-END:variables
 
@@ -393,14 +412,14 @@ private void myDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         Runnable uploadFileTask = new Runnable() {
             @Override
             public void run() {
-                if (accessPerm == AccessPermission.PRIVATE){
-                client.uploadFile(fileName, accessPerm, null, file);
-                } else if (accessPerm == AccessPermission.PUBLIC){
+                if (accessPerm == AccessPermission.PRIVATE) {
+                    client.uploadFile(fileName, accessPerm, null, file);
+                } else if (accessPerm == AccessPermission.PUBLIC) {
                     client.uploadFile(fileName, accessPerm, writeReadPerm, file);
                 }
             }
         };
-        
+
         (new Thread(uploadFileTask)).start();
     }
 
@@ -450,6 +469,36 @@ private void myDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN
             @Override
             public void run() {
                 userNameLbl.setText(name);
+            }
+        };
+        try {
+            SwingUtilities.invokeAndWait(updateUI);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FileCatalogClientUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(FileCatalogClientUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void register(final String name,final String pwd) {
+        Runnable loginTask = new Runnable() {
+            @Override
+            public void run() {
+                client.register(name, pwd);
+            }
+        };
+
+        (new Thread(loginTask)).start();
+    }
+    
+    @Override
+    public void updateAfterLogin(final String userName) {
+            Runnable updateUI = new Runnable() {
+            @Override
+            public void run() {
+                userNameLbl.setText(userName);
+                unregisterMenuItem.setEnabled(true);
             }
         };
         try {

@@ -5,6 +5,9 @@
 package client;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.logging.Level;
@@ -23,7 +26,7 @@ import utils.RejectedException;
 public class CatalogClientImp implements CatalogClient {
     private static final String DEFAULT_HOST = "localhost";
     private static final int DEFAULT_PORT = 1099;
-    private static final String MARKETPLACE = "FileCat";
+    private static final String CATALOG = "Catalog";
     private String currentUser;
     private int currentUserId;
     private boolean isLoggedIn;
@@ -45,7 +48,7 @@ public class CatalogClientImp implements CatalogClient {
         } catch (RemoteException ex) {
             Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return allFiles;
     }
 
@@ -60,7 +63,7 @@ public class CatalogClientImp implements CatalogClient {
         } catch (RemoteException ex) {
             Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return myFiles;
     }
 
@@ -75,7 +78,7 @@ public class CatalogClientImp implements CatalogClient {
         } catch (RemoteException ex) {
             Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return downloadedFile;
     }
 
@@ -107,7 +110,9 @@ public class CatalogClientImp implements CatalogClient {
         try {
             catalog.deleteFile(this.currentUserId, selectedFile.getId());
         } catch (RejectedException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -115,11 +120,16 @@ public class CatalogClientImp implements CatalogClient {
     @Override
     public void register(String userName, String pwd) {
         try {
-
+            catalog = (Catalog) Naming.lookup("//" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/" + CATALOG);
             catalog.registerUser(userName, pwd);
-            // ui.notifyRegistrationSuccessful(userName, pwd);
+        } catch (NotBoundException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -137,9 +147,19 @@ public class CatalogClientImp implements CatalogClient {
     @Override
     public void login(String userName, String pwd) {
         try {
+            if (catalog == null) {
+                catalog = (Catalog) Naming.lookup("//" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/" + CATALOG);
+            }
             catalog.login(userName, pwd);
+            ui.updateAfterLogin(userName);
+        } catch (NotBoundException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RejectedException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -153,4 +173,5 @@ public class CatalogClientImp implements CatalogClient {
             Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
 }
