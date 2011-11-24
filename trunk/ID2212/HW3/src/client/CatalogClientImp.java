@@ -179,6 +179,7 @@ public class CatalogClientImp implements CatalogClient {
     public void logout() {
         try {
             catalog.logout(this.currentUserId);
+            ui.updateAfterlogout();
         } catch (RejectedException ex) {
             Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
