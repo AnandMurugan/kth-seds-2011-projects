@@ -5,35 +5,37 @@
 package model;
 
 import java.io.Serializable;
-import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 /**
  *
  * @author julio
  */
-@Entity
+@Entity(name = "Users")
 public class CatalogUser implements Serializable {
     @Id
-    @GeneratedValue
+    @Column(name = "ID", nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
+    @Column(name = "NAME", nullable = false)
     private String name;
+    @Column(name = "PASSWORD", nullable = false)
     private int password;
-    @OneToMany(mappedBy = "owner")
-    private List<CatalogFile> myCatalogFiles;
 
+    /*Constructors*/
     public CatalogUser() {
     }
 
-    public CatalogUser(int id, String name, int password) {
-        this.id = id;
+    public CatalogUser(String name, int password) {
         this.name = name;
         this.password = password;
     }
 
+    /*Getters and setters*/
     public int getId() {
         return id;
     }
@@ -46,10 +48,6 @@ public class CatalogUser implements Serializable {
         return password;
     }
 
-    public List<CatalogFile> getMyCatalogFiles() {
-        return myCatalogFiles;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -60,9 +58,5 @@ public class CatalogUser implements Serializable {
 
     public void setPassword(int password) {
         this.password = password;
-    }
-
-    public void setMyCatalogFiles(List<CatalogFile> myCatalogFiles) {
-        this.myCatalogFiles = myCatalogFiles;
     }
 }
