@@ -4,9 +4,10 @@
  */
 package client;
 
+import java.io.File;
+import java.util.List;
 import model.AccessPermission;
 import model.CatalogFile;
-import model.CatalogUser;
 
 /**
  *
@@ -14,14 +15,14 @@ import model.CatalogUser;
  */
 public interface CatalogClient {
     // TODO. Add parameters
-    void getAllFiles();
-    void getMyFiles();
-    void downloadFile(CatalogFile selectedFile);
-    void updateFile(CatalogFile selectedFile);
-    CatalogFile uploadFile(String name, AccessPermission access); // server should create the CatalogFile object and return it
+    List<CatalogFile> getAllFiles();
+    List<CatalogFile> getMyFiles();
+    File downloadFile(CatalogFile selectedFile);
+    void updateFile(CatalogFile selectedFile, File file);
+    void uploadFile(CatalogFile fileDesc, File file); // server should create the CatalogFile object and return it
     void deleteFile(CatalogFile selectedFile);
-    void register(String userName, String pwd); // should throw an exception when the user already exists
-                                                // should validate the length of the pwd.
-    void unregister();
+    void register(String userName, String pwd); // should throw an exception when the user already exists             // should validate the length of the pwd.
+    void unregister(String pwd);
     void login(String userName, String pwd); // Verify if the user is already logged from other client. 
+    void logout();
 }
