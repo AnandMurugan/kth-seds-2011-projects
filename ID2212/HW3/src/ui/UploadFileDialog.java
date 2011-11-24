@@ -228,12 +228,12 @@ private void okBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     // Validate UI data
     if (!fileNameTxt.getText().isEmpty() && !filePathTxt.getText().isEmpty()) {
         File file = new File(filePathTxt.getText());
-        
+
         if (file.exists()) {
             ((FileCatResponsiveUI) getParent()).uploadFile(fileNameTxt.getText(), access, writeRead, file);
         }
     }
-    
+
     dispose();
 }//GEN-LAST:event_okBtnActionPerformed
 
@@ -244,48 +244,6 @@ private void readRdbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 private void writeRdbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeRdbtnActionPerformed
     writeRead = WriteReadPermission.WRITE;
 }//GEN-LAST:event_writeRdbtnActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(UploadFileDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(UploadFileDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(UploadFileDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(UploadFileDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                UploadFileDialog dialog = new UploadFileDialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup accessPermGrp;
     private javax.swing.JButton browseBtn;

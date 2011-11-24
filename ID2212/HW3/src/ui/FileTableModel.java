@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import model.AccessPermission;
 import model.CatalogFile;
+import model.WriteReadPermission;
 
 /**
  *
@@ -16,7 +17,7 @@ import model.CatalogFile;
 public class FileTableModel extends AbstractTableModel {
     List<CatalogFile> catalogFileList;
     String headerList[] = new String[]{
-        "Name", "Size", "Owner", "Access"
+        "Name", "Size", "Owner", "Access", "WRITE/READ", "Modified"
     };
 
     public FileTableModel(List<CatalogFile> list) {
@@ -25,7 +26,7 @@ public class FileTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 4;
+        return 6;
     }
 
     @Override
@@ -47,10 +48,12 @@ public class FileTableModel extends AbstractTableModel {
             case 2:
                 return item.getOwner().getName();
             case 3:
-                if (item.getAccessPermission() == AccessPermission.PUBLIC)
-                    return "Public";
-                else
-                    return "Private";
+                return item.getAccessPermission();
+            case 4:
+                WriteReadPermission p = item.getWriteReadPermission();
+                return p != null ? p : "-";
+            case 5:
+                return item.getLastModifiedTime();
             default:
                 return "";
         }
