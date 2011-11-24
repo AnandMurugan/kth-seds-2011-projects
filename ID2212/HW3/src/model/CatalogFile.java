@@ -6,6 +6,7 @@ package model;
 
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -41,9 +42,9 @@ import javax.persistence.TemporalType;
     query = "SELECT f "
     + "FROM CatalogFile f "
     + "WHERE "
-    + "(f.accessPermission = model.AccessPermission.PUBLIC AND NOT (f.owner = :owner))"
+    + "(f.accessPermission = model.AccessPermission.PRIVATE AND f.owner = :owner)"
     + "OR"
-    + "(f.owner = :owner)"),
+    + "(f.accessPermission = model.AccessPermission.PUBLIC)"),
     @NamedQuery(name = CatalogFile.GET_FILE_BY_ID_QUERY,
     query = "SELECT f "
     + "FROM CatalogFile f "
@@ -77,12 +78,12 @@ public class CatalogFile implements Serializable {
     @Column(name = "file_size", nullable = false)
     private long fileSize;
     @ManyToOne
-    @JoinColumn(name = "owner_id", nullable = false)
+    @JoinColumn(name = "owner_id", nullable = true)
     private CatalogUser owner;
     @Enumerated(EnumType.STRING)
     @Column(name = "access", nullable = false)
     private AccessPermission accessPermission;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_modification_time", nullable = false)
     private Date lastModifiedTime;
     @Enumerated(EnumType.STRING)

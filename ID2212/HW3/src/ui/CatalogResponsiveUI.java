@@ -14,16 +14,30 @@ import model.WriteReadPermission;
  *
  * @author julio
  */
-public interface FileCatResponsiveUI {
+public interface CatalogResponsiveUI {
     void updateAllFiles(List<CatalogFile> files);
+
     void updateMyFiles(List<CatalogFile> files);
+
     void deleteMyFile(CatalogFile file);
+
     void deleteFile(CatalogFile file);
+
     void uploadFile(String fileName, AccessPermission accessPerm, WriteReadPermission writeReadPerm, File file);
+
     void saveFile(byte[] file);
+
     void login(String name, String pwd); // called by the login dialog
+
     void setUserName(String name);
+
     void register(String name, String pwd);
+
     void updateAfterLogin(String userName);
-    void updateAfterlogout();
+
+    void updateAfterLogout();
+
+    void showRemoteExceptionNotification(String msg);
+    
+    void showRejectedExceptionNotification(String msg);
 }

@@ -39,9 +39,18 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
     private final static String FOLDER = "catalog/";
     private final EntityManager em = Persistence.createEntityManagerFactory("model").createEntityManager();
     private Set<Integer> loggedInUsers = new HashSet<Integer>();
+    private final static CatalogUser UNKNOWN = new CatalogUser("<UNKNOWN>", 0);
 
     public CatalogImpl() throws RemoteException {
         super();
+
+        EntityTransaction transaction = null;
+        try {
+            transaction = beginTransaction();
+            em.persist(UNKNOWN);
+        } finally {
+            commitTransaction(transaction);
+        }
     }
 
     @Override
@@ -95,6 +104,15 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
                 for (CatalogFile privateFile : privateFiles) {
                     em.remove(privateFile);
                 }
+
+                List<CatalogFile> userFiles = em.createNamedQuery(CatalogFile.GET_USER_FILES_QUERY, CatalogFile.class).
+                        setParameter("owner", user).
+                        getResultList();
+
+                for (CatalogFile userFile : userFiles) {
+                    userFile.setOwner(UNKNOWN);
+                }
+
                 em.remove(user);
             }
         } finally {
@@ -178,7 +196,7 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
             }
 
             CatalogFile catalogFile = new CatalogFile(name, file.length, user, access,
-                    new Date(System.currentTimeMillis()), writeRead, filePath);
+                    new Date(), writeRead, filePath);
             em.persist(catalogFile);
         } catch (IOException ex) {
             throw new RejectedException("Bad file!");
@@ -271,9 +289,11 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
             if (file == null) {
                 throw new RejectedException("File not found!");
             }
-            if ((file.getAccessPermission() == AccessPermission.PRIVATE && !file.getOwner().equals(user))
-                    || (file.getAccessPermission() == AccessPermission.PUBLIC && file.getWriteReadPermission() == WriteReadPermission.READ)) {
-                throw new RejectedException("Not allowed action!");
+            if (!file.getOwner().equals(user)) {
+                if ((file.getAccessPermission() == AccessPermission.PRIVATE)
+                        || (file.getAccessPermission() == AccessPermission.PUBLIC && file.getWriteReadPermission() == WriteReadPermission.READ)) {
+                    throw new RejectedException("Not allowed action!");
+                }
             }
 
             new File(file.getFilePath()).delete();
@@ -329,7 +349,7 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
 
             em.createNamedQuery(CatalogFile.UPDATE_FILE_QUERY).
                     setParameter("id", fileId).
-                    setParameter("newTime", new Date(System.currentTimeMillis())).
+                    setParameter("newTime", new Date()).
                     setParameter("newSize", actualFile.length).
                     //setHint("javax.persistence.cache.storeMode", "REFRESH").
                     executeUpdate();

@@ -10,15 +10,13 @@
  */
 package ui;
 
-import javax.swing.JOptionPane;
-
 /**
  *
  * @author Igor
  */
-public class ConnectDialog extends javax.swing.JDialog {
+public class RegisterDialog extends javax.swing.JDialog {
     /** Creates new form ConnectDialog */
-    public ConnectDialog(java.awt.Frame parent, boolean modal) {
+    public RegisterDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
@@ -39,12 +37,17 @@ public class ConnectDialog extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Log in");
+        setTitle("Registration");
         setResizable(false);
 
         jLabel1.setText("User Name:");
 
-        connectButton.setText("Log in");
+        connectButton.setText("Register");
+        connectButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                connectButtonActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Password:");
 
@@ -87,6 +90,11 @@ public class ConnectDialog extends javax.swing.JDialog {
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         setBounds((screenSize.width-228)/2, (screenSize.height-147)/2, 228, 147);
     }// </editor-fold>//GEN-END:initComponents
+
+private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_connectButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton connectButton;
     private javax.swing.JLabel jLabel1;
@@ -101,7 +109,7 @@ public class ConnectDialog extends javax.swing.JDialog {
             String userName = userNameTxt.getText();
             String pwd = pwdTxt.getText();
             dispose();
-            ((FileCatalogClientUI) getParent()).login(userName, pwd);
+            ((CatalogClientUI) getParent()).register(userName, pwd);
         }
     };
 }

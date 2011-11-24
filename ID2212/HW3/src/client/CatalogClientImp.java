@@ -4,19 +4,16 @@
  */
 package client;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.AccessPermission;
 import model.CatalogFile;
 import model.WriteReadPermission;
 import server.Catalog;
-import ui.FileCatResponsiveUI;
+import ui.CatalogResponsiveUI;
 import utils.AlreadyLoggedInException;
 import utils.RejectedException;
 
@@ -25,29 +22,35 @@ import utils.RejectedException;
  * @author julio
  */
 public class CatalogClientImp implements CatalogClient {
-    private static final String DEFAULT_HOST = "130.229.129.151";
-    private static final int DEFAULT_PORT = 1099;
-    private static final String CATALOG = "Catalog";
-    private String currentUser;
+    private static String host = "localhost";
+    private static int port = 1099;
+    private static String catalogName = "Catalog";
     private int currentUserId;
-    private boolean isLoggedIn;
-    private FileCatResponsiveUI ui;
+    private CatalogResponsiveUI ui;
     private Catalog catalog;
 
-    public CatalogClientImp(FileCatResponsiveUI ui) {
+    public CatalogClientImp(CatalogResponsiveUI ui, String[] args) {
         this.ui = ui;
+
+        if (args.length > 0) {
+            host = args[0];
+        }
     }
 
     @Override
     public List<CatalogFile> getAllFiles() {
+        if (catalog == null) {
+            return null;
+        }
+
         List<CatalogFile> allFiles = null;
         try {
             allFiles = catalog.getAllFiles(this.currentUserId);
             ui.updateAllFiles(allFiles);
         } catch (RejectedException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRejectedExceptionNotification(ex.getMessage());
         } catch (RemoteException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRemoteExceptionNotification(ex.getMessage());
         }
 
         return allFiles;
@@ -55,14 +58,18 @@ public class CatalogClientImp implements CatalogClient {
 
     @Override
     public List<CatalogFile> getMyFiles() {
+        if (catalog == null) {
+            return null;
+        }
+
         List<CatalogFile> myFiles = null;
         try {
             myFiles = catalog.getMyFiles(this.currentUserId);
             ui.updateMyFiles(myFiles);
         } catch (RejectedException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRejectedExceptionNotification(ex.getMessage());
         } catch (RemoteException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRemoteExceptionNotification(ex.getMessage());
         }
 
         return myFiles;
@@ -70,15 +77,23 @@ public class CatalogClientImp implements CatalogClient {
 
     @Override
     public byte[] downloadFile(CatalogFile selectedFile) {
+        if (catalog == null) {
+            return null;
+        }
+
+        if (selectedFile == null) {
+            return null;
+        }
+
         byte[] downloadedFile = null;
 
         try {
             downloadedFile = catalog.downloadFile(this.currentUserId, selectedFile.getId());
             ui.saveFile(downloadedFile);
         } catch (RejectedException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRejectedExceptionNotification(ex.getMessage());
         } catch (RemoteException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRemoteExceptionNotification(ex.getMessage());
         }
 
         return downloadedFile;
@@ -86,104 +101,130 @@ public class CatalogClientImp implements CatalogClient {
 
     @Override
     public void updateFile(CatalogFile selectedFile, byte[] file) {
+        if (catalog == null) {
+            return;
+        }
+
         try {
             catalog.updateFile(this.currentUserId, selectedFile.getId(), file);
             getAllFiles();
             getMyFiles();
         } catch (RejectedException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRejectedExceptionNotification(ex.getMessage());
         } catch (RemoteException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRemoteExceptionNotification(ex.getMessage());
         }
     }
 
     @Override
     public void uploadFile(String fileName, AccessPermission accessPerm, WriteReadPermission writeReadPerm, byte[] file) {
+        if (catalog == null) {
+            return;
+        }
+
         try {
             catalog.uploadFile(this.currentUserId, fileName, accessPerm, writeReadPerm, file);
             getMyFiles();
             getAllFiles();
         } catch (RejectedException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRejectedExceptionNotification(ex.getMessage());
         } catch (RemoteException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRemoteExceptionNotification(ex.getMessage());
         }
     }
 
     @Override
     public void deleteFile(CatalogFile selectedFile) {
+        if (catalog == null) {
+            return;
+        }
+
+        if (selectedFile == null) {
+            return;
+        }
+
         try {
             catalog.deleteFile(this.currentUserId, selectedFile.getId());
             getAllFiles();
             getMyFiles();
         } catch (RejectedException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRejectedExceptionNotification(ex.getMessage());
         } catch (RemoteException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRemoteExceptionNotification(ex.getMessage());
         }
-
     }
 
     @Override
     public void register(String userName, String pwd) {
         try {
-            catalog = (Catalog) Naming.lookup("//" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/" + CATALOG);
+            catalog = (Catalog) Naming.lookup("//" + host + ":" + port + "/" + catalogName);
             catalog.registerUser(userName, pwd);
         } catch (NotBoundException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRemoteExceptionNotification(ex.getMessage());
         } catch (MalformedURLException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRemoteExceptionNotification(ex.getMessage());
         } catch (RejectedException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRejectedExceptionNotification(ex.getMessage());
         } catch (RemoteException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRemoteExceptionNotification(ex.getMessage());
         }
     }
 
     @Override
-    public void unregister(String pwd) {
+    public void unregister() {
+        if (catalog == null) {
+            return;
+        }
+
         try {
+            //catalog.logout(this.currentUserId);
+            ui.updateAfterLogout();
             catalog.unregisterUser(currentUserId);
         } catch (RejectedException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRejectedExceptionNotification(ex.getMessage());
         } catch (RemoteException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRemoteExceptionNotification(ex.getMessage());
         }
     }
 
     @Override
     public void login(String userName, String pwd) {
         try {
-            catalog = (Catalog) Naming.lookup("//" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/" + CATALOG);
+            catalog = (Catalog) Naming.lookup("//" + host + ":" + port + "/" + catalogName);
             this.currentUserId = catalog.login(userName, pwd);
             getMyFiles();
             getAllFiles();
             ui.updateAfterLogin(userName);
         } catch (NotBoundException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRemoteExceptionNotification(ex.getMessage());
         } catch (MalformedURLException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRemoteExceptionNotification(ex.getMessage());
         } catch (AlreadyLoggedInException ex) {
+            ui.showRejectedExceptionNotification(ex.getMessage());
             this.currentUserId = ex.getId();
             getMyFiles();
             getAllFiles();
             ui.updateAfterLogin(userName);
         } catch (RejectedException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRejectedExceptionNotification(ex.getMessage());
         } catch (RemoteException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRemoteExceptionNotification(ex.getMessage());
         }
     }
 
     @Override
     public void logout() {
+        if (catalog == null) {
+            return;
+        }
+
         try {
             catalog.logout(this.currentUserId);
-            ui.updateAfterlogout();
+            ui.updateAfterLogout();
         } catch (RejectedException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRejectedExceptionNotification(ex.getMessage());
         } catch (RemoteException ex) {
-            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+            ui.showRemoteExceptionNotification(ex.getMessage());
         }
     }
 }

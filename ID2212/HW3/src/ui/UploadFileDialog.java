@@ -197,7 +197,8 @@ public class UploadFileDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        pack();
+        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        setBounds((screenSize.width-359)/2, (screenSize.height-295)/2, 359, 295);
     }// </editor-fold>//GEN-END:initComponents
 
 private void browseBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseBtnActionPerformed
@@ -235,7 +236,7 @@ private void okBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
         File file = new File(filePathTxt.getText());
 
         if (file.exists()) {
-            ((FileCatResponsiveUI) getParent()).uploadFile(fileNameTxt.getText(), access, writeRead, file);
+            ((CatalogResponsiveUI) getParent()).uploadFile(fileNameTxt.getText(), access, writeRead, file);
         }
     }
 
