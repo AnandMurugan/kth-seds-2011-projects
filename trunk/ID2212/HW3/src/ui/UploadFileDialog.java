@@ -117,6 +117,11 @@ public class UploadFileDialog extends javax.swing.JDialog {
         });
 
         cancelBtn.setText("Cancel");
+        cancelBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -244,6 +249,11 @@ private void readRdbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 private void writeRdbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeRdbtnActionPerformed
     writeRead = WriteReadPermission.WRITE;
 }//GEN-LAST:event_writeRdbtnActionPerformed
+
+private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtnActionPerformed
+    dispose();
+}//GEN-LAST:event_cancelBtnActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup accessPermGrp;
     private javax.swing.JButton browseBtn;
