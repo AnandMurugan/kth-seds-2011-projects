@@ -284,9 +284,7 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
     }
 
     @Override
-    public void updateFile(int id,
-            int fileId,
-            byte[] actualFile) throws RejectedException, RemoteException {
+    public void updateFile(int id, int fileId, byte[] actualFile) throws RejectedException, RemoteException {
         if (!loggedInUsers.contains(id)) {
             throw new RejectedException("Not logged in!");
         }
@@ -319,9 +317,12 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
             if (file == null) {
                 throw new RejectedException("File not found!");
             }
-            if ((file.getAccessPermission() == AccessPermission.PRIVATE && !file.getOwner().equals(user))
-                    || (file.getAccessPermission() == AccessPermission.PUBLIC && file.getWriteReadPermission() == WriteReadPermission.READ)) {
-                throw new RejectedException("Not allowed action!");
+
+            if (!file.getOwner().equals(user)) {
+                if ((file.getAccessPermission() == AccessPermission.PRIVATE)
+                        || (file.getAccessPermission() == AccessPermission.PUBLIC && file.getWriteReadPermission() == WriteReadPermission.READ)) {
+                    throw new RejectedException("Not allowed action!");
+                }
             }
 
             saveFile(actualFile, file.getFilePath());
@@ -329,7 +330,11 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
             em.createNamedQuery(CatalogFile.UPDATE_FILE_QUERY).
                     setParameter("id", fileId).
                     setParameter("newTime", new Date(System.currentTimeMillis())).
+                    setParameter("newSize", actualFile.length).
+                    //setHint("javax.persistence.cache.storeMode", "REFRESH").
                     executeUpdate();
+            //em.getEntityManagerFactory().getCache().evict(CatalogFile.class, file);
+            em.getEntityManagerFactory().getCache().evictAll();
         } catch (IOException ex) {
             throw new RejectedException("Bad file!");
         } finally {
@@ -361,6 +366,7 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
 
         List<CatalogFile> allFiles = em.createNamedQuery(CatalogFile.GET_AVAILABLE_FILES_QUERY, CatalogFile.class).
                 setParameter("owner", user).
+                setHint("javax.persistence.cache.storeMode", "REFRESH").
                 getResultList();
 
         return allFiles;
@@ -393,6 +399,7 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
 
         List<CatalogFile> userFiles = em.createNamedQuery(CatalogFile.GET_USER_FILES_QUERY, CatalogFile.class).
                 setParameter("owner", user).
+                setHint("javax.persistence.cache.storeMode", "REFRESH").
                 getResultList();
 
         return userFiles;

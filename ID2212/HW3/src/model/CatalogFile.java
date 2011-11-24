@@ -51,7 +51,8 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = CatalogFile.UPDATE_FILE_QUERY,
     query = "UPDATE CatalogFile f "
     + "SET "
-    + "f.lastModifiedTime = :newTime "
+    + "f.lastModifiedTime = :newTime, "
+    + "f.fileSize = :newSize " 
     + "WHERE f.id = :id"),
     @NamedQuery(name = CatalogFile.DELETE_FILE_QUERY,
     query = "DELETE "
