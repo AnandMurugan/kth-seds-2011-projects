@@ -41,9 +41,9 @@ public class FileTableModel extends AbstractTableModel {
 
         switch (column) {
             case 0:
-                return item.getName();
+                return item.getFileName();
             case 1:
-                return item.getSize();
+                return item.getFileSize();
             case 2:
                 return item.getOwner();
             case 3:
