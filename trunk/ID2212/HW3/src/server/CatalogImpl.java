@@ -31,6 +31,7 @@ import model.AccessPermission;
 import model.CatalogFile;
 import model.CatalogUser;
 import model.WriteReadPermission;
+import utils.AlreadyLoggedInException;
 import utils.RejectedException;
 
 /**
@@ -123,7 +124,7 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
         }
 
         if (loggedInUsers.add(user.getId()) == false) {
-            throw new RejectedException("Already logged in!");
+            throw new AlreadyLoggedInException("Already logged in!", user.getId());
         } else {
             return user.getId();
         }
