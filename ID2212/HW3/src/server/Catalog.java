@@ -26,13 +26,13 @@ public interface Catalog extends Remote {
 
     void logout(int id) throws RejectedException, RemoteException;
 
-    void uploadFile(int id, String name, AccessPermission access, WriteReadPermission writeRead, File file) throws RejectedException, RemoteException;
+    void uploadFile(int id, String name, AccessPermission access, WriteReadPermission writeRead, byte[] file) throws RejectedException, RemoteException;
 
-    File downloadFile(int id, int fileId) throws RejectedException, RemoteException;
+    byte[] downloadFile(int id, int fileId) throws RejectedException, RemoteException;
 
     void deleteFile(int id, int fileId) throws RejectedException, RemoteException;
 
-    void updateFile(int id, int fileId, File file) throws RejectedException, RemoteException;
+    void updateFile(int id, int fileId, byte[] file) throws RejectedException, RemoteException;
 
     List<CatalogFile> getAllFiles(int id) throws RejectedException, RemoteException;
 
