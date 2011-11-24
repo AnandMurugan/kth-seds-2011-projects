@@ -6,7 +6,9 @@ package ui;
 
 import java.io.File;
 import java.util.List;
+import model.AccessPermission;
 import model.CatalogFile;
+import model.WriteReadPermission;
 
 /**
  *
@@ -17,7 +19,7 @@ public interface FileCatResponsiveUI {
     void updateMyFiles(List<CatalogFile> files);
     void deleteMyFile(CatalogFile file);
     void deleteFile(CatalogFile file);
-    void uploadFile(CatalogFile file);
+    void uploadFile(String fileName, AccessPermission accessPerm, WriteReadPermission writeReadPerm, File file);
     void saveFile(File file);
     void login(String name, String pwd); // called by the login dialog
     void setUserName(String name);

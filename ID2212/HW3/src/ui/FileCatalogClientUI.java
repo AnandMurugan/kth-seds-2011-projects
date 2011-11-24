@@ -21,7 +21,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
+import model.AccessPermission;
 import model.CatalogFile;
+import model.WriteReadPermission;
 
 /**
  *
@@ -90,12 +92,22 @@ public class FileCatalogClientUI extends javax.swing.JFrame implements FileCatRe
         jScrollPane2.setViewportView(myFilesTable);
 
         myDownloadBtn.setText("Download");
+        myDownloadBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                myDownloadBtnActionPerformed(evt);
+            }
+        });
 
         myUpdateBtn.setText("Update");
 
         myDeleteBtn.setText("Delete");
 
         myUploadBtn.setText("Upload");
+        myUploadBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                myUploadBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -260,6 +272,14 @@ private void loginMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     (new ConnectDialog(this, true)).setVisible(true);
 }//GEN-LAST:event_loginMenuItemActionPerformed
 
+private void myUploadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myUploadBtnActionPerformed
+    (new UploadFileDialog(this, true)).setVisible(true);
+}//GEN-LAST:event_myUploadBtnActionPerformed
+
+private void myDownloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myDownloadBtnActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_myDownloadBtnActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -369,8 +389,19 @@ private void loginMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     }
 
     @Override
-    public void uploadFile(CatalogFile file) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void uploadFile(final String fileName, final AccessPermission accessPerm, final WriteReadPermission writeReadPerm, final File file) {
+        Runnable uploadFileTask = new Runnable() {
+            @Override
+            public void run() {
+                if (accessPerm == AccessPermission.PRIVATE){
+                client.uploadFile(fileName, accessPerm, null, file);
+                } else if (accessPerm == AccessPermission.PUBLIC){
+                    client.uploadFile(fileName, accessPerm, writeReadPerm, file);
+                }
+            }
+        };
+        
+        (new Thread(uploadFileTask)).start();
     }
 
     @Override
@@ -408,14 +439,14 @@ private void loginMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         int retrieval = saveFileDlg.showSaveDialog((Component) this);
 
         if (retrieval == JFileChooser.APPROVE_OPTION) {
-            String fileName = saveFileDlg.getSelectedFile().getName();
-
+            String fileName = saveFileDlg.getSelectedFile().getPath();
+            // TODO. Write file
         }
     }
 
     @Override
     public void setUserName(final String name) {
-         Runnable updateUI = new Runnable() {
+        Runnable updateUI = new Runnable() {
             @Override
             public void run() {
                 userNameLbl.setText(name);

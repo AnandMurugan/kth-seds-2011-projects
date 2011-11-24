@@ -6,11 +6,12 @@ package client;
 
 import java.io.File;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.AccessPermission;
 import model.CatalogFile;
+import model.WriteReadPermission;
 import server.Catalog;
 import ui.FileCatResponsiveUI;
 import utils.RejectedException;
@@ -28,7 +29,6 @@ public class CatalogClientImp implements CatalogClient {
     private boolean isLoggedIn;
     private FileCatResponsiveUI ui;
     private Catalog catalog;
-    List<CatalogFile> testList = new ArrayList<CatalogFile>();
 
     public CatalogClientImp(FileCatResponsiveUI ui) {
         this.ui = ui;
@@ -36,30 +36,46 @@ public class CatalogClientImp implements CatalogClient {
 
     @Override
     public List<CatalogFile> getAllFiles() {
-
-        //ui.updateAllFiles(catalog.getAllFiles());
-        ui.updateAllFiles(testList);
-        return testList;
+        List<CatalogFile> allFiles = null;
+        try {
+            allFiles = catalog.getAllFiles(this.currentUserId);
+            ui.updateAllFiles(allFiles);
+        } catch (RejectedException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RemoteException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return allFiles;
     }
 
     @Override
     public List<CatalogFile> getMyFiles() {
-        //ui.updateAllFiles(catalog.getMyFiles());
-        ui.updateMyFiles(testList);
-        return testList;
+        List<CatalogFile> myFiles = null;
+        try {
+            myFiles = catalog.getAllFiles(this.currentUserId);
+            ui.updateAllFiles(myFiles);
+        } catch (RejectedException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RemoteException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return myFiles;
     }
 
     @Override
     public File downloadFile(CatalogFile selectedFile) {
         File downloadedFile = null;
-        ui.saveFile(downloadedFile);
-        /*try {
-        downloadedFile = catalog.saveFile(selectedFile.getId(), this.currentUser);
-        ui.saveFile();
-        } catch(RejectedException ex){
+        try {
+            downloadedFile = catalog.downloadFile(this.currentUserId, selectedFile.getId());
+            ui.saveFile(downloadedFile);
+        } catch (RejectedException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RemoteException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
-        }*/
-
         return downloadedFile;
     }
 
@@ -75,8 +91,15 @@ public class CatalogClientImp implements CatalogClient {
     }
 
     @Override
-    public void uploadFile(CatalogFile fileDesc, File file) {
-        //catalog.uploadFile(this.currentUser, fileDesc, file);
+    public void uploadFile(String fileName, AccessPermission accessPerm, WriteReadPermission writeReadPerm, File file) {
+        try {
+            catalog.uploadFile(this.currentUserId, fileName, accessPerm, writeReadPerm, file);
+            getMyFiles();
+        } catch (RejectedException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RemoteException ex) {
+            Logger.getLogger(CatalogClientImp.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
