@@ -4,15 +4,11 @@
  */
 package server;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.AccessPermission;
-import model.WriteReadPermission;
-import utils.RejectedException;
 
 /**
  *
@@ -34,12 +30,6 @@ public class Server {
             Catalog catalogObj = new CatalogImpl();
             Naming.rebind(catalogName, catalogObj);
             System.out.println(catalogObj + " is ready.");
-
-            catalogObj.registerUser("Igor", "igorigor");
-            int id = catalogObj.login("Igor", "igorigor");
-            catalogObj.uploadFile(id, "TEST FILE", AccessPermission.PUBLIC, WriteReadPermission.WRITE, new File("d:/Programming/NetBeansProjects/ID2212_HW3/build.xml"));
-        } catch (RejectedException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MalformedURLException ex) {
