@@ -14,13 +14,13 @@ import model.WriteReadPermission;
  *
  * @author julio
  */
-public class FileTableModel extends AbstractTableModel {
+public class CatalogFileTableModel extends AbstractTableModel {
     List<CatalogFile> catalogFileList;
     String headerList[] = new String[]{
         "Name", "Size", "Owner", "Access", "WRITE/READ", "Modified"
     };
 
-    public FileTableModel(List<CatalogFile> list) {
+    public CatalogFileTableModel(List<CatalogFile> list) {
         catalogFileList = list;
     }
 
