@@ -731,6 +731,8 @@ private void logoutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GE
                 setTitle("File Catalog --- USER: " + userName);
                 unregisterMenuItem.setEnabled(true);
                 logoutMenuItem.setEnabled(true);
+                loginMenuItem.setEnabled(false);
+                registerMenuItem.setEnabled(false);
             }
         };
         try {
@@ -776,6 +778,8 @@ private void logoutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GE
                 setTitle("File Catalog");
                 unregisterMenuItem.setEnabled(false);
                 logoutMenuItem.setEnabled(false);
+                loginMenuItem.setEnabled(true);
+                registerMenuItem.setEnabled(true);
             }
         };
         try {
