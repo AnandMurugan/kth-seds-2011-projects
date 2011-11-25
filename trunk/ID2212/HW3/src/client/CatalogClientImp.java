@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import model.AccessPermission;
 import model.CatalogFile;
@@ -178,6 +179,8 @@ public class CatalogClientImp implements CatalogClient {
 
         try {
             //catalog.logout(this.currentUserId);
+            ui.updateAllFiles(new ArrayList<CatalogFile>());
+            ui.updateMyFiles(new ArrayList<CatalogFile>());
             ui.updateAfterLogout();
             catalog.unregisterUser(currentUserId);
         } catch (RejectedException ex) {
