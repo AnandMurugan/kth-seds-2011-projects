@@ -5,7 +5,6 @@
     <class>model.CatalogFile</class>
     <class>model.CatalogUser</class>
     <properties>
-      <property name="eclipselink.ddl-generation" value="create-tables"/>
       <property name="eclipselink.ddl-generation.output-mode" value="database"/>
       <property name="eclipselink.logging.level" value="INFO"/>
       <property name="javax.persistence.jdbc.password" value="student"/>

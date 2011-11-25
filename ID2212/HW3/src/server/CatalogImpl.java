@@ -47,7 +47,13 @@ public class CatalogImpl extends UnicastRemoteObject implements Catalog {
         EntityTransaction transaction = null;
         try {
             transaction = beginTransaction();
-            em.persist(UNKNOWN);
+            List<CatalogUser> users = em.createNamedQuery(CatalogUser.GET_USER_BY_NAME_QUERY, CatalogUser.class).
+                    setParameter("name", UNKNOWN.getName()).
+                    getResultList();
+            if (users.isEmpty()) {
+                em.persist(UNKNOWN);
+            }
+
         } finally {
             commitTransaction(transaction);
         }
