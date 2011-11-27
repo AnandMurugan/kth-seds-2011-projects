@@ -1,8 +1,8 @@
 package stegoStrategy;
 
-import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class RandomUnique {
 	private Random rand;
@@ -12,7 +12,7 @@ public class RandomUnique {
 	public RandomUnique(int seed, int range) {
 		rand = new Random(seed);
 		this.range = range;
-		alreadyGenerated = new HashSet<Integer>();
+		alreadyGenerated = new TreeSet<Integer>();
 	}
 	
 	public int nextInt() {
@@ -21,5 +21,12 @@ public class RandomUnique {
 			return next;
 		}
 		return nextInt();
+	}
+	
+	public Set<Integer> nextInt(int size) {
+		while(alreadyGenerated.size() < size) {
+			alreadyGenerated.add(rand.nextInt(range));
+		}
+		return alreadyGenerated;
 	}
 }

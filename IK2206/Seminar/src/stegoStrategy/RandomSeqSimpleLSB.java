@@ -21,36 +21,20 @@ public class RandomSeqSimpleLSB implements IStegoStrategy {
 		this.seed = seed;
 	}
 	
-	private Set<Integer> generateIndexes(int nrOfIndexes, int range) {
-		Set<Integer> indexValues = new TreeSet<Integer>();
-		
-		Random rand = new Random(seed);
-		while(indexValues.size() < nrOfIndexes/nrOfBits) {
-			indexValues.add(rand.nextInt(range));
-		}
-		
-		return indexValues;
-	}
-
 	public void encode(IContainerFile cover, IReadStegoFile stego) {
 		System.out.println("encoding...");
-		Set<Integer> indexValues = generateIndexes(stego.getSize(), cover.getSize());
-		int curIndex = 0;
+		RandomUnique randGen = new RandomUnique(seed, cover.getSize());
+		Set<Integer> indexValues = randGen.nextInt(stego.getSize()/nrOfBits);
 		Iterator<Integer> it = indexValues.iterator();
 		while(it.hasNext()) {
 			int nextIndex = it.next();
-			while(curIndex < nextIndex) {
-				cover.getNextByte();
-				curIndex++;
-			}
 			
-			byte coverByte = cover.getNextByte();
+			byte coverByte = cover.getByte(nextIndex);
 			byte stegoByte = stego.getNextBits(nrOfBits);
 			coverByte = (byte) (coverByte >> nrOfBits);
 			coverByte = (byte) (coverByte << nrOfBits);
 			coverByte = (byte) (coverByte | stegoByte);
-			cover.setByte(coverByte);
-			curIndex++;
+			cover.setByte(nextIndex, coverByte);
 		}
 		if(stego.hasMoreBits()) {
 			System.out.println("Couldn't encode the whole message, container was too small");
@@ -60,21 +44,16 @@ public class RandomSeqSimpleLSB implements IStegoStrategy {
 	public void decode(IContainerFile cover, IWriteStegoFile stego) {
 		System.out.println("decoding...");
 		
-		Set<Integer> indexValues = generateIndexes(stego.getSize(), cover.getSize());
-		int curIndex = 0;
+		RandomUnique randGen = new RandomUnique(seed, cover.getSize());
+		Set<Integer> indexValues = randGen.nextInt(stego.getSize()/nrOfBits);
 		Iterator<Integer> it = indexValues.iterator();
 		while(it.hasNext()) {
 			int nextIndex = it.next();
-			while(curIndex < nextIndex) {
-				cover.getNextByte();
-				curIndex++;
-			}
 		
-			byte coverByte = cover.getNextByte();
+			byte coverByte = cover.getByte(nextIndex);
 			short mask = ByteHelper.getMask(nrOfBits-1, nrOfBits);
 			byte stegoByte = (byte)(coverByte & mask);
 			stego.setNextBits(stegoByte, nrOfBits);
-			curIndex++;
 		}
 		if(stego.hasMoreBits()) {
 			System.out.println("Couldn't decode the whole message, container was too small");
