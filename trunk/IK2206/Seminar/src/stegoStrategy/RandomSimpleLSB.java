@@ -10,9 +10,10 @@ import stegoFile.ByteHelper;
 
 import common.IContainerFile;
 import common.IReadStegoFile;
+import common.IStegoStrategy;
 import common.IWriteStegoFile;
 
-public class RandomSimpleLSB {
+public class RandomSimpleLSB implements IStegoStrategy {
 	private int nrOfBits;
 	private int seed;
 	
