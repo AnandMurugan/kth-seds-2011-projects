@@ -113,10 +113,12 @@ public class BmpFileContainer implements IContainerFile {
         return imageByteSize;
     }
 
+    @Override
     public boolean hasMoreBytes() {
         return (imageByteSize > currentIndex);
     }
 
+    @Override
     public void saveFile(String path) {
         try {
             File outputfile = new File(path);
@@ -144,4 +146,71 @@ public class BmpFileContainer implements IContainerFile {
     //System.out.println("current byte: " + i);
     }
     } */
+
+    @Override
+    public byte getByte(int index) throws IndexOutOfBoundsException {
+        byte result = 0;
+        
+        if (index >= imageByteSize) {
+            throw new IndexOutOfBoundsException();
+        }
+        
+        int pixelNumber = index / 3;
+        int pixelColor = (index + 1) % 3;
+        
+        
+        int posY = pixelNumber / width;
+        int posX = pixelNumber % width;
+        
+        int pixelValue = image.getRGB(posX, posY);
+        
+        switch (pixelColor) {
+            case RED_COLOR:
+                result = (byte) ((pixelValue & 0x00ff0000) >> 16);
+                break; // red
+            case GREEN_COLOR:
+                result = (byte) ((pixelValue & 0x0000ff00) >> 8);
+                break; // green
+            case BLUE_COLOR:
+                result = (byte) ((pixelValue & 0x000000ff));
+                break; // blue
+        }
+        
+        return result;
+    }
+
+    @Override
+    public void setByte(int index, byte newByte) throws IndexOutOfBoundsException {
+        if (index >= imageByteSize) {
+            throw new IndexOutOfBoundsException();
+        }
+        
+        int pixelNumber = index / 3;
+        int pixelColor = (index + 1) % 3;
+        
+        
+        int posY = pixelNumber / width;
+        int posX = pixelNumber % width;
+        
+        
+        int oldPixelColor = image.getRGB(posX, posY);
+        int newPixelColor = oldPixelColor;
+        int newIntByte = (newByte & 0x000000FF);
+        switch (pixelColor) {
+            case RED_COLOR:
+            	newPixelColor = newPixelColor & (0xFF00FFFF);
+                newPixelColor = newPixelColor | (newIntByte << 16); // red
+                break;
+            case GREEN_COLOR:
+            	newPixelColor = newPixelColor & (0xFFFF00FF);
+            	newPixelColor = newPixelColor | (newIntByte << 8); // green
+                break;
+            case BLUE_COLOR:
+            	newPixelColor = newPixelColor & (0xFFFFFF00);
+                newPixelColor = newPixelColor | newIntByte; // blue
+                break;
+        }
+        
+        image.setRGB(posX, posY, newPixelColor);
+    }
 }
