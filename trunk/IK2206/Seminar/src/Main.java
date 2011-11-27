@@ -1,3 +1,9 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 import stegoFile.ReadStegoFileImpl;
 import stegoFile.WriteStegoFileImpl;
 import stegoStrategy.SimpleLSB;
@@ -11,8 +17,13 @@ import container.BmpFileContainer;
 public class Main {
 	public static void main(String args[]) {
 		Main m = new Main();
-		m.test1();
+		//m.test1();
 		m.test2();
+		/*try {
+			m.test3();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}*/
 
 	}
 
@@ -34,16 +45,60 @@ public class Main {
 		System.out.println("test2");
 		IContainerFile cover = new BmpFileContainer();
 		cover.loadFile("src/resources/test.bmp");
-		String secretMessage = "this is a secret message";
+		String secretMessage = "this is a secret message this is a secret message";
+		int size = secretMessage.length();
 		IReadStegoFile readStego = new ReadStegoFileImpl(secretMessage.getBytes());
 		IStegoStrategy lsb = new SimpleLSB(2);
 		lsb.encode(cover, readStego);
 		cover.saveFile("src/resources/testStego.bmp");
 		IContainerFile modifiedCover = new BmpFileContainer();
 		modifiedCover.loadFile("src/resources/testStego.bmp");
-		IWriteStegoFile writeStego = new WriteStegoFileImpl(secretMessage.length());
+		IWriteStegoFile writeStego = new WriteStegoFileImpl(size);
 		lsb.decode(modifiedCover, writeStego);
 		System.out.println(new String(writeStego.getMessage()));
+	}
 
+	public void test3() throws Exception {
+		File file = new File("source/resources/testFile.txt");
+		InputStream is;
+		is = new FileInputStream(file);
+
+		// Get the size of the file
+		long length = file.length();
+
+		if (length > Integer.MAX_VALUE) {
+			// File is too large
+		}
+
+		// Create the byte array to hold the data
+		byte[] bytes = new byte[(int)length];
+
+		// Read in the bytes
+		int offset = 0;
+		int numRead = 0;
+		while (offset < bytes.length
+				&& (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+			offset += numRead;
+		}
+
+		// Ensure all the bytes have been read in
+		if (offset < bytes.length) {
+			throw new IOException("Could not completely read file "+file.getName());
+		}
+
+		// Close the input stream and return bytes
+		is.close();
+
+		IContainerFile cover = new BmpFileContainer();
+		cover.loadFile("src/resources/test.bmp");
+		IReadStegoFile readStego = new ReadStegoFileImpl(bytes);
+		IStegoStrategy lsb = new SimpleLSB(2);
+		lsb.encode(cover, readStego);
+		cover.saveFile("src/resources/testStego.bmp");
+		IContainerFile modifiedCover = new BmpFileContainer();
+		modifiedCover.loadFile("src/resources/testStego.bmp");
+		IWriteStegoFile writeStego = new WriteStegoFileImpl(bytes.length);
+		lsb.decode(modifiedCover, writeStego);
+		System.out.println(new String(writeStego.getMessage()));
 	}
 }
