@@ -15,6 +15,6 @@ public interface IContainerFile {
     public void setByte(byte newByte);
     public int getSize();
     public boolean hasMoreBytes();
-    public void setByte(int index, byte newByte);
+    public void setByte(int index, byte newByte) throws IndexOutOfBoundsException;
     public byte getByte(int index) throws IndexOutOfBoundsException;
 }
