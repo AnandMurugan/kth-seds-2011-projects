@@ -64,4 +64,8 @@ public class WriteStegoFileImpl implements IWriteStegoFile{
 		}
 		return true;
 	}
+	
+	public int getSize() {
+		return maxByteIndex*8;
+	}
 }

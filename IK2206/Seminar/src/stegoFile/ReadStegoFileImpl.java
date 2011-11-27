@@ -37,6 +37,10 @@ public class ReadStegoFileImpl implements IReadStegoFile {
 		}
 		return 0;
 	}
+	
+	public int getSize() {
+		return messageBytes.length*8;
+	}
 
 	public boolean hasMoreBits() {
 		if(byteIndex >= messageBytes.length) {
