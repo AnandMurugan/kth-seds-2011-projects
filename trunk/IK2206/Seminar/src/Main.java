@@ -3,9 +3,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
 import stegoFile.ReadStegoFileImpl;
 import stegoFile.WriteStegoFileImpl;
+import stegoStrategy.RandomSeqSimpleLSB;
 import stegoStrategy.SimpleLSB;
 import common.IContainerFile;
 import common.IReadStegoFile;
@@ -19,11 +21,11 @@ public class Main {
 		Main m = new Main();
 		//m.test1();
 		m.test2();
-		/*try {
+		try {
 			m.test3();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}*/
+		}
 
 	}
 
@@ -59,7 +61,7 @@ public class Main {
 	}
 
 	public void test3() throws Exception {
-		File file = new File("source/resources/testFile.txt");
+		File file = new File("src/resources/testText.txt");
 		InputStream is;
 		is = new FileInputStream(file);
 
@@ -92,7 +94,7 @@ public class Main {
 		IContainerFile cover = new BmpFileContainer();
 		cover.loadFile("src/resources/test.bmp");
 		IReadStegoFile readStego = new ReadStegoFileImpl(bytes);
-		IStegoStrategy lsb = new SimpleLSB(2);
+		IStegoStrategy lsb = new RandomSeqSimpleLSB(4, 20);
 		lsb.encode(cover, readStego);
 		cover.saveFile("src/resources/testStego.bmp");
 		IContainerFile modifiedCover = new BmpFileContainer();
