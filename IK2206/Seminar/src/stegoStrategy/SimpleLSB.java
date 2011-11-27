@@ -9,7 +9,6 @@ import common.IWriteStegoFile;
 
 public class SimpleLSB implements IStegoStrategy {
 	int nrOfBits;
-	IWriteStegoFile st = new WriteStegoFileImpl(24);
 	
 	public SimpleLSB(int nrOfBits) {
 		this.nrOfBits = nrOfBits;
@@ -20,7 +19,6 @@ public class SimpleLSB implements IStegoStrategy {
 		while(cover.hasMoreBytes() && stego.hasMoreBits()) {
 			byte coverByte = cover.getNextByte();
 			byte stegoByte = stego.getNextBits(nrOfBits);
-			st.setNextBits(stegoByte, nrOfBits);
 			coverByte = (byte) (coverByte >> nrOfBits);
 			coverByte = (byte) (coverByte << nrOfBits);
 			coverByte = (byte) (coverByte | stegoByte);
