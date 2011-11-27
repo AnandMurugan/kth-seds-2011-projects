@@ -1,6 +1,6 @@
-import StegoFileImpl.ReadStegoFileImpl;
-import StegoFileImpl.WriteStegoFileImpl;
-import StegoStrategyImpl.SimpleLSB;
+import stegoFile.ReadStegoFileImpl;
+import stegoFile.WriteStegoFileImpl;
+import stegoStrategy.SimpleLSB;
 import common.IContainerFile;
 import common.IReadStegoFile;
 import common.IStegoStrategy;
