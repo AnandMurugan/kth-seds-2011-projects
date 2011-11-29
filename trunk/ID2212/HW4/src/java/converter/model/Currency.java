@@ -13,44 +13,42 @@ import javax.persistence.Id;
  * @author julio
  */
 public class Currency implements CurrencyDTO {
-private static final long serialVersionUID = 16247164401L;
+    private static final long serialVersionUID = 16247164401L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) 
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String symbol;
     private String country;
     private float dollarRate;
-    
-    
-    public Currency(){
-        
+
+    public Currency() {
     }
-    
-    public Currency(String symbol, String country, float dollarRate){
+
+    public Currency(String symbol, String country, float dollarRate) {
         this.symbol = symbol;
         this.country = country;
         this.dollarRate = dollarRate;
     }
-    
+
     @Override
-    public String getSymbol(){
+    public String getSymbol() {
         return symbol;
     }
-    
+
     @Override
-    public String getCountry(){
+    public String getCountry() {
         return country;
     }
-    
+
     @Override
-    public float getDollarRate(){
+    public float getDollarRate() {
         return dollarRate;
     }
-    
-    public void setDollarRate(float newRate){
+
+    public void setDollarRate(float newRate) {
         this.dollarRate = newRate;
     }
-    
+
     @Override
     public int hashCode() {
         return new Integer(id).hashCode();
@@ -69,5 +67,4 @@ private static final long serialVersionUID = 16247164401L;
     public String toString() {
         return "converter.model.Currency[id=" + id + "]";
     }
-    
 }
