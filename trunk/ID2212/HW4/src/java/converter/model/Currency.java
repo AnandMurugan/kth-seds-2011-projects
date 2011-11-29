@@ -4,6 +4,8 @@
  */
 package converter.model;
 
+import java.io.Serializable;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,7 +14,8 @@ import javax.persistence.Id;
  *
  * @author julio
  */
-public class Currency implements CurrencyDTO {
+@Entity
+public class Currency implements CurrencyDTO, Serializable {
     private static final long serialVersionUID = 16247164401L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,6 +31,10 @@ public class Currency implements CurrencyDTO {
         this.symbol = symbol;
         this.country = country;
         this.dollarRate = dollarRate;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override
