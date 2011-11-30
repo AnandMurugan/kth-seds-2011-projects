@@ -4,6 +4,8 @@
  */
 package converter.controller;
 
+import converter.model.CurrencyDTO;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 
@@ -13,7 +15,11 @@ import javax.ejb.LocalBean;
  */
 @Stateless
 @LocalBean
-public class CurrencyFacade {
+public class ConverterFacade {
+
+    public List<CurrencyDTO> getCurrencyList() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
 
     
     
