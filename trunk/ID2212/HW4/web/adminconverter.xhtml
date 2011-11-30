@@ -8,10 +8,10 @@
     <h:body>
 
         <p>
-            <h:outputLabel rendered="#{currencyManager.isLoggedIn == true}"  value="Welcome admin."/>
+            <h:outputLabel rendered="#{currencyManager.isLoggedIn}"  value="Welcome admin."/>
         </p>
 
-        <h:form rendered="#{currencyManager.isLoggedIn == true}">
+        <h:form rendered="#{currencyManager.isLoggedIn}">
             <p>
                 <h:outputLabel for="symbol"  value="Currency Symbol: "/>
                 <h:inputText id="symbol" value="#{currencyManager.symbol}"/>
@@ -31,14 +31,14 @@
 
         </h:form>
 
-        <h:form rendered="#{currencyManager.isLoggedIn != true}">
+        <h:form rendered="#{!currencyManager.isLoggedIn}">
             <h1>login</h1>
             <p>
-                <h:outputLabel for="userName" rendered="#{currencyManager.isLoggedIn != true}"  value="User name: "/>
+                <h:outputLabel for="userName" rendered="#{!currencyManager.isLoggedIn}"  value="User name: "/>
                 <h:inputText id="userName" value="#{currencyManager.userName}"/>
             </p>
             <p>
-                <h:outputLabel for="pwd" rendered="#{currencyManager.isLoggedIn != true}"  value="Password: "/>
+                <h:outputLabel for="pwd" rendered="#{!currencyManager.isLoggedIn}"  value="Password: "/>
                 <h:inputSecret id="pwd" value="#{currencyManager.password}"/>
             </p>
             <p>

@@ -31,6 +31,7 @@ public class ConverterManager implements Serializable {
     private CurrencyDTO toCurrency;
     private CurrencyDTO fromCurrency;
     private float amount;
+    private float result;
     private List<CurrencyDTO> currencyList;
     private Exception conversionFailure;
 
@@ -43,6 +44,14 @@ public class ConverterManager implements Serializable {
 
     public void setAmount(float amount) {
         this.amount = amount;
+    }
+
+    public float getResult() {
+        return result;
+    }
+
+    public void setResult(float result) {
+        this.result = result;
     }
 
     public CurrencyDTO getFromCurrency() {
@@ -96,14 +105,14 @@ public class ConverterManager implements Serializable {
         return conversionFailure;
     }
 
-    public float convert() {
+    public void convert() {
         startConversation();
         try {
             ExchangeRateDTO rate = converterFacade.getExchangeRate(fromCurrency, toCurrency);
-            return amount * rate.getRate();
+            result = amount * rate.getRate();
         } catch (ExchangeRateNotFoundException ex) {
             handleException(ex);
-            return Float.NaN;
+            result = Float.NaN;
         }
     }
 }
