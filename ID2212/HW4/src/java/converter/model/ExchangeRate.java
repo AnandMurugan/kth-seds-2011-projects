@@ -10,13 +10,25 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  *
  * @author Igor
  */
+@NamedQueries({
+    @NamedQuery(name = ExchangeRate.GET_EXCHANGE_RATE_REQUEST,
+    query = "SELECT r "
+    + "FROM ExchangeRate r "
+    + "WHERE "
+    + "(r.fromCurrency = :from) "
+    + "AND "
+    + "(r.toCurrency = :to)")
+})
 @Entity
-public class ExchangeRate implements Serializable {
+public class ExchangeRate implements ExchangeRateDTO, Serializable {
+    public static final String GET_EXCHANGE_RATE_REQUEST = "ExchangeRate_getExchangeRate";
     private static final long serialVersionUID = 123L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -48,6 +60,7 @@ public class ExchangeRate implements Serializable {
         return toCurrency;
     }
 
+    @Override
     public float getRate() {
         return rate;
     }
