@@ -16,35 +16,55 @@
                 </h3>
             </p>
 
-            <p>
-                <h:outputLabel for="fromList" value="From:" />
-                <h:selectOneMenu id="fromList" value="#{converter.fromCurrency}" >
-                    <f:selectItems value="#{converter.currencyList}" />
-                </h:selectOneMenu> 
-            </p>
+            <table>
+                <tr>
+                    <td>
+                        <h:outputLabel for="fromList" value="From:" />
+                    </td>
+                    <td>
+                        <h:selectOneMenu id="fromList" value="#{converter.fromCurrencyStr}">
+                            <f:selectItems value="#{converter.currencyList}" />
+                        </h:selectOneMenu> 
+                    </td>
+                </tr>
 
-            <p>
-                <h:outputLabel for="toList" value="To:" />
-                <h:selectOneMenu id="toList" value="#{converter.toCurrency}" >
-                    <f:selectItems value="#{converter.currencyList}" />
-                </h:selectOneMenu> 
-            </p>
+                <tr>
+                    <td>
+                        <h:outputLabel for="toList" value="To:" />
+                    </td>
+                    <td>
+                        <h:selectOneMenu id="toList" value="#{converter.toCurrencyStr}">
+                            <f:selectItems value="#{converter.currencyList}" />
+                        </h:selectOneMenu> 
+                    </td>
+                </tr>
 
-            <p>
-                <h:outputLabel for="amount" value="Amount:"/>
-                <h:inputText id="amount" value="#{converter.amount}" validatorMessage="Amount should be more than 0!">
-                    <f:validateLongRange minimum="0" />
-                </h:inputText>
-            </p>
+                <tr>
+                    <td>
+                        <h:outputLabel for="amount" value="Amount:"/>
+                    </td>
+                    <td>
+                        <h:inputText id="amount" value="#{converter.amount}" validatorMessage="Amount should be more than 0!">
+                            <f:validateLongRange minimum="0" />
+                        </h:inputText>
+                    </td>
+                </tr>
 
-            <p>
-                <h:commandButton value="Convert" action="#{converter.convert}"/>
-            </p>
+                <tr>
+                    <td>
+                        <h:commandButton value="Convert" action="#{converter.convert}"/>
+                    </td>
+                </tr>
 
-            <p>
-                <h:outputLabel for="result" value="Result:"/>
-                <h:outputText id="result" value="#{converter.result}" />
-            </p>
+                <tr>
+                    <td>
+                        <h:outputLabel for="result" value="Result:"/>
+                    </td>
+                    <td>
+                        <h:outputText id="result" value="#{converter.result}" />
+                    </td>
+                </tr>
+            </table>
         </h:form>        
     </h:body>
 </html>
