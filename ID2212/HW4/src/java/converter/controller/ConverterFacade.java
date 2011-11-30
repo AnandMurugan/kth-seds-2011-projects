@@ -26,25 +26,25 @@ public class ConverterFacade {
     private EntityManager em;
 
     public List<CurrencyDTO> getCurrencyList() {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return em.createNamedQuery(Currency.GET_ALL_CURRENCIES, CurrencyDTO.class).
+                getResultList();
     }
 
     public ExchangeRateDTO getExchangeRate(CurrencyDTO fromCurrency, CurrencyDTO toCurrency) throws ExchangeRateNotFoundException {
-        List<ExchangeRate> resList = em.createNamedQuery(ExchangeRate.GET_EXCHANGE_RATE_REQUEST, ExchangeRate.class).
+        List<ExchangeRateDTO> resList = em.createNamedQuery(ExchangeRate.GET_EXCHANGE_RATE_REQUEST, ExchangeRateDTO.class).
                 setParameter("from", fromCurrency).
                 setParameter("from", fromCurrency).
                 getResultList();
         if (resList.isEmpty()) {
             throw new ExchangeRateNotFoundException(fromCurrency, toCurrency);
         } else {
-            return (ExchangeRateDTO) resList.get(0);
+            return resList.get(0);
         }
     }
 
-    public CurrencyDTO createCurrency(String symbol, String country, String name) {
+    public void createCurrency(String symbol, String country, String name) {
         Currency newCurrency = new Currency(symbol, country, name);
         em.persist(newCurrency);
-        return newCurrency;
     }
 
     public boolean login(String userId, String pwd) {
