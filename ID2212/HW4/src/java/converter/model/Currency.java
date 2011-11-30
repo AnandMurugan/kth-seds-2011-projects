@@ -76,6 +76,6 @@ public class Currency implements CurrencyDTO, Serializable {
 
     @Override
     public String toString() {
-        return "converter.model.Currency[id=" + id + "]";
+        return name + " (" + symbol + ")";
     }
 }
