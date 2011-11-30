@@ -22,17 +22,18 @@ public class Currency implements CurrencyDTO, Serializable {
     private int id;
     private String symbol;
     private String country;
-    private float dollarRate;
+    private String name;
 
     public Currency() {
     }
 
-    public Currency(String symbol, String country, float dollarRate) {
+    public Currency(String symbol, String country, String name) {
         this.symbol = symbol;
         this.country = country;
-        this.dollarRate = dollarRate;
+        this.name = name;
     }
 
+    @Override
     public int getId() {
         return id;
     }
@@ -47,13 +48,8 @@ public class Currency implements CurrencyDTO, Serializable {
         return country;
     }
 
-    @Override
-    public float getDollarRate() {
-        return dollarRate;
-    }
-
-    public void setDollarRate(float newRate) {
-        this.dollarRate = newRate;
+    public String getName() {
+        return name;
     }
 
     @Override

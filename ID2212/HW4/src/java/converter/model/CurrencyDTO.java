@@ -9,10 +9,9 @@ package converter.model;
  * @author julio
  */
 public interface CurrencyDTO {
-    
+    int getId();
+
     String getSymbol();
-    
-    float getDollarRate();
-    
+
     String getCountry();
 }
