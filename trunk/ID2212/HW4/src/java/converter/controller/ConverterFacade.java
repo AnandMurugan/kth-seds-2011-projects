@@ -26,11 +26,19 @@ public class ConverterFacade {
     private EntityManager em;
 
     public List<CurrencyDTO> getCurrencyList() {
-        return em.createNamedQuery(Currency.GET_ALL_CURRENCIES, CurrencyDTO.class).
+        return em.createNamedQuery(Currency.GET_ALL_CURRENCIES_REQUEST, CurrencyDTO.class).
                 getResultList();
     }
 
-    public ExchangeRateDTO getExchangeRate(CurrencyDTO fromCurrency, CurrencyDTO toCurrency) throws ExchangeRateNotFoundException {
+    public ExchangeRateDTO getExchangeRate(String fromCurrencySymbolStr, String toCurrencySymbolStr) throws ExchangeRateNotFoundException {
+        Currency toCurrency = em.createNamedQuery(Currency.GET_CURRENCY_BY_SYMBOL_REQUEST, Currency.class).
+                setParameter("symbol", toCurrencySymbolStr).
+                getSingleResult();
+
+        Currency fromCurrency = em.createNamedQuery(Currency.GET_CURRENCY_BY_SYMBOL_REQUEST, Currency.class).
+                setParameter("symbol", fromCurrencySymbolStr).
+                getSingleResult();
+
         List<ExchangeRateDTO> resList = em.createNamedQuery(ExchangeRate.GET_EXCHANGE_RATE_REQUEST, ExchangeRateDTO.class).
                 setParameter("from", fromCurrency).
                 setParameter("to", toCurrency).

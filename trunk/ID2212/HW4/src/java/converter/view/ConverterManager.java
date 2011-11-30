@@ -10,6 +10,7 @@ import converter.model.ExchangeRateDTO;
 import converter.model.ExchangeRateNotFoundException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.StringTokenizer;
 import javax.ejb.EJB;
 import javax.enterprise.context.Conversation;
 import javax.inject.Named;
@@ -28,8 +29,8 @@ public class ConverterManager implements Serializable {
     private ConverterFacade converterFacade;
     @Inject
     private Conversation conversation;
-    private CurrencyDTO toCurrency;
-    private CurrencyDTO fromCurrency;
+    private String toCurrencyStr;
+    private String fromCurrencyStr;
     private float amount;
     private float result;
     private List<CurrencyDTO> currencyList;
@@ -54,20 +55,20 @@ public class ConverterManager implements Serializable {
         this.result = result;
     }
 
-    public CurrencyDTO getFromCurrency() {
-        return fromCurrency;
+    public String getFromCurrencyStr() {
+        return fromCurrencyStr;
     }
 
-    public void setFromCurrency(CurrencyDTO fromCurrency) {
-        this.fromCurrency = fromCurrency;
+    public void setFromCurrencyStr(String fromCurrency) {
+        this.fromCurrencyStr = fromCurrency;
     }
 
-    public CurrencyDTO getToCurrency() {
-        return toCurrency;
+    public String getToCurrencyStr() {
+        return toCurrencyStr;
     }
 
-    public void setToCurrency(CurrencyDTO toCurrency) {
-        this.toCurrency = toCurrency;
+    public void setToCurrencyStr(String toCurrency) {
+        this.toCurrencyStr = toCurrency;
     }
 
     public boolean isSuccess() {
@@ -108,11 +109,19 @@ public class ConverterManager implements Serializable {
     public void convert() {
         startConversation();
         try {
-            ExchangeRateDTO rate = converterFacade.getExchangeRate(fromCurrency, toCurrency);
+            ExchangeRateDTO rate = converterFacade.getExchangeRate(getCurrencySymbol(fromCurrencyStr), getCurrencySymbol(toCurrencyStr));
             result = amount * rate.getRate();
         } catch (ExchangeRateNotFoundException ex) {
             handleException(ex);
             result = Float.NaN;
         }
+    }
+
+    private String getCurrencySymbol(String value) {
+        StringTokenizer st = new StringTokenizer(value, "()");
+        st.nextToken();
+        String symbol = st.nextToken().trim();
+
+        return symbol;
     }
 }

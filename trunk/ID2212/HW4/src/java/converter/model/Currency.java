@@ -17,13 +17,18 @@ import javax.persistence.NamedQuery;
  * @author julio
  */
 @NamedQueries({
-    @NamedQuery(name = Currency.GET_ALL_CURRENCIES,
+    @NamedQuery(name = Currency.GET_ALL_CURRENCIES_REQUEST,
     query = "SELECT c "
-    + "FROM Currency c")
+    + "FROM Currency c"),
+    @NamedQuery(name = Currency.GET_CURRENCY_BY_SYMBOL_REQUEST,
+    query = "SELECT c "
+    + "FROM Currency c "
+    + "WHERE c.symbol = :symbol")
 })
 @Entity
 public class Currency implements CurrencyDTO, Serializable {
-    public static final String GET_ALL_CURRENCIES = "Currency_getAllCurrencies";
+    public static final String GET_ALL_CURRENCIES_REQUEST = "Currency_getAllCurrencies";
+    public static final String GET_CURRENCY_BY_SYMBOL_REQUEST = "Currency_getCurrencyBySymbol";
     private static final long serialVersionUID = 16247164401L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
