@@ -33,7 +33,7 @@ public class ConverterFacade {
     public ExchangeRateDTO getExchangeRate(CurrencyDTO fromCurrency, CurrencyDTO toCurrency) throws ExchangeRateNotFoundException {
         List<ExchangeRateDTO> resList = em.createNamedQuery(ExchangeRate.GET_EXCHANGE_RATE_REQUEST, ExchangeRateDTO.class).
                 setParameter("from", fromCurrency).
-                setParameter("from", fromCurrency).
+                setParameter("to", toCurrency).
                 getResultList();
         if (resList.isEmpty()) {
             throw new ExchangeRateNotFoundException(fromCurrency, toCurrency);

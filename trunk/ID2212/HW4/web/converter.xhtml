@@ -1,18 +1,51 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
     <h:head>
         <title>Currency Converter</title>
     </h:head>
     <h:body>
-        <h1>please select the currencies conversion from the list</h1>
-        <h:outputLabel for="convertResult" rendered="{acctManager.currentAcct != null}"  value="result is: "/>
-        <h:outputText id="convertResult" value="{acctManager.currentAcct.acctNo}"/>
-        <p>
-            <h:inputText id="searchedAcct" value="{acctManager.searchedAcct}"/>
-        </p>
-        
+        <h1>Currency Converter</h1>
+        <h:form>
+            <p>
+                <h3 style="color: red">
+                    <h:outputText value="#{converter.exception.message}" rendered="#{!converter.success}" />
+                </h3>
+            </p>
+
+            <p>
+                <h:outputLabel for="fromList" value="From:" />
+                <h:selectOneMenu id="fromList" value="#{converter.fromCurrency}" >
+                    <f:selectItems value="#{converter.currencyList}" />
+                </h:selectOneMenu> 
+            </p>
+
+            <p>
+                <h:outputLabel for="toList" value="To:" />
+                <h:selectOneMenu id="toList" value="#{converter.toCurrency}" >
+                    <f:selectItems value="#{converter.currencyList}" />
+                </h:selectOneMenu> 
+            </p>
+
+            <p>
+                <h:outputLabel for="amount" value="Amount:"/>
+                <h:inputText id="amount" value="#{converter.amount}" validatorMessage="Amount should be more than 0!">
+                    <f:validateLongRange minimum="0" />
+                </h:inputText>
+            </p>
+
+            <p>
+                <h:commandButton value="Convert" action="#{converter.convert}"/>
+            </p>
+
+            <p>
+                <h:outputLabel for="result" value="Result:"/>
+                <h:outputText id="result" value="#{converter.result}" />
+            </p>
+        </h:form>        
     </h:body>
 </html>
 
