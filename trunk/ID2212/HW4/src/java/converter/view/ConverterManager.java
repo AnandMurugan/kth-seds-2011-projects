@@ -6,8 +6,12 @@ package converter.view;
 
 import converter.controller.ConverterFacade;
 import converter.model.CurrencyDTO;
+import converter.model.ExchangeRateDTO;
+import converter.model.ExchangeRateNotFoundException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.enterprise.context.Conversation;
 import javax.inject.Named;
@@ -29,8 +33,8 @@ public class ConverterManager implements Serializable {
     private CurrencyDTO toCurrency;
     private CurrencyDTO fromCurrency;
     private float amount;
-    private boolean success;
     private List<CurrencyDTO> currencyList;
+    private Exception conversionFailure;
 
     public ConverterManager() {
     }
@@ -60,11 +64,7 @@ public class ConverterManager implements Serializable {
     }
 
     public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
+        return conversionFailure == null;
     }
 
     public List<CurrencyDTO> getCurrencyList() {
@@ -85,6 +85,27 @@ public class ConverterManager implements Serializable {
     private void stopConversation() {
         if (!conversation.isTransient()) {
             conversation.end();
+        }
+    }
+
+    private void handleException(Exception e) {
+        stopConversation();
+        e.printStackTrace(System.err);
+        conversionFailure = e;
+    }
+
+    public Exception getException() {
+        return conversionFailure;
+    }
+
+    public float convert() {
+        startConversation();
+        try {
+            ExchangeRateDTO rate = converterFacade.getExchangeRate(fromCurrency, toCurrency);
+            return amount * rate.getRate();
+        } catch (ExchangeRateNotFoundException ex) {
+            handleException(ex);
+            return 0;
         }
     }
 }
