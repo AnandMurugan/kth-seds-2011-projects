@@ -9,13 +9,21 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  *
  * @author julio
  */
+@NamedQueries({
+    @NamedQuery(name = Currency.GET_ALL_CURRENCIES,
+    query = "SELECT c "
+    + "FROM Currency c")
+})
 @Entity
 public class Currency implements CurrencyDTO, Serializable {
+    public static final String GET_ALL_CURRENCIES = "Currency_getAllCurrencies";
     private static final long serialVersionUID = 16247164401L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

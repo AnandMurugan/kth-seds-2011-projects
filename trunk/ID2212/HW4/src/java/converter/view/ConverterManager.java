@@ -10,8 +10,6 @@ import converter.model.ExchangeRateDTO;
 import converter.model.ExchangeRateNotFoundException;
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.enterprise.context.Conversation;
 import javax.inject.Named;
@@ -105,7 +103,7 @@ public class ConverterManager implements Serializable {
             return amount * rate.getRate();
         } catch (ExchangeRateNotFoundException ex) {
             handleException(ex);
-            return 0;
+            return Float.NaN;
         }
     }
 }
