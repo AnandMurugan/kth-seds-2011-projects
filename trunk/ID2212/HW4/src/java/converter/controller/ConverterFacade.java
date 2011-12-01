@@ -4,16 +4,20 @@
  */
 package converter.controller;
 
+import converter.model.ConverterUser;
+import converter.model.ConverterUserDTO;
 import converter.model.Currency;
 import converter.model.CurrencyDTO;
 import converter.model.ExchangeRate;
 import converter.model.ExchangeRateNotFoundException;
+import converter.model.NotUserFoundException;
 import java.util.List;
-import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 /**
@@ -105,11 +109,14 @@ public class ConverterFacade {
         }
     }
 
-    public boolean login(String userId, String pwd) {
-        boolean valid = false;
-        if (userId.equals("test") && pwd.equals("test")) {
-            valid = true;
+    public boolean login(String userId, String pwd) throws NotUserFoundException {
+
+        try {
+            boolean valid = false;
+            ConverterUserDTO requestedUser = em.createNamedQuery(ConverterUser.GET_USER_BY_NAME_PASSWORD_REQUEST, ConverterUserDTO.class).setParameter("userName", userId).setParameter("password", pwd).getSingleResult();
+            return true;
+        } catch (NoResultException ex) {
+            throw new NotUserFoundException(userId);
         }
-        return valid;
     }
 }
