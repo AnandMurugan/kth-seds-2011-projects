@@ -1,9 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
     <h:head>
-        <title>Currency Converter</title>
+        <title>Currency Converter Admin</title>
     </h:head>
     <h:body>
 
@@ -12,6 +13,7 @@
         </p>
 
         <h:form rendered="#{currencyManager.isLoggedIn}">
+            <h3>Add new currency</h3>
             <p>
                 <h:outputLabel for="symbol"  value="Currency Symbol: "/>
                 <h:inputText id="symbol" value="#{currencyManager.symbol}"/>
@@ -23,6 +25,34 @@
             <p>
                 <h:outputLabel for="name" value="Currency name: "/>
                 <h:inputText id="name" value="#{currencyManager.currencyName}"/>
+            </p>
+            <p>
+                
+                <h:commandButton value="Submit" action="#{currencyManager.createCurrency}"/>
+            </p>
+
+
+        </h:form>
+
+        <h:form rendered="#{currencyManager.isLoggedIn == true}">
+            <h3>
+                Add currency rate
+            </h3>
+            <p>
+                <h:outputLabel for="from"  value="From Currency: "/>
+                <h:selectOneMenu>
+                    <f:selectItems value="#{currencyManager.currencies}" var="model" itemLabel="#{model.symbol}"/>
+                </h:selectOneMenu>
+            </p>
+            <p>
+                <h:outputLabel for="to" value="To Currency: "/>
+                <h:selectOneMenu >
+                    <f:selectItems value="#{currencyManager.currencies}" var="model" itemLabel="#{model.symbol}"/>
+                </h:selectOneMenu>
+            </p>
+            <p>
+                <h:outputLabel for="rate" value="Rate: "/>
+                <h:inputText id="rate" value="{currencyManager.rate}"/>
             </p>
             <p>
                 <h:commandButton value="Submit" action="#{currencyManager.createCurrency}"/>
