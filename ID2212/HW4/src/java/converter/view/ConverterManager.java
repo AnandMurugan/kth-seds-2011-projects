@@ -109,8 +109,7 @@ public class ConverterManager implements Serializable {
     public void convert() {
         startConversation();
         try {
-            ExchangeRateDTO rate = converterFacade.getExchangeRate(getCurrencySymbol(fromCurrencyStr), getCurrencySymbol(toCurrencyStr));
-            result = amount * rate.getRate();
+            result = converterFacade.convert(getCurrencySymbol(fromCurrencyStr), getCurrencySymbol(toCurrencyStr), amount);
         } catch (ExchangeRateNotFoundException ex) {
             handleException(ex);
             result = Float.NaN;

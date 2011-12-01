@@ -4,15 +4,16 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core">
     <h:head>
-        <title>Currency Converter Admin</title>
+        <title>Currency Converter Administration</title>
     </h:head>
     <h:body>
-
         <p>
-            <h:outputLabel rendered="#{currencyManager.isLoggedIn}"  value="Welcome admin."/>
+            <h:outputLabel rendered="#{currencyManager.loggedIn}"  value="Welcome, admin."/>
         </p>
+        
+        <a href="converter.xhtml">Back to converter</a>
 
-        <h:form rendered="#{currencyManager.isLoggedIn}">
+        <h:form rendered="#{currencyManager.loggedIn}">
             <h3>Add new currency</h3>
             <p>
                 <h:outputLabel for="symbol"  value="Currency Symbol: "/>
@@ -27,48 +28,45 @@
                 <h:inputText id="name" value="#{currencyManager.currencyName}"/>
             </p>
             <p>
-                
-                <h:commandButton value="Submit" action="#{currencyManager.createCurrency}"/>
+                <h:commandButton value="Create" action="#{currencyManager.createCurrency}"/>
             </p>
 
 
         </h:form>
 
-        <h:form rendered="#{currencyManager.isLoggedIn == true}">
+        <h:form rendered="#{currencyManager.loggedIn == true}">
             <h3>
                 Add currency rate
             </h3>
             <p>
                 <h:outputLabel for="from"  value="From Currency: "/>
-                <h:selectOneMenu>
-                    <f:selectItems value="#{currencyManager.currencies}" var="model" itemLabel="#{model.symbol}"/>
+                <h:selectOneMenu id ="from" value="#{converter.fromCurrencyStr}">
+                    <f:selectItems value="#{currencyManager.currencies}"/>
                 </h:selectOneMenu>
             </p>
             <p>
                 <h:outputLabel for="to" value="To Currency: "/>
-                <h:selectOneMenu >
-                    <f:selectItems value="#{currencyManager.currencies}" var="model" itemLabel="#{model.symbol}"/>
+                <h:selectOneMenu id="to" value="#{converter.toCurrencyStr}">
+                    <f:selectItems value="#{currencyManager.currencies}"/>
                 </h:selectOneMenu>
             </p>
             <p>
                 <h:outputLabel for="rate" value="Rate: "/>
-                <h:inputText id="rate" value="{currencyManager.rate}"/>
+                <h:inputText id="rate" value="#{currencyManager.rate}"/>
             </p>
             <p>
-                <h:commandButton value="Submit" action="#{currencyManager.createCurrency}"/>
+                <h:commandButton value="Change" action="#{currencyManager.changeRate}"/>
             </p>
-
-
         </h:form>
 
-        <h:form rendered="#{!currencyManager.isLoggedIn}">
+        <h:form rendered="#{!currencyManager.loggedIn}">
             <h1>login</h1>
             <p>
-                <h:outputLabel for="userName" rendered="#{!currencyManager.isLoggedIn}"  value="User name: "/>
+                <h:outputLabel for="userName" rendered="#{!currencyManager.loggedIn}"  value="User name: "/>
                 <h:inputText id="userName" value="#{currencyManager.userName}"/>
             </p>
             <p>
-                <h:outputLabel for="pwd" rendered="#{!currencyManager.isLoggedIn}"  value="Password: "/>
+                <h:outputLabel for="pwd" rendered="#{!currencyManager.loggedIn}"  value="Password: "/>
                 <h:inputSecret id="pwd" value="#{currencyManager.password}"/>
             </p>
             <p>
