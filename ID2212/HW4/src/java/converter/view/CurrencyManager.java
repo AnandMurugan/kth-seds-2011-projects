@@ -168,6 +168,7 @@ public class CurrencyManager implements Serializable {
         try {
             startConversation();
             loggedIn = converterFacade.login(userName, password);
+            failure = null;
         } catch (Exception e) {
             loggedIn  = false;
             handleException(e);
