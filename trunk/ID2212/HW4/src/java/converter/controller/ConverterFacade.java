@@ -76,6 +76,9 @@ public class ConverterFacade {
     public void createCurrency(String symbol, String country, String name) {
         Currency newCurrency = new Currency(symbol, country, name);
         em.persist(newCurrency);
+
+        ExchangeRate newExchangeRate = new ExchangeRate(newCurrency, newCurrency, 1.0f);
+        em.persist(newExchangeRate);
     }
 
     public void changeExchangeRate(String fromCurrencySymbolStr, String toCurrencySymbolStr, float rate) {
