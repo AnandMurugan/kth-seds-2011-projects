@@ -13,7 +13,9 @@
             <h:commandLink id="link" action="goToAdminPage">
                 <h:outputText value="Edit currencies and exchange rates"/>
             </h:commandLink>
+        </h:form>
 
+        <h:form>
             <p>
                 <h3 style="color: red">
                     <h:outputText value="#{converter.exception.message}" rendered="#{!converter.success}" />
@@ -48,7 +50,8 @@
                         <h:outputLabel for="amount" value="Amount:"/>
                     </td>
                     <td>
-                        <h:inputText id="amount" value="#{converter.amount}" validatorMessage="Amount should be more than 0!">
+                        <h:inputText id="amount" value="#{converter.amount}" validatorMessage="Amount should be more than 0!">                            
+                            <!--<f:validateRegex pattern="+?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?"/>-->
                             <f:validateLongRange minimum="0" />
                         </h:inputText>
                     </td>
