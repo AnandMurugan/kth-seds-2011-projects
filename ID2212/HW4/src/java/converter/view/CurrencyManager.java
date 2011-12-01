@@ -43,6 +43,22 @@ public class CurrencyManager implements Serializable {
     public CurrencyManager() {
     }
 
+    public String getFromCurrencyStr() {
+        return fromCurrencyStr;
+    }
+
+    public void setFromCurrencyStr(String fromCurrencyStr) {
+        this.fromCurrencyStr = fromCurrencyStr;
+    }
+
+    public String getToCurrencyStr() {
+        return toCurrencyStr;
+    }
+
+    public void setToCurrencyStr(String toCurrencyStr) {
+        this.toCurrencyStr = toCurrencyStr;
+    }
+
     public String getCountry() {
         return country;
     }
@@ -98,22 +114,6 @@ public class CurrencyManager implements Serializable {
 
     public void setCurrencies(List<CurrencyDTO> currencies) {
         this.currencies = currencies;
-    }
-
-    public String getFromCurrencyStr() {
-        return fromCurrencyStr;
-    }
-
-    public void setFromCurrencyStr(String fromCurrencyStr) {
-        this.fromCurrencyStr = fromCurrencyStr;
-    }
-
-    public String getToCurrencyStr() {
-        return toCurrencyStr;
-    }
-
-    public void setToCurrencyStr(String toCurrencyStr) {
-        this.toCurrencyStr = toCurrencyStr;
     }
 
     public float getRate() {

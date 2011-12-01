@@ -14,7 +14,6 @@ import javax.ejb.LocalBean;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 
 /**
@@ -75,15 +74,8 @@ public class ConverterFacade {
     }
 
     public void createCurrency(String symbol, String country, String name) {
-//        EntityTransaction transaction = null;
-//        try {
-//            transaction = beginTransaction();
-
         Currency newCurrency = new Currency(symbol, country, name);
         em.persist(newCurrency);
-//        } finally {
-//            commitTransaction(transaction);
-//        }
     }
 
     public void changeExchangeRate(String fromCurrencySymbolStr, String toCurrencySymbolStr, float rate) {
@@ -99,9 +91,6 @@ public class ConverterFacade {
                 setParameter("from", fromCurrency).
                 setParameter("to", toCurrency).
                 getResultList();
-//        EntityTransaction transaction = null;
-//        try {
-//            transaction = beginTransaction();
 
         if (resList.isEmpty()) {
             ExchangeRate newEr = new ExchangeRate(fromCurrency, toCurrency, rate);
@@ -111,9 +100,6 @@ public class ConverterFacade {
             er.setRate(rate);
             em.merge(er);
         }
-//        } finally {
-//            commitTransaction(transaction);
-//        }
     }
 
     public boolean login(String userId, String pwd) {
@@ -121,19 +107,6 @@ public class ConverterFacade {
         if (userId.equals("test") && pwd.equals("test")) {
             valid = true;
         }
-        /*if (found == null) {
-        throw new EntityNotFoundException("No account with number " + acctNo);
-        }*/
         return valid;
-    }
-
-    private EntityTransaction beginTransaction() {
-        EntityTransaction transaction = em.getTransaction();
-        transaction.begin();
-        return transaction;
-    }
-
-    private void commitTransaction(EntityTransaction transaction) {
-        transaction.commit();
     }
 }

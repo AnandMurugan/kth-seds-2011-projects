@@ -25,10 +25,10 @@
                 <h3 style="color: red">
                     <c:choose>
                         <c:when test="#{currencyManager.exception.cause != null}">
-                            <h:outputText value="#{currencyManager.exception.cause.message}" rendered="#{!currencyManager.success}" />
+                            <h:outputText value="Error. Cause: #{currencyManager.exception.cause.message}" rendered="#{!currencyManager.success}" />
                         </c:when>
                         <c:otherwise>
-                            <h:outputText value="#{currencyManager.exception.message}" rendered="#{!currencyManager.success}" />
+                            <h:outputText value="Error: #{currencyManager.exception.message}" rendered="#{!currencyManager.success}" />
                         </c:otherwise>                            
                     </c:choose>
                 </h3>         
@@ -52,17 +52,17 @@
             </p>
         </h:form>
 
-        <h:form rendered="#{currencyManager.loggedIn == true}">
+        <h:form rendered="#{currencyManager.loggedIn}">
             <h3>Change exchange rate</h3>
             <p>
                 <h:outputLabel for="from"  value="From:"/>
-                <h:selectOneMenu id ="from" value="#{converter.fromCurrencyStr}">
+                <h:selectOneMenu id ="from" value="#{currencyManager.fromCurrencyStr}">
                     <f:selectItems value="#{currencyManager.currencies}"/>
                 </h:selectOneMenu>
             </p>
             <p>
                 <h:outputLabel for="to" value="To:"/>
-                <h:selectOneMenu id="to" value="#{converter.toCurrencyStr}">
+                <h:selectOneMenu id="to" value="#{currencyManager.toCurrencyStr}">
                     <f:selectItems value="#{currencyManager.currencies}"/>
                 </h:selectOneMenu>
             </p>
