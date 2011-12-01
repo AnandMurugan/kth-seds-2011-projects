@@ -14,13 +14,7 @@
             <h:commandLink id="link" action="goToConverterPage">
                 <h:outputText value="Go back to converter"/>
             </h:commandLink>
-        </h:form>
-
-        <h:form rendered="#{currencyManager.loggedIn}">
-            <p>
-                <h:outputLabel rendered="#{currencyManager.loggedIn}"  value="Welcome, admin."/>
-            </p>
-
+            
             <p>
                 <h3 style="color: red">
                     <c:choose>
@@ -33,7 +27,13 @@
                     </c:choose>
                 </h3>         
             </p>
+        </h:form>
 
+        <h:form rendered="#{currencyManager.loggedIn}">
+            <p>
+                <h:outputLabel rendered="#{currencyManager.loggedIn}"  value="Welcome, admin."/>
+            </p>
+            
             <h3>Add new currency</h3>
             <p>
                 <h:outputLabel for="symbol"  value="Currency symbol:"/>
