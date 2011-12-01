@@ -11,6 +11,8 @@ import converter.model.ExchangeRateNotFoundException;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
@@ -21,6 +23,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 @LocalBean
+@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class ConverterFacade {
     @PersistenceContext(unitName = "currencyPU")
     private EntityManager em;
@@ -72,15 +75,15 @@ public class ConverterFacade {
     }
 
     public void createCurrency(String symbol, String country, String name) {
-        EntityTransaction transaction = null;
-        try {
-            transaction = beginTransaction();
+//        EntityTransaction transaction = null;
+//        try {
+//            transaction = beginTransaction();
 
-            Currency newCurrency = new Currency(symbol, country, name);
-            em.persist(newCurrency);
-        } finally {
-            commitTransaction(transaction);
-        }
+        Currency newCurrency = new Currency(symbol, country, name);
+        em.persist(newCurrency);
+//        } finally {
+//            commitTransaction(transaction);
+//        }
     }
 
     public void changeExchangeRate(String fromCurrencySymbolStr, String toCurrencySymbolStr, float rate) {
@@ -96,21 +99,21 @@ public class ConverterFacade {
                 setParameter("from", fromCurrency).
                 setParameter("to", toCurrency).
                 getResultList();
-        EntityTransaction transaction = null;
-        try {
-            transaction = beginTransaction();
+//        EntityTransaction transaction = null;
+//        try {
+//            transaction = beginTransaction();
 
-            if (resList.isEmpty()) {
-                ExchangeRate newEr = new ExchangeRate(fromCurrency, toCurrency, rate);
-                em.persist(newEr);
-            } else {
-                ExchangeRate er = resList.get(0);
-                er.setRate(rate);
-                em.merge(er);
-            }
-        } finally {
-            commitTransaction(transaction);
+        if (resList.isEmpty()) {
+            ExchangeRate newEr = new ExchangeRate(fromCurrency, toCurrency, rate);
+            em.persist(newEr);
+        } else {
+            ExchangeRate er = resList.get(0);
+            er.setRate(rate);
+            em.merge(er);
         }
+//        } finally {
+//            commitTransaction(transaction);
+//        }
     }
 
     public boolean login(String userId, String pwd) {
