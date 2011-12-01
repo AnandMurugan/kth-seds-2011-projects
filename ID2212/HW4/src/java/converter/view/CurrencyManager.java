@@ -5,7 +5,9 @@
 package converter.view;
 
 import converter.controller.ConverterFacade;
+import converter.model.CurrencyDTO;
 import java.io.Serializable;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.enterprise.context.Conversation;
 import javax.inject.Named;
@@ -28,6 +30,8 @@ public class CurrencyManager implements Serializable {
     private boolean isLoggedIn;
     private String userName;
     private String password;
+    
+    
     private Exception transactionFailure;
     @Inject
     private Conversation conversation;
@@ -105,6 +109,10 @@ public class CurrencyManager implements Serializable {
     
     public void SetCurrencyname(String currencyName){
         this.currencyName = currencyName;
+    }
+    
+    public List<CurrencyDTO> getCurrencies(){
+        return converterFacade.getCurrencyList();
     }
     
     private void handleException(Exception e) {
