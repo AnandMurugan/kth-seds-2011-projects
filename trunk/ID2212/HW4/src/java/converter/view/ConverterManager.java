@@ -6,7 +6,6 @@ package converter.view;
 
 import converter.controller.ConverterFacade;
 import converter.model.CurrencyDTO;
-import converter.model.ExchangeRateDTO;
 import converter.model.ExchangeRateNotFoundException;
 import java.io.Serializable;
 import java.util.List;

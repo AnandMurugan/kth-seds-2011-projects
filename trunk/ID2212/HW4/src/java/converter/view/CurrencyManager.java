@@ -6,8 +6,6 @@ package converter.view;
 
 import converter.controller.ConverterFacade;
 import converter.model.CurrencyDTO;
-import converter.model.ExchangeRate;
-import converter.model.ExchangeRateNotFoundException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -126,6 +124,10 @@ public class CurrencyManager implements Serializable {
         this.rate = rate;
     }
 
+    public boolean isSuccess() {
+        return failure == null;
+    }
+
     private void startConversation() {
         if (conversation.isTransient()) {
             conversation.begin();
@@ -147,7 +149,11 @@ public class CurrencyManager implements Serializable {
     }
 
     public void changeRate() {
-        converterFacade.changeExchangeRate(getCurrencySymbol(fromCurrencyStr), getCurrencySymbol(toCurrencyStr), rate);
+        try {
+            converterFacade.changeExchangeRate(getCurrencySymbol(fromCurrencyStr), getCurrencySymbol(toCurrencyStr), rate);
+        } catch (Exception e) {
+            handleException(e);
+        }
     }
 
     private String getCurrencySymbol(String value) {
@@ -169,7 +175,7 @@ public class CurrencyManager implements Serializable {
     }
 
     private void handleException(Exception e) {
-        stopConversation();
+        //stopConversation();
         e.printStackTrace(System.err);
         failure = e;
     }

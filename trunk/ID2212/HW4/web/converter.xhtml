@@ -10,7 +10,10 @@
     <h:body>
         <h1>Currency Converter</h1>
         <h:form>
-            <a href="adminconverter.xhtml">Edit currencies and exchange rates</a>
+            <h:commandLink id="link" action="goToAdminPage">
+                <h:outputText value="Edit currencies and exchange rates"/>
+            </h:commandLink>
+
             <p>
                 <h3 style="color: red">
                     <h:outputText value="#{converter.exception.message}" rendered="#{!converter.success}" />

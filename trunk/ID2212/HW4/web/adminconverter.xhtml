@@ -7,51 +7,61 @@
         <title>Currency Converter Administration</title>
     </h:head>
     <h:body>
-        <p>
-            <h:outputLabel rendered="#{currencyManager.loggedIn}"  value="Welcome, admin."/>
-        </p>
-        
-        <a href="converter.xhtml">Back to converter</a>
+        <h1>Currency Converter Administration</h1>
+
+        <h:form>
+            <h:commandLink id="link" action="goToConverterPage">
+                <h:outputText value="Go back to converter"/>
+            </h:commandLink>
+        </h:form>
 
         <h:form rendered="#{currencyManager.loggedIn}">
+            <p>
+                <h:outputLabel rendered="#{currencyManager.loggedIn}"  value="Welcome, admin."/>
+            </p>
+
+
+
+            <p>
+                <h3 style="color: red">
+                    <h:outputText value="#{currencyManager.exception.message}" rendered="#{!currencyManager.success}" />
+                </h3>
+            </p>
+
             <h3>Add new currency</h3>
             <p>
-                <h:outputLabel for="symbol"  value="Currency Symbol: "/>
+                <h:outputLabel for="symbol"  value="Currency symbol:"/>
                 <h:inputText id="symbol" value="#{currencyManager.symbol}"/>
             </p>
             <p>
-                <h:outputLabel for="country" value="Currency Country: "/>
+                <h:outputLabel for="country" value="Currency country:"/>
                 <h:inputText id="country" value="#{currencyManager.country}"/>
             </p>
             <p>
-                <h:outputLabel for="name" value="Currency name: "/>
+                <h:outputLabel for="name" value="Currency name:"/>
                 <h:inputText id="name" value="#{currencyManager.currencyName}"/>
             </p>
             <p>
                 <h:commandButton value="Create" action="#{currencyManager.createCurrency}"/>
             </p>
-
-
         </h:form>
 
         <h:form rendered="#{currencyManager.loggedIn == true}">
-            <h3>
-                Add currency rate
-            </h3>
+            <h3>Change exchange rate</h3>
             <p>
-                <h:outputLabel for="from"  value="From Currency: "/>
+                <h:outputLabel for="from"  value="From:"/>
                 <h:selectOneMenu id ="from" value="#{converter.fromCurrencyStr}">
                     <f:selectItems value="#{currencyManager.currencies}"/>
                 </h:selectOneMenu>
             </p>
             <p>
-                <h:outputLabel for="to" value="To Currency: "/>
+                <h:outputLabel for="to" value="To:"/>
                 <h:selectOneMenu id="to" value="#{converter.toCurrencyStr}">
                     <f:selectItems value="#{currencyManager.currencies}"/>
                 </h:selectOneMenu>
             </p>
             <p>
-                <h:outputLabel for="rate" value="Rate: "/>
+                <h:outputLabel for="rate" value="Rate:"/>
                 <h:inputText id="rate" value="#{currencyManager.rate}"/>
             </p>
             <p>
@@ -60,7 +70,7 @@
         </h:form>
 
         <h:form rendered="#{!currencyManager.loggedIn}">
-            <h1>login</h1>
+            <h1>Login</h1>
             <p>
                 <h:outputLabel for="userName" rendered="#{!currencyManager.loggedIn}"  value="User name: "/>
                 <h:inputText id="userName" value="#{currencyManager.userName}"/>
