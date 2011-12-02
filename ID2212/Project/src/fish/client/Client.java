@@ -5,9 +5,9 @@
 package fish.client;
 
 import fish.common.RejectedException;
+import fish.server.Server;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -16,12 +16,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 
 /**
  * {@code Client} class represents a peer in a FISH.
@@ -36,7 +36,7 @@ public class Client {
     /**
      * Default server port
      */
-    public final static int DEFAULT_PORT = 8080;
+    public final static int DEFAULT_PORT = Server.DEFAULT_PORT;
     /**
      * Default peer port
      */
@@ -51,7 +51,7 @@ public class Client {
     private Socket inSocketToPeer;
     private ServerSocket outSocketToPeer;
     /*Sharing*/
-    private Map<String, File> sharedFiles;
+    private MultiMap sharedFiles;
 
     /**
      * Creates a FISH client.
@@ -65,7 +65,7 @@ public class Client {
         setSharedFiles(sharedFilePath);
 
         /*Connecting to the server*/
-        //connectToServer(host, port);
+        connectToServer(host, port);
 
         /*Sending list of shared files to server*/
         share();
@@ -75,18 +75,26 @@ public class Client {
     }
 
     private void setSharedFiles(String sharedFilePath) {
-        sharedFiles = new HashMap<String, File>();
+        sharedFiles = new MultiValueMap();
 
+        long t1 = System.currentTimeMillis();
         File shared = new File(sharedFilePath);
+        searchLocalSharedFiles(shared);//recursive call
+        long t2 = System.currentTimeMillis();
+        float t = (t2 - t1) / 1000.0f;
+
+        out.println("INFO: Found " + ((MultiValueMap) sharedFiles).totalSize() + " local files for sharing in " + t + " seconds.");
+    }
+
+    private void searchLocalSharedFiles(File shared) {
         if (shared.isDirectory()) {
-            File[] files = shared.listFiles(new FilesOnlyFileFilter());
+            File[] files = shared.listFiles();
             for (File f : files) {
-                sharedFiles.put(f.getName(), f);
+                searchLocalSharedFiles(f);
             }
         } else {
             sharedFiles.put(shared.getName(), shared);
         }
-        out.println("INFO: List of shared files was successfully retrieved.");
     }
 
     private void connectToServer(String host, int port) {
@@ -232,6 +240,12 @@ public class Client {
             case MYLIST:
                 //TODO
                 return;
+            case LASTLIST:
+                //TODO
+                return;
+            case FIND:
+                //TODO
+                return;
         }
     }
 
@@ -265,31 +279,27 @@ public class Client {
         new Client(host, port, sharedFilePath).run();
     }
 
-    private class FilesOnlyFileFilter implements FileFilter {
-        @Override
-        public boolean accept(File pathname) {
-            return pathname.isFile();
-        }
-    }
-
     private enum CommandName {
-        HELP("Print out the list of commands", null),
-        SHARE("Start sharing files (if already started, update list of shared files)", null),
-        UNSHARE("Stop sharing files", null),
-        LIST("Show list of all shared files from server", null),
-        DOWNLOAD("Download a file", new String[]{"<FileID> - id of the file from the last retrieved shared file list"}),
-        EXIT("Stop sharing and close client", null),
-        MYLIST("Show list of my files under shared file path", null);
+        HELP("Print out the list of commands"),
+        SHARE("Start sharing files (if already started, update list of shared files)"),
+        UNSHARE("Stop sharing files"),
+        LIST("Show list of all shared files from server"),
+        DOWNLOAD("Download a file with given FileID", new String[]{"<FileID> - id of the file from the last retrieved shared file list"}),
+        EXIT("Stop sharing and close client"),
+        MYLIST("Show list of my files under shared file path"),
+        LASTLIST("Show last retrieved shared file list"),
+        FIND("Get list of shared files by given name", new String[]{"<name> - name mask"});
         private String description;
         private String[] paramDescriptions;
 
+        private CommandName(String description) {
+            this.description = description;
+            this.paramDescriptions = new String[]{};
+        }
+
         private CommandName(String description, String[] paramDescriptions) {
             this.description = description;
-            if (paramDescriptions == null) {
-                this.paramDescriptions = new String[]{};
-            } else {
-                this.paramDescriptions = paramDescriptions;
-            }
+            this.paramDescriptions = paramDescriptions;
         }
 
         public String getDescription() {
