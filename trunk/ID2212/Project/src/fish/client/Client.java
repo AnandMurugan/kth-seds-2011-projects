@@ -4,17 +4,24 @@
  */
 package fish.client;
 
+import fish.common.RejectedException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * {@code Client} class represents a peer in a FISH.
@@ -55,10 +62,10 @@ public class Client {
      */
     public Client(String host, int port, String sharedFilePath) {
         /*Setting shared files*/
-        retrieveSharedFiles(sharedFilePath);
+        setSharedFiles(sharedFilePath);
 
         /*Connecting to the server*/
-        connectToServer(host, port);
+        //connectToServer(host, port);
 
         /*Sending list of shared files to server*/
         share();
@@ -67,7 +74,7 @@ public class Client {
         startPeerRequestHandling();
     }
 
-    private void retrieveSharedFiles(String sharedFilePath) {
+    private void setSharedFiles(String sharedFilePath) {
         sharedFiles = new HashMap<String, File>();
 
         File shared = new File(sharedFilePath);
@@ -124,7 +131,107 @@ public class Client {
     }
 
     private void run() {
+        String inputString = null;
+        try {
+            InetAddress clientIp = InetAddress.getLocalHost();
+            inputString = "fish-client@" + clientIp + ">";
+        } catch (UnknownHostException ex) {
+            out.println("ERROR: Failed to get this host IP.");
+            System.exit(4);
+        }
+
         while (true) {
+            out.print(inputString);
+            try {
+                String userInput = in.readLine();
+                execute(parse(userInput));
+            } catch (RejectedException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                out.println("ERROR: " + ex.getMessage());
+            }
+        }
+    }
+
+    private Command parse(String userInput) {
+        if (userInput == null) {
+            return null;
+        }
+
+        StringTokenizer tokenizer = new StringTokenizer(userInput);
+        if (tokenizer.countTokens() == 0) {
+            return null;
+        }
+
+        CommandName commandName = null;
+        List<String> args = new ArrayList<String>();
+        int userInputTokenNo = 1;
+        while (tokenizer.hasMoreTokens()) {
+            switch (userInputTokenNo) {
+                case 1:
+                    try {
+                        String commandNameString = tokenizer.nextToken();
+                        commandName = CommandName.valueOf(commandNameString.toUpperCase().trim());
+                    } catch (IllegalArgumentException ex) {
+                        out.println("ERROR: Unrecognized command.");
+                        return null;
+                    }
+                    break;
+                case 2:
+                    args.add(tokenizer.nextToken());
+                    break;
+                default:
+                    out.println("ERROR: Illegal command.");
+                    return null;
+            }
+            userInputTokenNo++;
+        }
+        return new Command(commandName, args.toArray(new String[]{}));
+    }
+
+    void execute(Command command) throws RejectedException {
+        if (command == null) {
+            return;
+        }
+
+        switch (command.getCommandName()) {
+            case HELP:
+                for (CommandName commandName : CommandName.values()) {
+                    out.println(commandName + "\n\t" + commandName.getDescription());
+                    for (String param : commandName.getParamDescriptions()) {
+                        out.println("\t " + param);
+                    }
+                }
+                out.println();
+                return;
+            case SHARE:
+                share();
+                return;
+            case UNSHARE:
+                unshare();
+                return;
+            case LIST:
+                //TODO 
+                return;
+            case DOWNLOAD:
+                int fileId;
+                try {
+                    fileId = Integer.parseInt(command.getArgs()[0]);
+                } catch (ArrayIndexOutOfBoundsException ex) {
+                    out.println("ERROR: No FileID are specified.");
+                    return;
+                } catch (NumberFormatException ex) {
+                    out.println("EROR: Wrong FileID.");
+                    return;
+                }
+                //TODO
+                return;
+            case EXIT:
+                unshare();
+                System.exit(0);
+            case MYLIST:
+                //TODO
+                return;
         }
     }
 
@@ -162,6 +269,53 @@ public class Client {
         @Override
         public boolean accept(File pathname) {
             return pathname.isFile();
+        }
+    }
+
+    private enum CommandName {
+        HELP("Print out the list of commands", null),
+        SHARE("Start sharing files (if already started, update list of shared files)", null),
+        UNSHARE("Stop sharing files", null),
+        LIST("Show list of all shared files from server", null),
+        DOWNLOAD("Download a file", new String[]{"<FileID> - id of the file from the last retrieved shared file list"}),
+        EXIT("Stop sharing and close client", null),
+        MYLIST("Show list of my files under shared file path", null);
+        private String description;
+        private String[] paramDescriptions;
+
+        private CommandName(String description, String[] paramDescriptions) {
+            this.description = description;
+            if (paramDescriptions == null) {
+                this.paramDescriptions = new String[]{};
+            } else {
+                this.paramDescriptions = paramDescriptions;
+            }
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String[] getParamDescriptions() {
+            return paramDescriptions;
+        }
+    };
+
+    private class Command {
+        private CommandName commandName;
+        private String[] args;
+
+        private CommandName getCommandName() {
+            return commandName;
+        }
+
+        public String[] getArgs() {
+            return args;
+        }
+
+        private Command(CommandName commandName, String[] args) {
+            this.commandName = commandName;
+            this.args = args;
         }
     }
 }
