@@ -5,7 +5,6 @@
 package fish.client;
 
 import fish.common.RejectedException;
-import fish.server.Server;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +15,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +32,11 @@ import org.apache.commons.collections.map.MultiValueMap;
  * @author Igor
  */
 public class Client {
+    /*CLI*/
+    private final static String USAGE = "java fish.client.Client <shared_file_path> [<server_address> [<server_port>]]";
+    private final static PrintStream out = System.out;
+    private final static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    /*Networking*/
     /**
      * Default server host
      */
@@ -36,16 +44,11 @@ public class Client {
     /**
      * Default server port
      */
-    public final static int DEFAULT_PORT = Server.DEFAULT_PORT;
+    public final static int DEFAULT_PORT = 8080;//Server.DEFAULT_PORT;
     /**
      * Default peer port
      */
     public final static int DEFAULT_PEER_PORT = 8081;
-    /*CLI*/
-    private final static String USAGE = "java fish.client.Client <shared_file_path> [<server_address> [<server_port>]]";
-    private final static PrintStream out = System.out;
-    private final static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-    /*Networking*/
     private final static int LINGER = 100;
     private Socket socketToServer;
     private Socket inSocketToPeer;
@@ -65,7 +68,7 @@ public class Client {
         setSharedFiles(sharedFilePath);
 
         /*Connecting to the server*/
-        connectToServer(host, port);
+        //connectToServer(host, port);
 
         /*Sending list of shared files to server*/
         share();
@@ -138,11 +141,65 @@ public class Client {
         out.println("INFO: Started handling requests from peers.");
     }
 
+    private void printMyFiles() {
+        int size = ((MultiValueMap) sharedFiles).totalSize();
+        String[][] table = new String[size + 1][4];
+        fillRow(table[0], "File", "Size", "Date", "Path");
+        int i = 1;
+        for (String fileName : (Set<String>) sharedFiles.keySet()) {
+            for (File f : (Collection<File>) ((MultiValueMap) sharedFiles).getCollection(fileName)) {
+                fillRow(table[i],
+                        fileName,
+                        Long.toString(f.length()),
+                        new Date(f.lastModified()).toString(),
+                        f.getPath());
+                ++i;
+            }
+        }
+
+        int[] max = calcMaxLengthInColums(table);
+        int lineLength = max.length + 1;
+        for (int l : max) {
+            lineLength += l;
+        }
+
+        String format = "|%-" + max[0] + "s|%-" + max[1] + "s|%-" + max[2] + "s|%-" + max[3] + "s|\n";
+        char[] lineArr = new char[lineLength];
+        Arrays.fill(lineArr, '-');
+        String line = new String(lineArr);
+
+        out.printf("%s\n", line);
+        out.printf(format, table[0][0], table[0][1], table[0][2], table[0][3]);
+        out.printf("%s\n", line);
+        for (int j = 1; j < size + 1; j++) {
+            out.printf(format, table[j][0], table[j][1], table[j][2], table[j][3]);
+        }
+        out.printf("%s\n\n", line);
+    }
+
+    private void fillRow(String[] row, String... data) {
+        int n = row.length;
+        System.arraycopy(data, 0, row, 0, n);
+    }
+
+    private int[] calcMaxLengthInColums(String[][] table) {
+        int columns = table[0].length;
+        int[] max = new int[columns];
+        for (String[] row : table) {
+            for (int i = 0; i < columns; i++) {
+                if (row[i].length() > max[i]) {
+                    max[i] = row[i].length();
+                }
+            }
+        }
+        return max;
+    }
+
     private void run() {
         String inputString = null;
         try {
             InetAddress clientIp = InetAddress.getLocalHost();
-            inputString = "fish-client@" + clientIp + ">";
+            inputString = clientIp.getHostName() + "@" + clientIp.getHostAddress() + ">";
         } catch (UnknownHostException ex) {
             out.println("ERROR: Failed to get this host IP.");
             System.exit(4);
@@ -237,8 +294,8 @@ public class Client {
             case EXIT:
                 unshare();
                 System.exit(0);
-            case MYLIST:
-                //TODO
+            case MYFILES:
+                printMyFiles();
                 return;
             case LASTLIST:
                 //TODO
@@ -286,7 +343,7 @@ public class Client {
         LIST("Show list of all shared files from server"),
         DOWNLOAD("Download a file with given FileID", new String[]{"<FileID> - id of the file from the last retrieved shared file list"}),
         EXIT("Stop sharing and close client"),
-        MYLIST("Show list of my files under shared file path"),
+        MYFILES("Show list of my files under shared file path"),
         LASTLIST("Show last retrieved shared file list"),
         FIND("Get list of shared files by given name", new String[]{"<name> - name mask"});
         private String description;
