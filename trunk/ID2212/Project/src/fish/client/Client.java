@@ -30,6 +30,10 @@ public class Client {
      * Default server port
      */
     public final static int DEFAULT_PORT = 8080;
+    /**
+     * Default peer port
+     */
+    public final static int DEFAULT_PEER_PORT = 8081;
     /*CLI*/
     private final static String USAGE = "java fish.client.Client <shared_file_path> [<server_address> [<server_port>]]";
     private final static PrintStream out = System.out;
@@ -51,6 +55,19 @@ public class Client {
      */
     public Client(String host, int port, String sharedFilePath) {
         /*Setting shared files*/
+        retrieveSharedFiles(sharedFilePath);
+
+        /*Connecting to the server*/
+        connectToServer(host, port);
+
+        /*Sending list of shared files to server*/
+        share();
+
+        /*Starting handling requests from other peers*/
+        startPeerRequestHandling();
+    }
+
+    private void retrieveSharedFiles(String sharedFilePath) {
         sharedFiles = new HashMap<String, File>();
 
         File shared = new File(sharedFilePath);
@@ -62,8 +79,11 @@ public class Client {
         } else {
             sharedFiles.put(shared.getName(), shared);
         }
+        out.println("INFO: List of shared files was successfully retrieved.");
+    }
 
-        /*Connecting to the server*/
+    private void connectToServer(String host, int port) {
+
         try {
             socketToServer = new Socket(host, port);
             socketToServer.setSoLinger(true, LINGER);
@@ -74,9 +94,33 @@ public class Client {
             out.println("ERROR: " + ex.getMessage());
             System.exit(2);
         }
+        out.println("INFO: Connected to the server.");
+    }
 
-        /*Sending list of shared files to server*/
-        /*Starting handling requests from other peers*/
+    private void share() {
+    }
+
+    private void unshare() {
+    }
+
+    private void startPeerRequestHandling() {
+        Runnable requestHandlingTask = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    outSocketToPeer = new ServerSocket(DEFAULT_PEER_PORT);
+                    while (true) {
+                        Socket clientSocket = outSocketToPeer.accept();
+                        new PeerRequestHandler(clientSocket, sharedFiles).start();
+                    }
+                } catch (IOException ex) {
+                    out.println("ERROR: " + ex.getMessage());
+                    System.exit(3);
+                }
+            }
+        };
+        new Thread(requestHandlingTask).start();
+        out.println("INFO: Started handling requests from peers.");
     }
 
     private void run() {
@@ -84,6 +128,11 @@ public class Client {
         }
     }
 
+    /**
+     * Main method.
+     * 
+     * @param args Command-line arguments provided by user 
+     */
     public static void main(String[] args) {
         String sharedFilePath = null;
         String host = DEFAULT_HOST;
