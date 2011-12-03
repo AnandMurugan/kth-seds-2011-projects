@@ -4,6 +4,7 @@
  */
 package fish.client;
 
+import fish.common.FileInfo;
 import fish.common.RejectedException;
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,13 +16,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -36,7 +37,7 @@ import org.apache.commons.cli.ParseException;
  * 
  * @author Igor
  */
-public class Client {
+public final class Client {
     /*CLI*/
     private final static String USAGE_SHORT = "java fish.client.Client";
     private final static String USAGE = "java fish.client.Client [-path <shared_file_path>] [-host <server_address>] [-port <server_port>]";
@@ -60,8 +61,9 @@ public class Client {
     private Socket inSocketToPeer;
     private ServerSocket outSocketToPeer;
     /*FISHing*/
-    private Map<String, File> sharedFiles;
+    private Map<String, File> mySharedFiles;
     private boolean sharing;
+    private List<FileInfo> foundSharedFiles;
 
     /**
      * Creates a FISH client.
@@ -71,7 +73,7 @@ public class Client {
      * @param sharedFilePath Path to the shared folder
      */
     public Client(String host, int port, String sharedFilePath) {
-        sharedFiles = new HashMap<String, File>();
+        mySharedFiles = new HashMap<String, File>();
         sharing = false;
 
         /*Connecting to the server*/
@@ -89,7 +91,18 @@ public class Client {
         startPeerRequestHandling();
     }
 
-    private void addSharedFiles(String sharedFilePath, boolean recursive) {
+    /**
+     * Adds files under given path to the list of shared files. These changes are
+     * local only. To notify FISH server about changes, {@link Client#share share} methods should be
+     * called.
+     * 
+     * @param sharedFilePath Path to files
+     * @param recursive If {@code true}, then file search would be recursive (looking
+     * into subfolders)
+     * 
+     * @return The number of added files
+     */
+    public int addSharedFiles(String sharedFilePath, boolean recursive) {
         long t1 = System.currentTimeMillis();
         File shared = new File(sharedFilePath);
         int count = modifySharedFiles(shared, recursive, false, 0);
@@ -97,9 +110,22 @@ public class Client {
         float t = (t2 - t1) / 1000.0f;
 
         out.println("INFO: Added " + count + " local files for sharing in " + t + " seconds.\n");
+
+        return count;
     }
 
-    private void removeSharedFiles(String sharedFilePath, boolean recursive) {
+    /**
+     * Removes files under given path from the list of shared files. These changes are
+     * local only. To notify FISH server about changes, {@link Client#share share} methods should be
+     * called.
+     * 
+     * @param sharedFilePath Path to files
+     * @param recursive If {@code true}, then file search would be recursive (looking
+     * into subfolders)
+     * 
+     * @return The number of removed files
+     */
+    public int removeSharedFiles(String sharedFilePath, boolean recursive) {
         long t1 = System.currentTimeMillis();
         File shared = new File(sharedFilePath);
         int count = modifySharedFiles(shared, recursive, true, 0);
@@ -107,6 +133,8 @@ public class Client {
         float t = (t2 - t1) / 1000.0f;
 
         out.println("INFO: Removed " + count + " local files for sharing in " + t + " seconds.\n");
+
+        return count;
     }
 
     private int modifySharedFiles(File shared, boolean recursive, boolean removal, int count) {
@@ -121,14 +149,15 @@ public class Client {
                 } else {
                     if (f.isFile()) {
                         try {
+                            f = f.getCanonicalFile();
                             Object old;
                             if (!removal) {
-                                old = sharedFiles.put(f.getCanonicalPath(), f);
+                                old = mySharedFiles.put(f.getPath(), f);
                                 if (old == null) {
                                     ++count;
                                 }
                             } else {
-                                old = sharedFiles.remove(f.getCanonicalPath());
+                                old = mySharedFiles.remove(f.getPath());
                                 if (old != null) {
                                     ++count;
                                 }
@@ -141,14 +170,15 @@ public class Client {
             }
         } else {
             try {
+                shared = shared.getCanonicalFile();
                 Object old;
                 if (!removal) {
-                    old = sharedFiles.put(shared.getCanonicalPath(), shared);
+                    old = mySharedFiles.put(shared.getPath(), shared);
                     if (old == null) {
                         ++count;
                     }
                 } else {
-                    old = sharedFiles.remove(shared.getCanonicalPath());
+                    old = mySharedFiles.remove(shared.getPath());
                     if (old != null) {
                         ++count;
                     }
@@ -174,15 +204,53 @@ public class Client {
         out.println("INFO: Connected to the server.\n");
     }
 
-    private void share() {
+    /**
+     * Sends FISH server the list of shared files 
+     */
+    public void share() {
+        //TODO
         if (!sharing) {
             sharing = true;
         } else {
         }
     }
 
-    private void unshare() {
+    /**
+     * Tells FISH server to remove all client's shared files
+     */
+    public void unshare() {
+        //TODO
         sharing = false;
+    }
+
+    /**
+     * Retrieves the list of all shared files from FISH server (client's shared 
+     * files are not included).
+     */
+    public List<FileInfo> obtainSharedFileList() {
+        //TODO
+        return null;
+    }
+
+    /**
+     * Retrieves the list of all shared from FISH server by filename mask 
+     * (client's shared files are not included)
+     * 
+     * @param mask File name mask
+     */
+    public List<FileInfo> obtainSharedFileList(String mask) {
+        //TODO
+        return null;
+    }
+
+    /**
+     * Downloads a shared file from peer and saves it under given name.
+     * 
+     * @param index An index of file in the list of shared files
+     * @param filename A filepath under which downloaded file would be written (saved)
+     */
+    public void download(int index, String filename) {
+        //TODO
     }
 
     private void startPeerRequestHandling() {
@@ -193,7 +261,7 @@ public class Client {
                     outSocketToPeer = new ServerSocket(DEFAULT_PEER_PORT);
                     while (true) {
                         Socket clientSocket = outSocketToPeer.accept();
-                        new PeerRequestHandler(clientSocket, sharedFiles).start();
+                        new PeerRequestHandler(clientSocket, mySharedFiles).start();
                     }
                 } catch (IOException ex) {
                     out.println("ERROR: " + ex.getMessage() + "\n");
@@ -207,21 +275,34 @@ public class Client {
         out.println("INFO: Started handling requests from peers.\n");
     }
 
-    private void printMyFiles() {
-        int size = sharedFiles.size();
+    /**
+     * Gets the collection of client's files for sharing
+     * 
+     * @return Collection of files for sharing
+     */
+    public Collection<File> getMySharedFiles() {
+        return mySharedFiles.values();
+    }
+
+    /**
+     * Print the list of local files that are marked for sharing.
+     */
+    public void printMyFiles() {
+        if (mySharedFiles == null || mySharedFiles.isEmpty()) {
+            out.println("No files for sharing were added.\n");
+            return;
+        }
+
+        int size = mySharedFiles.size();
         String[][] table = new String[size + 1][4];
-        fillRow(table[0], "File", "Size", "Date", "Path");
+        fillRow(table[0], "Name", "Size", "Date", "Path");
         int i = 1;
-        for (File f : sharedFiles.values()) {
-            try {
-                fillRow(table[i],
-                        f.getName(),
-                        Long.toString(f.length()),
-                        new Date(f.lastModified()).toString(),
-                        f.getCanonicalPath());
-            } catch (IOException ex) {
-                out.println("ERROR: " + ex.getMessage() + "\n");
-            }
+        for (File f : mySharedFiles.values()) {
+            fillRow(table[i],
+                    f.getName(),
+                    Long.toString(f.length()),
+                    new Date(f.lastModified()).toString(),
+                    f.getPath());
             ++i;
         }
 
@@ -253,6 +334,50 @@ public class Client {
         out.printf("Total: %d files.\n\n", size);
     }
 
+    /**
+     * Print the last found list of shared files.
+     */
+    public void printFoundFiles() {
+        if (foundSharedFiles == null || foundSharedFiles.isEmpty()) {
+            out.println("No shared files were found.\n");
+            return;
+        }
+
+        int size = foundSharedFiles.size();
+        String[][] table = new String[size + 1][4];
+        fillRow(table[0], "FileID", "Name", "Size", "Owner");
+        int i = 1;
+        for (FileInfo fi : foundSharedFiles) {
+            fillRow(table[i],
+                    Integer.toString(i),
+                    fi.getName(),
+                    Long.toString(fi.getSize()),
+                    fi.getOwnerAddress().getHostString());
+            ++i;
+        }
+
+        int[] max = calcMaxLengthInColums(table);
+        int lineLength = 3 * max.length + 1;
+        for (int l : max) {
+            lineLength += l;
+        }
+
+        String format = "| %-" + max[0] + "s | %-" + max[1] + "s | %-" + max[2] + "s | %-" + max[3] + "s |\n";
+        char[] lineArr = new char[lineLength];
+        Arrays.fill(lineArr, '-');
+        String line = new String(lineArr);
+
+        out.printf("%s\n", line);
+        out.printf(format, table[0][0], table[0][1], table[0][2], table[0][3]);
+        out.printf("%s\n", line);
+        for (int j = 1; j < size + 1; j++) {
+            out.printf(format, table[j][0], table[j][1], table[j][2], table[j][3]);
+        }
+        out.printf("%s\n", line);
+        out.printf("Total: %d files.\n\n", size);
+
+    }
+
     private void fillRow(String[] row, String... data) {
         int n = row.length;
         System.arraycopy(data, 0, row, 0, n);
@@ -271,6 +396,9 @@ public class Client {
         return max;
     }
 
+    /**
+     * Starts CLI for FISH client
+     */
     public void run() {
         String inputString = null;
         try {
@@ -287,7 +415,7 @@ public class Client {
                 String userInput = in.readLine();
                 execute(parse(userInput));
             } catch (RejectedException ex) {
-                throw new UnsupportedOperationException("TODO");
+                out.println("ERROR: " + ex.getMessage() + "\n");
             } catch (IOException ex) {
                 out.println("ERROR: " + ex.getMessage() + "\n");
             }
@@ -344,21 +472,20 @@ public class Client {
                 unshare();
                 return;
             case LIST:
-                //TODO 
+                obtainSharedFileList();
+                printFoundFiles();
                 return;
             case DOWNLOAD:
                 try {
                     int fileId = Integer.parseInt(command.getArgs()[0]);
                     String filepath = command.getArgs()[1];
-
-                    //TODO
+                    download(fileId, filepath);
                 } catch (ArrayIndexOutOfBoundsException ex) {
                     out.println("ERROR: Not enough parameters.\n");
-                    return;
                 } catch (NumberFormatException ex) {
                     out.println("ERROR: Wrong fileID.\n");
-                    return;
                 }
+                return;
             case EXIT:
                 unshare();
                 System.exit(0);
@@ -366,36 +493,46 @@ public class Client {
                 printMyFiles();
                 return;
             case LAST:
-                //TODO
+                printFoundFiles();
                 return;
             case FIND:
-                //TODO
+                try {
+                    String mask = command.getArgs()[0];
+                    obtainSharedFileList(mask);
+                    printFoundFiles();
+                } catch (ArrayIndexOutOfBoundsException ex) {
+                    out.println("ERROR: Not enough parameters.\n");
+                }
                 return;
             case ADD:
                 try {
                     String filepath = command.getArgs()[0];
                     boolean r = Boolean.parseBoolean(command.getArgs()[1]);
                     addSharedFiles(filepath, r);
-                    return;
+                    if (sharing) {
+                        share();
+                    }
                 } catch (ArrayIndexOutOfBoundsException ex) {
                     out.println("ERROR: Not enough parameters.\n");
-                    return;
                 }
+                return;
             case REMOVE:
                 try {
                     String filepath = command.getArgs()[0];
                     boolean r = Boolean.parseBoolean(command.getArgs()[1]);
                     removeSharedFiles(filepath, r);
-                    return;
+                    if (sharing) {
+                        share();
+                    }
                 } catch (ArrayIndexOutOfBoundsException ex) {
                     out.println("ERROR: Not enough parameters.\n");
-                    return;
                 }
+                return;
         }
     }
 
     /**
-     * Main method.
+     * Main method: creates and runs FISH client.
      * 
      * @param args Command-line arguments provided by user 
      */
