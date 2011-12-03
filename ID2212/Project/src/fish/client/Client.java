@@ -17,9 +17,11 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -58,7 +60,7 @@ public class Client {
     private Socket inSocketToPeer;
     private ServerSocket outSocketToPeer;
     /*FISHing*/
-    private Set<File> sharedFiles;
+    private Map<String, File> sharedFiles;
     private boolean sharing;
 
     /**
@@ -69,11 +71,11 @@ public class Client {
      * @param sharedFilePath Path to the shared folder
      */
     public Client(String host, int port, String sharedFilePath) {
-        sharedFiles = new HashSet<File>();
+        sharedFiles = new HashMap<String, File>();
         sharing = false;
 
         /*Connecting to the server*/
-        connectToServer(host, port);
+        //connectToServer(host, port);
 
         /*Setting shared files*/
         if (sharedFilePath != null && !sharedFilePath.isEmpty()) {
@@ -90,53 +92,69 @@ public class Client {
     private void addSharedFiles(String sharedFilePath, boolean recursive) {
         long t1 = System.currentTimeMillis();
         File shared = new File(sharedFilePath);
-        modifySharedFiles(shared, recursive, false);
+        int count = modifySharedFiles(shared, recursive, false, 0);
         long t2 = System.currentTimeMillis();
         float t = (t2 - t1) / 1000.0f;
 
-        out.println("INFO: Added " + sharedFiles.size() + " local files for sharing in " + t + " seconds.");
+        out.println("INFO: Added " + count + " local files for sharing in " + t + " seconds.\n");
     }
 
     private void removeSharedFiles(String sharedFilePath, boolean recursive) {
         long t1 = System.currentTimeMillis();
         File shared = new File(sharedFilePath);
-        int count = modifySharedFiles(shared, recursive, true);
+        int count = modifySharedFiles(shared, recursive, true, 0);
         long t2 = System.currentTimeMillis();
         float t = (t2 - t1) / 1000.0f;
 
-        out.println("INFO: Removed " + count + " local files for sharing in " + t + " seconds.");
+        out.println("INFO: Removed " + count + " local files for sharing in " + t + " seconds.\n");
     }
 
-    private int modifySharedFiles(File shared, boolean recursive, boolean removal) {
-        int count = 0;
+    private int modifySharedFiles(File shared, boolean recursive, boolean removal, int count) {
         if (shared.isDirectory()) {
             File[] files = shared.listFiles();
+            if (files == null) {
+                return count;
+            }
             for (File f : files) {
                 if (recursive) {
-                    modifySharedFiles(f, recursive, removal);
+                    count = modifySharedFiles(f, recursive, removal, count);
                 } else {
                     if (f.isFile()) {
-                        boolean modified;
-                        if (!removal) {
-                            modified = sharedFiles.add(shared);
-                        } else {
-                            modified = sharedFiles.remove(shared);
-                        }
-                        if (modified) {
-                            ++count;
+                        try {
+                            Object old;
+                            if (!removal) {
+                                old = sharedFiles.put(f.getCanonicalPath(), f);
+                                if (old == null) {
+                                    ++count;
+                                }
+                            } else {
+                                old = sharedFiles.remove(f.getCanonicalPath());
+                                if (old != null) {
+                                    ++count;
+                                }
+                            }
+                        } catch (IOException ex) {
+                            out.println("ERROR: " + ex.getMessage() + "\n");
                         }
                     }
                 }
             }
         } else {
-            boolean modified;
-            if (!removal) {
-                modified = sharedFiles.add(shared);
-            } else {
-                modified = sharedFiles.remove(shared);
-            }
-            if (modified) {
-                ++count;
+            try {
+                Object old;
+                if (!removal) {
+                    old = sharedFiles.put(shared.getCanonicalPath(), shared);
+                    if (old == null) {
+                        ++count;
+                    }
+                } else {
+                    old = sharedFiles.remove(shared.getCanonicalPath());
+                    if (old != null) {
+                        ++count;
+                    }
+                }
+            } catch (IOException ex) {
+                out.println("ERROR: " + ex.getMessage() + "\n");
             }
         }
         return count;
@@ -147,13 +165,13 @@ public class Client {
             socketToServer = new Socket(host, port);
             socketToServer.setSoLinger(true, LINGER);
         } catch (UnknownHostException ex) {
-            out.println("ERROR: Host not found");
+            out.println("ERROR: Host not found.\n");
             System.exit(2);
         } catch (IOException ex) {
-            out.println("ERROR: " + ex.getMessage());
+            out.println("ERROR: " + ex.getMessage() + "\n");
             System.exit(2);
         }
-        out.println("INFO: Connected to the server.");
+        out.println("INFO: Connected to the server.\n");
     }
 
     private void share() {
@@ -178,13 +196,15 @@ public class Client {
                         new PeerRequestHandler(clientSocket, sharedFiles).start();
                     }
                 } catch (IOException ex) {
-                    out.println("ERROR: " + ex.getMessage());
+                    out.println("ERROR: " + ex.getMessage() + "\n");
                     System.exit(3);
                 }
             }
         };
-        new Thread(requestHandlingTask, "Peer-Request-Handler").start();
-        out.println("INFO: Started handling requests from peers.");
+        Thread prh = new Thread(requestHandlingTask, "Peer-Request-Handler");
+        prh.setDaemon(true);
+        prh.start();
+        out.println("INFO: Started handling requests from peers.\n");
     }
 
     private void printMyFiles() {
@@ -192,12 +212,16 @@ public class Client {
         String[][] table = new String[size + 1][4];
         fillRow(table[0], "File", "Size", "Date", "Path");
         int i = 1;
-        for (File f : sharedFiles) {
-            fillRow(table[i],
-                    f.getName(),
-                    Long.toString(f.length()),
-                    new Date(f.lastModified()).toString(),
-                    f.getPath());
+        for (File f : sharedFiles.values()) {
+            try {
+                fillRow(table[i],
+                        f.getName(),
+                        Long.toString(f.length()),
+                        new Date(f.lastModified()).toString(),
+                        f.getCanonicalPath());
+            } catch (IOException ex) {
+                out.println("ERROR: " + ex.getMessage() + "\n");
+            }
             ++i;
         }
 
@@ -225,7 +249,8 @@ public class Client {
         for (int j = 1; j < size + 1; j++) {
             out.printf(format, table[j][0], table[j][1], table[j][2], table[j][3]);
         }
-        out.printf("%s\n\n", line);
+        out.printf("%s\n", line);
+        out.printf("Total: %d files.\n\n", size);
     }
 
     private void fillRow(String[] row, String... data) {
@@ -252,7 +277,7 @@ public class Client {
             InetAddress clientIp = InetAddress.getLocalHost();
             inputString = clientIp.getHostName() + "@" + clientIp.getHostAddress() + ">";
         } catch (UnknownHostException ex) {
-            out.println("ERROR: Failed to get this host IP.");
+            out.println("ERROR: Failed to get this host IP.\n");
             System.exit(4);
         }
 
@@ -264,7 +289,7 @@ public class Client {
             } catch (RejectedException ex) {
                 throw new UnsupportedOperationException("TODO");
             } catch (IOException ex) {
-                out.println("ERROR: " + ex.getMessage());
+                out.println("ERROR: " + ex.getMessage() + "\n");
             }
         }
     }
@@ -286,7 +311,7 @@ public class Client {
             String commandNameString = tokenizer.nextToken().toUpperCase().trim();
             commandName = CommandName.valueOf(commandNameString);
         } catch (IllegalArgumentException ex) {
-            System.out.println("ERROR: Illegal command.");
+            System.out.println("ERROR: Illegal command.\n");
             return null;
         }
         int i = 0;
@@ -325,33 +350,47 @@ public class Client {
                 try {
                     int fileId = Integer.parseInt(command.getArgs()[0]);
                     String filepath = command.getArgs()[1];
+
+                    //TODO
                 } catch (ArrayIndexOutOfBoundsException ex) {
-                    out.println("ERROR: Not enough parameters.");
+                    out.println("ERROR: Not enough parameters.\n");
                     return;
                 } catch (NumberFormatException ex) {
-                    out.println("ERROR: Wrong fileID.");
+                    out.println("ERROR: Wrong fileID.\n");
                     return;
                 }
-                //TODO
-                return;
             case EXIT:
                 unshare();
                 System.exit(0);
             case MYFILES:
                 printMyFiles();
                 return;
-            case LASTLIST:
+            case LAST:
                 //TODO
                 return;
             case FIND:
                 //TODO
                 return;
-            case ADDFILES:
-                //TODO
-                return;
-            case REMOVEFILES:
-                //TODO
-                return;
+            case ADD:
+                try {
+                    String filepath = command.getArgs()[0];
+                    boolean r = Boolean.parseBoolean(command.getArgs()[1]);
+                    addSharedFiles(filepath, r);
+                    return;
+                } catch (ArrayIndexOutOfBoundsException ex) {
+                    out.println("ERROR: Not enough parameters.\n");
+                    return;
+                }
+            case REMOVE:
+                try {
+                    String filepath = command.getArgs()[0];
+                    boolean r = Boolean.parseBoolean(command.getArgs()[1]);
+                    removeSharedFiles(filepath, r);
+                    return;
+                } catch (ArrayIndexOutOfBoundsException ex) {
+                    out.println("ERROR: Not enough parameters.\n");
+                    return;
+                }
         }
     }
 
@@ -404,7 +443,7 @@ public class Client {
             formatter.printHelp(USAGE_SHORT, options);
             System.exit(1);
         } catch (NumberFormatException ex) {
-            out.println("ERROR: Wrong port number.");
+            out.println("ERROR: Wrong port number.\n");
             System.exit(1);
         }
     }
@@ -414,16 +453,16 @@ public class Client {
         HELP("Print out the list of commands"),
         SHARE("Start sharing files (if already started, update list of shared files)"),
         UNSHARE("Stop sharing files"),
-        ADDFILES("Add files for sharing under given path",
+        ADD("Add files for sharing under given path",
         new String[]{"<path> - path to files", "<recursive> - true/false"}),
-        REMOVEFILES("Remove files for sharing under given path",
+        REMOVE("Remove files for sharing under given path",
         new String[]{"<path> - path to files", "<recursive> - true/false"}),
         LIST("Show list of all shared files from server"),
         DOWNLOAD("Download a file with given FileID",
         new String[]{"<fileID> - id of the file from the last retrieved shared file list", "<filepath> - path to file to save"}),
         EXIT("Stop sharing and close client"),
         MYFILES("Show list of my files under shared file path"),
-        LASTLIST("Show last retrieved shared file list"),
+        LAST("Show last retrieved shared file list"),
         FIND("Get list of shared files by given name",
         new String[]{"<name> - name mask"});
         /*End commands*/
