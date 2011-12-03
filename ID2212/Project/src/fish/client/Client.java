@@ -14,14 +14,12 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -59,8 +57,8 @@ public class Client {
     private Socket socketToServer;
     private Socket inSocketToPeer;
     private ServerSocket outSocketToPeer;
-    /*Sharing*/
-    private Map<Integer, File> sharedFiles;
+    /*FISHing*/
+    private Set<File> sharedFiles;
     private boolean sharing;
 
     /**
@@ -71,16 +69,16 @@ public class Client {
      * @param sharedFilePath Path to the shared folder
      */
     public Client(String host, int port, String sharedFilePath) {
-        sharedFiles = new ConcurrentHashMap<Integer, File>();
+        sharedFiles = new HashSet<File>();
         sharing = false;
-
-        /*Setting shared files*/
-        if (sharedFilePath != null && !sharedFilePath.isEmpty()) {
-            addSharedFiles(sharedFilePath, false);
-        }
 
         /*Connecting to the server*/
         connectToServer(host, port);
+
+        /*Setting shared files*/
+        if (sharedFilePath != null && !sharedFilePath.isEmpty()) {
+            addSharedFiles(sharedFilePath, true);
+        }
 
         /*Sending list of shared files to server*/
         share();
@@ -102,14 +100,15 @@ public class Client {
     private void removeSharedFiles(String sharedFilePath, boolean recursive) {
         long t1 = System.currentTimeMillis();
         File shared = new File(sharedFilePath);
-        modifySharedFiles(shared, recursive, true);
+        int count = modifySharedFiles(shared, recursive, true);
         long t2 = System.currentTimeMillis();
         float t = (t2 - t1) / 1000.0f;
 
-        out.println("INFO: Removed " + sharedFiles.size() + " local files for sharing in " + t + " seconds.");
+        out.println("INFO: Removed " + count + " local files for sharing in " + t + " seconds.");
     }
 
-    private void modifySharedFiles(File shared, boolean recursive, boolean removal) {
+    private int modifySharedFiles(File shared, boolean recursive, boolean removal) {
+        int count = 0;
         if (shared.isDirectory()) {
             File[] files = shared.listFiles();
             for (File f : files) {
@@ -117,21 +116,30 @@ public class Client {
                     modifySharedFiles(f, recursive, removal);
                 } else {
                     if (f.isFile()) {
+                        boolean modified;
                         if (!removal) {
-                            sharedFiles.put(shared.hashCode(), shared);
+                            modified = sharedFiles.add(shared);
                         } else {
-                            sharedFiles.remove(shared.hashCode());
+                            modified = sharedFiles.remove(shared);
+                        }
+                        if (modified) {
+                            ++count;
                         }
                     }
                 }
             }
         } else {
+            boolean modified;
             if (!removal) {
-                sharedFiles.put(shared.hashCode(), shared);
+                modified = sharedFiles.add(shared);
             } else {
-                sharedFiles.remove(shared.hashCode());
+                modified = sharedFiles.remove(shared);
+            }
+            if (modified) {
+                ++count;
             }
         }
+        return count;
     }
 
     private void connectToServer(String host, int port) {
@@ -184,7 +192,7 @@ public class Client {
         String[][] table = new String[size + 1][4];
         fillRow(table[0], "File", "Size", "Date", "Path");
         int i = 1;
-        for (File f : sharedFiles.values()) {
+        for (File f : sharedFiles) {
             fillRow(table[i],
                     f.getName(),
                     Long.toString(f.length()),
@@ -272,7 +280,7 @@ public class Client {
         }
 
         CommandName commandName = null;
-        List<String> args = new ArrayList<String>();
+        String[] args = new String[tokenizer.countTokens() - 1];
 
         try {
             String commandNameString = tokenizer.nextToken().toUpperCase().trim();
@@ -281,11 +289,12 @@ public class Client {
             System.out.println("ERROR: Illegal command.");
             return null;
         }
+        int i = 0;
         while (tokenizer.hasMoreTokens()) {
-            args.add(tokenizer.nextToken());
+            args[i++] = tokenizer.nextToken();
         }
 
-        return new Command(commandName, args.toArray(new String[]{}));
+        return new Command(commandName, args);
     }
 
     private void execute(Command command) throws RejectedException {
@@ -320,7 +329,7 @@ public class Client {
                     out.println("ERROR: Not enough parameters.");
                     return;
                 } catch (NumberFormatException ex) {
-                    out.println("EROR: Wrong fileID.");
+                    out.println("ERROR: Wrong fileID.");
                     return;
                 }
                 //TODO
