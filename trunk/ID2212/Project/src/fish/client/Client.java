@@ -16,15 +16,20 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.commons.collections.MultiMap;
-import org.apache.commons.collections.map.MultiValueMap;
+import java.util.concurrent.ConcurrentHashMap;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 /**
  * {@code Client} class represents a peer in a FISH.
@@ -33,7 +38,8 @@ import org.apache.commons.collections.map.MultiValueMap;
  */
 public class Client {
     /*CLI*/
-    private final static String USAGE = "java fish.client.Client <shared_file_path> [<server_address> [<server_port>]]";
+    private final static String USAGE_SHORT = "java fish.client.Client";
+    private final static String USAGE = "java fish.client.Client [-path <shared_file_path>] [-host <server_address>] [-port <server_port>]";
     private final static PrintStream out = System.out;
     private final static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     /*Networking*/
@@ -54,7 +60,8 @@ public class Client {
     private Socket inSocketToPeer;
     private ServerSocket outSocketToPeer;
     /*Sharing*/
-    private MultiMap sharedFiles;
+    private Map<Integer, File> sharedFiles;
+    private boolean sharing;
 
     /**
      * Creates a FISH client.
@@ -64,11 +71,16 @@ public class Client {
      * @param sharedFilePath Path to the shared folder
      */
     public Client(String host, int port, String sharedFilePath) {
+        sharedFiles = new ConcurrentHashMap<Integer, File>();
+        sharing = false;
+
         /*Setting shared files*/
-        setSharedFiles(sharedFilePath);
+        if (sharedFilePath != null && !sharedFilePath.isEmpty()) {
+            addSharedFiles(sharedFilePath, false);
+        }
 
         /*Connecting to the server*/
-        //connectToServer(host, port);
+        connectToServer(host, port);
 
         /*Sending list of shared files to server*/
         share();
@@ -77,31 +89,52 @@ public class Client {
         startPeerRequestHandling();
     }
 
-    private void setSharedFiles(String sharedFilePath) {
-        sharedFiles = new MultiValueMap();
-
+    private void addSharedFiles(String sharedFilePath, boolean recursive) {
         long t1 = System.currentTimeMillis();
         File shared = new File(sharedFilePath);
-        searchLocalSharedFiles(shared);//recursive call
+        modifySharedFiles(shared, recursive, false);
         long t2 = System.currentTimeMillis();
         float t = (t2 - t1) / 1000.0f;
 
-        out.println("INFO: Found " + ((MultiValueMap) sharedFiles).totalSize() + " local files for sharing in " + t + " seconds.");
+        out.println("INFO: Added " + sharedFiles.size() + " local files for sharing in " + t + " seconds.");
     }
 
-    private void searchLocalSharedFiles(File shared) {
+    private void removeSharedFiles(String sharedFilePath, boolean recursive) {
+        long t1 = System.currentTimeMillis();
+        File shared = new File(sharedFilePath);
+        modifySharedFiles(shared, recursive, true);
+        long t2 = System.currentTimeMillis();
+        float t = (t2 - t1) / 1000.0f;
+
+        out.println("INFO: Removed " + sharedFiles.size() + " local files for sharing in " + t + " seconds.");
+    }
+
+    private void modifySharedFiles(File shared, boolean recursive, boolean removal) {
         if (shared.isDirectory()) {
             File[] files = shared.listFiles();
             for (File f : files) {
-                searchLocalSharedFiles(f);
+                if (recursive) {
+                    modifySharedFiles(f, recursive, removal);
+                } else {
+                    if (f.isFile()) {
+                        if (!removal) {
+                            sharedFiles.put(shared.hashCode(), shared);
+                        } else {
+                            sharedFiles.remove(shared.hashCode());
+                        }
+                    }
+                }
             }
         } else {
-            sharedFiles.put(shared.getName(), shared);
+            if (!removal) {
+                sharedFiles.put(shared.hashCode(), shared);
+            } else {
+                sharedFiles.remove(shared.hashCode());
+            }
         }
     }
 
     private void connectToServer(String host, int port) {
-
         try {
             socketToServer = new Socket(host, port);
             socketToServer.setSoLinger(true, LINGER);
@@ -116,9 +149,14 @@ public class Client {
     }
 
     private void share() {
+        if (!sharing) {
+            sharing = true;
+        } else {
+        }
     }
 
     private void unshare() {
+        sharing = false;
     }
 
     private void startPeerRequestHandling() {
@@ -137,33 +175,38 @@ public class Client {
                 }
             }
         };
-        new Thread(requestHandlingTask).start();
+        new Thread(requestHandlingTask, "Peer-Request-Handler").start();
         out.println("INFO: Started handling requests from peers.");
     }
 
     private void printMyFiles() {
-        int size = ((MultiValueMap) sharedFiles).totalSize();
+        int size = sharedFiles.size();
         String[][] table = new String[size + 1][4];
         fillRow(table[0], "File", "Size", "Date", "Path");
         int i = 1;
-        for (String fileName : (Set<String>) sharedFiles.keySet()) {
-            for (File f : (Collection<File>) ((MultiValueMap) sharedFiles).getCollection(fileName)) {
-                fillRow(table[i],
-                        fileName,
-                        Long.toString(f.length()),
-                        new Date(f.lastModified()).toString(),
-                        f.getPath());
-                ++i;
-            }
+        for (File f : sharedFiles.values()) {
+            fillRow(table[i],
+                    f.getName(),
+                    Long.toString(f.length()),
+                    new Date(f.lastModified()).toString(),
+                    f.getPath());
+            ++i;
         }
 
         int[] max = calcMaxLengthInColums(table);
-        int lineLength = max.length + 1;
+        int lineLength = 3 * max.length + 1;
         for (int l : max) {
             lineLength += l;
         }
 
-        String format = "|%-" + max[0] + "s|%-" + max[1] + "s|%-" + max[2] + "s|%-" + max[3] + "s|\n";
+        Arrays.sort(table, 1, size + 1, new Comparator<String[]>() {
+            @Override
+            public int compare(String[] o1, String[] o2) {
+                return o1[3].compareToIgnoreCase(o2[3]);
+            }
+        });
+
+        String format = "| %-" + max[0] + "s | %-" + max[1] + "s | %-" + max[2] + "s | %-" + max[3] + "s |\n";
         char[] lineArr = new char[lineLength];
         Arrays.fill(lineArr, '-');
         String line = new String(lineArr);
@@ -195,7 +238,7 @@ public class Client {
         return max;
     }
 
-    private void run() {
+    public void run() {
         String inputString = null;
         try {
             InetAddress clientIp = InetAddress.getLocalHost();
@@ -211,7 +254,7 @@ public class Client {
                 String userInput = in.readLine();
                 execute(parse(userInput));
             } catch (RejectedException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                throw new UnsupportedOperationException("TODO");
             } catch (IOException ex) {
                 out.println("ERROR: " + ex.getMessage());
             }
@@ -230,31 +273,22 @@ public class Client {
 
         CommandName commandName = null;
         List<String> args = new ArrayList<String>();
-        int userInputTokenNo = 1;
-        while (tokenizer.hasMoreTokens()) {
-            switch (userInputTokenNo) {
-                case 1:
-                    try {
-                        String commandNameString = tokenizer.nextToken();
-                        commandName = CommandName.valueOf(commandNameString.toUpperCase().trim());
-                    } catch (IllegalArgumentException ex) {
-                        out.println("ERROR: Unrecognized command.");
-                        return null;
-                    }
-                    break;
-                case 2:
-                    args.add(tokenizer.nextToken());
-                    break;
-                default:
-                    out.println("ERROR: Illegal command.");
-                    return null;
-            }
-            userInputTokenNo++;
+
+        try {
+            String commandNameString = tokenizer.nextToken().toUpperCase().trim();
+            commandName = CommandName.valueOf(commandNameString);
+        } catch (IllegalArgumentException ex) {
+            System.out.println("ERROR: Illegal command.");
+            return null;
         }
+        while (tokenizer.hasMoreTokens()) {
+            args.add(tokenizer.nextToken());
+        }
+
         return new Command(commandName, args.toArray(new String[]{}));
     }
 
-    void execute(Command command) throws RejectedException {
+    private void execute(Command command) throws RejectedException {
         if (command == null) {
             return;
         }
@@ -279,14 +313,14 @@ public class Client {
                 //TODO 
                 return;
             case DOWNLOAD:
-                int fileId;
                 try {
-                    fileId = Integer.parseInt(command.getArgs()[0]);
+                    int fileId = Integer.parseInt(command.getArgs()[0]);
+                    String filepath = command.getArgs()[1];
                 } catch (ArrayIndexOutOfBoundsException ex) {
-                    out.println("ERROR: No FileID are specified.");
+                    out.println("ERROR: Not enough parameters.");
                     return;
                 } catch (NumberFormatException ex) {
-                    out.println("EROR: Wrong FileID.");
+                    out.println("EROR: Wrong fileID.");
                     return;
                 }
                 //TODO
@@ -303,6 +337,12 @@ public class Client {
             case FIND:
                 //TODO
                 return;
+            case ADDFILES:
+                //TODO
+                return;
+            case REMOVEFILES:
+                //TODO
+                return;
         }
     }
 
@@ -312,40 +352,72 @@ public class Client {
      * @param args Command-line arguments provided by user 
      */
     public static void main(String[] args) {
-        String sharedFilePath = null;
-        String host = DEFAULT_HOST;
-        int port = DEFAULT_PORT;
-        switch (args.length) {
-            case 3:
-                try {
-                    port = Integer.parseInt(args[2]);
-                } catch (NumberFormatException e) {
-                    out.println(USAGE);
-                    System.exit(1);
-                }
-            case 2:
-                host = args[1];
-            case 1:
-                sharedFilePath = args[0];
-                break;
-            default:
-                out.println(USAGE);
-                System.exit(1);
-        }
+        // create the command line parser
+        CommandLineParser parser = new GnuParser();
 
-        new Client(host, port, sharedFilePath).run();
+        // create the Options
+        Options options = new Options();
+        Option pathOption = OptionBuilder.withArgName("filepath").
+                hasArg().
+                withDescription("add files for sharing under given filepath").
+                withLongOpt("path").
+                create('P');
+        Option hostOption = OptionBuilder.withArgName("address").
+                hasArg().
+                withDescription("set the IP address of FISH server").
+                withLongOpt("host").
+                create('h');
+        Option portOption = OptionBuilder.withArgName("port").
+                hasArg().
+                withDescription("set port number of FISH server").
+                withLongOpt("port").
+                create('p');
+        options.addOption(pathOption);
+        options.addOption(hostOption);
+        options.addOption(portOption);
+
+        // automatically generate the help statement
+        HelpFormatter formatter = new HelpFormatter();
+
+        try {
+            String sharedFilePath;
+            String host;
+            int port;
+
+            // parse the command line arguments
+            CommandLine line = parser.parse(options, args);
+            sharedFilePath = line.getOptionValue("P", null);
+            host = line.getOptionValue("h", DEFAULT_HOST);
+            port = Integer.parseInt(line.getOptionValue("p", Integer.toString(DEFAULT_PORT)));
+
+            new Client(host, port, sharedFilePath).run();
+        } catch (ParseException ex) {
+            formatter.printHelp(USAGE_SHORT, options);
+            System.exit(1);
+        } catch (NumberFormatException ex) {
+            out.println("ERROR: Wrong port number.");
+            System.exit(1);
+        }
     }
 
     private enum CommandName {
+        /*Begin commands*/
         HELP("Print out the list of commands"),
         SHARE("Start sharing files (if already started, update list of shared files)"),
         UNSHARE("Stop sharing files"),
+        ADDFILES("Add files for sharing under given path",
+        new String[]{"<path> - path to files", "<recursive> - true/false"}),
+        REMOVEFILES("Remove files for sharing under given path",
+        new String[]{"<path> - path to files", "<recursive> - true/false"}),
         LIST("Show list of all shared files from server"),
-        DOWNLOAD("Download a file with given FileID", new String[]{"<FileID> - id of the file from the last retrieved shared file list"}),
+        DOWNLOAD("Download a file with given FileID",
+        new String[]{"<fileID> - id of the file from the last retrieved shared file list", "<filepath> - path to file to save"}),
         EXIT("Stop sharing and close client"),
         MYFILES("Show list of my files under shared file path"),
         LASTLIST("Show last retrieved shared file list"),
-        FIND("Get list of shared files by given name", new String[]{"<name> - name mask"});
+        FIND("Get list of shared files by given name",
+        new String[]{"<name> - name mask"});
+        /*End commands*/
         private String description;
         private String[] paramDescriptions;
 

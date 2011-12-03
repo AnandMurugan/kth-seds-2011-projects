@@ -16,7 +16,7 @@ class PeerRequestHandler extends Thread {
     public PeerRequestHandler(Socket clientSocket) {
     }
 
-    PeerRequestHandler(Socket clientSocket, Map<String, File> sharedFiles) {
+    PeerRequestHandler(Socket clientSocket, Map<Integer, File> sharedFiles) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }
