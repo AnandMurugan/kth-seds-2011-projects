@@ -6,7 +6,7 @@ package fish.client;
 
 import java.io.File;
 import java.net.Socket;
-import java.util.Set;
+import java.util.Map;
 
 /**
  *
@@ -16,7 +16,7 @@ class PeerRequestHandler extends Thread {
     public PeerRequestHandler(Socket clientSocket) {
     }
 
-    PeerRequestHandler(Socket clientSocket, Set<File> sharedFiles) {
+    PeerRequestHandler(Socket clientSocket, Map<String, File> sharedFiles) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }
