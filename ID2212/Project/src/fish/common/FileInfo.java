@@ -6,26 +6,25 @@ package fish.common;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 
 /**
  *
  * @author Igor
  */
 public class FileInfo {
-    private InetSocketAddress ownerAddress;
+    private String ownerHost;
     private File file;
 
     public FileInfo() {
     }
 
-    public FileInfo(InetSocketAddress ownerAddress, File file) {
-        this.ownerAddress = ownerAddress;
+    public FileInfo(String ownerHost, File file) {
+        this.ownerHost = ownerHost;
         this.file = file;
     }
 
-    public InetSocketAddress getOwnerAddress() {
-        return ownerAddress;
+    public String getOwnerHost() {
+        return ownerHost;
     }
 
     public String getName() {
@@ -36,7 +35,7 @@ public class FileInfo {
         return file.length();
     }
 
-    public String getCanonicalPath() throws IOException {
-        return file.getCanonicalPath();
+    public String getLocalKey() throws IOException {
+        return file.getPath();
     }
 }
