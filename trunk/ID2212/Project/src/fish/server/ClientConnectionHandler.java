@@ -4,10 +4,16 @@
  */
 package fish.server;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.collections.MultiMap;
 
 /**
  *
@@ -15,24 +21,40 @@ import java.net.Socket;
  */
 public class ClientConnectionHandler extends Thread {
     private Socket clientSocket;
+    private MultiMap files;
+    private boolean alive = true;
 
-    public ClientConnectionHandler(Socket clientSocket) {
+    public ClientConnectionHandler(Socket clientSocket, MultiMap files) {
         this.clientSocket = clientSocket;
+        this.files = files;
     }
 
     @Override
     public void run() {
-        BufferedInputStream in;
-        BufferedOutputStream out;
-
+        BufferedReader in = null;
+        BufferedWriter out = null;
         try {
-            in = new BufferedInputStream(clientSocket.getInputStream());
-            out = new BufferedOutputStream(clientSocket.getOutputStream());
-        } catch (IOException e) {
-            System.out.println(e.toString());
-            return;
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+
+            while (alive) {
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ClientConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(ClientConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-        
-        
+
+
+
     }
 }

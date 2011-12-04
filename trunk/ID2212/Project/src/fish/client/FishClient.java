@@ -5,16 +5,23 @@
 package fish.client;
 
 import fish.common.FileInfo;
+import fish.common.FishMessageType;
 import fish.common.RejectedException;
+import fish.server.FishServer;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -37,10 +44,10 @@ import org.apache.commons.cli.ParseException;
  * 
  * @author Igor
  */
-public final class Client {
+public final class FishClient {
     /*CLI*/
-    private final static String USAGE_SHORT = "java fish.client.Client";
-    private final static String USAGE = "java fish.client.Client [-path <shared_file_path>] [-host <server_address>] [-port <server_port>]";
+    private final static String USAGE_SHORT = "java fish.client.FishClient";
+    private final static String USAGE = "java fish.client.FishClient [-path <shared_file_path>] [-host <server_address>] [-port <server_port>]";
     private final static PrintStream out = System.out;
     private final static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     /*Networking*/
@@ -51,7 +58,7 @@ public final class Client {
     /**
      * Default server port
      */
-    public final static int DEFAULT_PORT = 8080;//Server.DEFAULT_PORT;
+    public final static int DEFAULT_PORT = FishServer.DEFAULT_PORT;
     /**
      * Default peer port
      */
@@ -72,12 +79,12 @@ public final class Client {
      * @param port FISH server port
      * @param sharedFilePath Path to the shared folder
      */
-    public Client(String host, int port, String sharedFilePath) {
+    public FishClient(String host, int port, String sharedFilePath) {
         mySharedFiles = new HashMap<String, File>();
         sharing = false;
 
         /*Connecting to the server*/
-        //connectToServer(host, port);
+        connectToServer(host, port);
 
         /*Setting shared files*/
         if (sharedFilePath != null && !sharedFilePath.isEmpty()) {
@@ -211,8 +218,9 @@ public final class Client {
         //TODO
         if (!sharing) {
             sharing = true;
-        } else {
         }
+
+
     }
 
     /**
@@ -229,7 +237,18 @@ public final class Client {
      */
     public List<FileInfo> obtainSharedFileList() {
         //TODO
-        return null;
+        /*FOR DEBUGGING ONLY start*/
+        List<FileInfo> list = new ArrayList<FileInfo>();
+        for (File f : mySharedFiles.values()) {
+//            try {
+            list.add(new FileInfo(/*InetAddress.getLocalHost().getHostAddress()*/"localhost", f));
+//            } catch (UnknownHostException ex) {
+//                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+        }
+        foundSharedFiles = list;
+        /*FOR DEBUGGING ONLY end*/
+        return foundSharedFiles;
     }
 
     /**
@@ -240,7 +259,7 @@ public final class Client {
      */
     public List<FileInfo> obtainSharedFileList(String mask) {
         //TODO
-        return null;
+        return foundSharedFiles;
     }
 
     /**
@@ -249,8 +268,67 @@ public final class Client {
      * @param index An index of file in the list of shared files
      * @param filename A filepath under which downloaded file would be written (saved)
      */
-    public void download(int index, String filename) {
-        //TODO
+    public void download(int index, String filename) throws RejectedException, IOException {
+        BufferedWriter peerOut = null;
+        BufferedReader peerIn = null;
+        FileOutputStream fileOut = null;
+        InputStream fileIn = null;
+        try {
+            FileInfo fi = foundSharedFiles.get(index);
+            String host = fi.getOwnerHost();
+
+            inSocketToPeer = new Socket(host, DEFAULT_PEER_PORT);
+
+            peerOut = new BufferedWriter(
+                    new OutputStreamWriter(inSocketToPeer.getOutputStream()));
+            peerIn = new BufferedReader(
+                    new InputStreamReader(inSocketToPeer.getInputStream()));
+
+            String request = FishMessageType.PEER_DOWNLOAD.name() + ";" + fi.getLocalKey();
+            peerOut.write(request);
+            peerOut.newLine();
+            peerOut.flush();
+
+            String response = peerIn.readLine();
+            if ((response == null)
+                    || (response.isEmpty())
+                    || (FishMessageType.PEER_OK != FishMessageType.valueOf(response))) {
+                throw new RejectedException("Peer did not respond with OK");
+            }
+
+            fileIn = inSocketToPeer.getInputStream();
+            File file = new File(filename);
+            fileOut = new FileOutputStream(file);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = fileIn.read(buf)) > 0) {
+                fileOut.write(buf, 0, len);
+            }
+
+            out.printf("INFO: File %s has been downloaded successfully from %s into %s.\n\n",
+                    fi.getName(),
+                    fi.getOwnerHost(),
+                    file.getCanonicalPath());
+        } catch (UnknownHostException ex) {
+            out.println("ERROR: Host not found.");
+        } catch (IOException ex) {
+            out.println("ERROR: " + ex.getMessage());
+        } finally {
+            if (fileIn != null) {
+                fileIn.close();
+            }
+            if (fileOut != null) {
+                fileOut.close();
+            }
+            if (peerIn != null) {
+                peerIn.close();
+            }
+            if (peerOut != null) {
+                peerOut.close();
+            }
+
+            inSocketToPeer.close();
+        }
     }
 
     private void startPeerRequestHandling() {
@@ -352,7 +430,7 @@ public final class Client {
                     Integer.toString(i),
                     fi.getName(),
                     Long.toString(fi.getSize()),
-                    fi.getOwnerAddress().getHostString());
+                    fi.getOwnerHost());
             ++i;
         }
 
@@ -477,13 +555,17 @@ public final class Client {
                 return;
             case DOWNLOAD:
                 try {
-                    int fileId = Integer.parseInt(command.getArgs()[0]);
+                    int fileId = Integer.parseInt(command.getArgs()[0]) - 1;
                     String filepath = command.getArgs()[1];
                     download(fileId, filepath);
+                } catch (IOException ex) {
+                    out.println("ERROR: " + ex.getMessage() + "\n");
                 } catch (ArrayIndexOutOfBoundsException ex) {
                     out.println("ERROR: Not enough parameters.\n");
                 } catch (NumberFormatException ex) {
                     out.println("ERROR: Wrong fileID.\n");
+                } catch (RejectedException ex) {
+                    out.println("ERROR: Downloading rejected. Reason: " + ex.getMessage() + "\n");
                 }
                 return;
             case EXIT:
@@ -575,7 +657,7 @@ public final class Client {
             host = line.getOptionValue("h", DEFAULT_HOST);
             port = Integer.parseInt(line.getOptionValue("p", Integer.toString(DEFAULT_PORT)));
 
-            new Client(host, port, sharedFilePath).run();
+            new FishClient(host, port, sharedFilePath).run();
         } catch (ParseException ex) {
             formatter.printHelp(USAGE_SHORT, options);
             System.exit(1);

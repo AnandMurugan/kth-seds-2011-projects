@@ -8,6 +8,8 @@ package fish.common;
  *
  * @author Igor
  */
-public enum MessageType {
-    
+public enum FishMessageType {
+    PEER_DOWNLOAD,
+    PEER_OK,
+    PEER_ERROR
 }
