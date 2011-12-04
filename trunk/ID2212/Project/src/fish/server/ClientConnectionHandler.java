@@ -4,13 +4,15 @@
  */
 package fish.server;
 
-import java.io.BufferedOutputStream;
+import fish.common.FishMessageType;
+import java.awt.TrayIcon.MessageType;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.collections.MultiMap;
@@ -37,7 +39,25 @@ public class ClientConnectionHandler extends Thread {
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
 
+            String str;
             while (alive) {
+                if ((str = in.readLine()) == null) {
+                    break;
+                }
+
+                StringTokenizer tokens = new StringTokenizer(str, ";");
+                String msgTypeString = tokens.nextToken();
+                FishMessageType msgType = FishMessageType.valueOf(msgTypeString);
+                switch (msgType) {
+                    case CLIENT_SHARE:
+                        break;
+                    case CLIENT_UNSHARE:
+                        break;
+                    case CLIENT_FIND_ALL:
+                        break;
+                    case CLIENT_FIND:
+                        break;
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(ClientConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -53,8 +73,9 @@ public class ClientConnectionHandler extends Thread {
                 Logger.getLogger(ClientConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
 
-
-
+    public void setAlive(boolean alive) {
+        this.alive = alive;
     }
 }
