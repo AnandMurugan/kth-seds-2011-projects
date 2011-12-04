@@ -6,12 +6,13 @@ package fish.common;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
 /**
  *
  * @author Igor
  */
-public class FileInfo {
+public class FileInfo implements Serializable {
     private String ownerHost;
     private File file;
 
