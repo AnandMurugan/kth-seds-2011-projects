@@ -752,7 +752,13 @@ public final class FishClient {
                 }
                 return;
             case EXIT:
-                unshare();
+                try {
+                    unshare();
+                } catch (IOException ex) {
+                    out.println("ERROR: " + ex.getMessage() + "\n");
+                } catch (RejectedException ex) {
+                    out.println("ERROR: Unsharing rejected. Reason: " + ex.getMessage() + "\n");
+                }
                 System.exit(0);
             case MYFILES:
                 printMyFiles();
