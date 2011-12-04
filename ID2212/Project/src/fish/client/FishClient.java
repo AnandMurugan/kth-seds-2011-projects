@@ -4,6 +4,7 @@
  */
 package fish.client;
 
+import com.sun.security.ntlm.Client;
 import fish.common.FileInfo;
 import fish.common.FishMessageType;
 import fish.common.RejectedException;
@@ -15,6 +16,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.net.InetAddress;
@@ -30,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -92,7 +97,13 @@ public final class FishClient {
         }
 
         /*Sending list of shared files to server*/
-        share();
+        try {
+            share();
+        } catch (RejectedException ex) {
+            out.println("ERROR: Sharing rejected. Reason: " + ex.getMessage() + "\n");
+        } catch (IOException ex) {
+            out.println("ERROR: " + ex.getMessage());
+        }
 
         /*Starting handling requests from other peers*/
         startPeerRequestHandling();
@@ -214,40 +225,155 @@ public final class FishClient {
     /**
      * Sends FISH server the list of shared files 
      */
-    public void share() {
-        //TODO
-        if (!sharing) {
-            sharing = true;
+    public void share() throws RejectedException, IOException {
+        BufferedWriter serverOut = null;
+        BufferedReader serverIn = null;
+        ObjectOutputStream listOut = null;
+        try {
+            serverOut = new BufferedWriter(
+                    new OutputStreamWriter(socketToServer.getOutputStream()));
+            serverIn = new BufferedReader(
+                    new InputStreamReader(socketToServer.getInputStream()));
+
+            serverOut.write(FishMessageType.CLIENT_SHARE.name());
+            serverOut.newLine();
+            serverOut.flush();
+
+            String response1 = serverIn.readLine();
+            if ((response1 == null)
+                    || (response1.isEmpty())
+                    || (FishMessageType.SERVER_OK != FishMessageType.valueOf(response1))) {
+                throw new RejectedException("Server did not respond with OK before sending list");
+            }
+
+            listOut = new ObjectOutputStream(socketToServer.getOutputStream());
+            listOut.writeObject(new ArrayList(mySharedFiles.values()));
+
+            String response2 = serverIn.readLine();
+            if ((response2 == null)
+                    || (response2.isEmpty())
+                    || (FishMessageType.SERVER_OK != FishMessageType.valueOf(response2))) {
+                throw new RejectedException("Server did not respond with OK after sending list");
+            }
+
+            if (!sharing) {
+                sharing = true;
+            }
+            out.printf("INFO: List of files for sharing was successfully submitted to the server.\n\n");
+        } catch (UnknownHostException ex) {
+            out.println("ERROR: Host not found.");
+        } catch (IOException ex) {
+            out.println("ERROR: " + ex.getMessage());
+        } finally {
+            if (listOut != null) {
+                listOut.close();
+            }
+            if (serverIn != null) {
+                serverIn.close();
+            }
+            if (serverIn != null) {
+                serverIn.close();
+            }
         }
-
-
     }
 
     /**
      * Tells FISH server to remove all client's shared files
      */
-    public void unshare() {
-        //TODO
-        sharing = false;
+    public void unshare() throws RejectedException, IOException {
+        BufferedWriter serverOut = null;
+        BufferedReader serverIn = null;
+        try {
+            serverOut = new BufferedWriter(
+                    new OutputStreamWriter(socketToServer.getOutputStream()));
+            serverIn = new BufferedReader(
+                    new InputStreamReader(socketToServer.getInputStream()));
+
+            serverOut.write(FishMessageType.CLIENT_UNSHARE.name());
+            serverOut.newLine();
+            serverOut.flush();
+
+            String response = serverIn.readLine();
+            if ((response == null)
+                    || (response.isEmpty())
+                    || (FishMessageType.SERVER_OK != FishMessageType.valueOf(response))) {
+                throw new RejectedException("Server did not respond with OK before sending list");
+            }
+
+            sharing = false;
+            out.printf("INFO: Client stopped sharing.\n\n");
+        } catch (UnknownHostException ex) {
+            out.println("ERROR: Host not found.");
+        } catch (IOException ex) {
+            out.println("ERROR: " + ex.getMessage());
+        } finally {
+            if (serverIn != null) {
+                serverIn.close();
+            }
+            if (serverIn != null) {
+                serverIn.close();
+            }
+        }
     }
 
     /**
      * Retrieves the list of all shared files from FISH server (client's shared 
      * files are not included).
      */
-    public List<FileInfo> obtainSharedFileList() {
-        //TODO
+    public List<FileInfo> obtainSharedFileList() throws RejectedException, IOException {
         /*FOR DEBUGGING ONLY start*/
-        List<FileInfo> list = new ArrayList<FileInfo>();
-        for (File f : mySharedFiles.values()) {
-//            try {
-            list.add(new FileInfo(/*InetAddress.getLocalHost().getHostAddress()*/"localhost", f));
-//            } catch (UnknownHostException ex) {
-//                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-        }
-        foundSharedFiles = list;
+//        List<FileInfo> list = new ArrayList<FileInfo>();
+//        for (File f : mySharedFiles.values()) {
+////            try {
+//            list.add(new FileInfo(/*InetAddress.getLocalHost().getHostAddress()*/"localhost", f));
+////            } catch (UnknownHostException ex) {
+////                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+////            }
+//        }
+//        foundSharedFiles = list;
         /*FOR DEBUGGING ONLY end*/
+        BufferedWriter serverOut = null;
+        BufferedReader serverIn = null;
+        ObjectInputStream listIn = null;
+        try {
+            serverOut = new BufferedWriter(
+                    new OutputStreamWriter(socketToServer.getOutputStream()));
+            serverIn = new BufferedReader(
+                    new InputStreamReader(socketToServer.getInputStream()));
+
+            serverOut.write(FishMessageType.CLIENT_FIND_ALL.name());
+            serverOut.newLine();
+            serverOut.flush();
+
+            String response = serverIn.readLine();
+            if ((response == null)
+                    || (response.isEmpty())
+                    || (FishMessageType.SERVER_OK != FishMessageType.valueOf(response))) {
+                throw new RejectedException("Server did not respond with OK");
+            }
+
+            listIn = new ObjectInputStream(socketToServer.getInputStream());
+            foundSharedFiles = (List<FileInfo>) listIn.readObject();
+
+            out.printf("INFO: %d files were found.\n\n",
+                    foundSharedFiles.size());
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(FishClient.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnknownHostException ex) {
+            out.println("ERROR: Host not found.");
+        } catch (IOException ex) {
+            out.println("ERROR: " + ex.getMessage());
+        } finally {
+            if (listIn != null) {
+                listIn.close();
+            }
+            if (serverIn != null) {
+                serverIn.close();
+            }
+            if (serverOut != null) {
+                serverOut.close();
+            }
+        }
         return foundSharedFiles;
     }
 
@@ -257,8 +383,49 @@ public final class FishClient {
      * 
      * @param mask File name mask
      */
-    public List<FileInfo> obtainSharedFileList(String mask) {
-        //TODO
+    public List<FileInfo> obtainSharedFileList(String mask) throws RejectedException, IOException {
+        BufferedWriter serverOut = null;
+        BufferedReader serverIn = null;
+        ObjectInputStream listIn = null;
+        try {
+            serverOut = new BufferedWriter(
+                    new OutputStreamWriter(socketToServer.getOutputStream()));
+            serverIn = new BufferedReader(
+                    new InputStreamReader(socketToServer.getInputStream()));
+
+            serverOut.write(FishMessageType.CLIENT_FIND_ALL + ";" + mask);
+            serverOut.newLine();
+            serverOut.flush();
+
+            String response = serverIn.readLine();
+            if ((response == null)
+                    || (response.isEmpty())
+                    || (FishMessageType.SERVER_OK != FishMessageType.valueOf(response))) {
+                throw new RejectedException("Server did not respond with OK");
+            }
+
+            listIn = new ObjectInputStream(socketToServer.getInputStream());
+            foundSharedFiles = (List<FileInfo>) listIn.readObject();
+
+            out.printf("INFO: %d files were found.\n\n",
+                    foundSharedFiles.size());
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(FishClient.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnknownHostException ex) {
+            out.println("ERROR: Host not found.");
+        } catch (IOException ex) {
+            out.println("ERROR: " + ex.getMessage());
+        } finally {
+            if (listIn != null) {
+                listIn.close();
+            }
+            if (serverIn != null) {
+                serverIn.close();
+            }
+            if (serverOut != null) {
+                serverOut.close();
+            }
+        }
         return foundSharedFiles;
     }
 
@@ -544,14 +711,30 @@ public final class FishClient {
                 out.println();
                 return;
             case SHARE:
-                share();
+                try {
+                    share();
+                } catch (IOException ex) {
+                    out.println("ERROR: " + ex.getMessage());
+                } catch (RejectedException ex) {
+                    out.println("ERROR: Sharing rejected. Reason: " + ex.getMessage() + "\n");
+                }
                 return;
             case UNSHARE:
-                unshare();
+                try {
+                    unshare();
+                } catch (IOException ex) {
+                    out.println("ERROR: " + ex.getMessage());
+                } catch (RejectedException ex) {
+                    out.println("ERROR: Unsharing rejected. Reason: " + ex.getMessage() + "\n");
+                }
                 return;
             case LIST:
-                obtainSharedFileList();
-                printFoundFiles();
+                try {
+                    obtainSharedFileList();
+                    printFoundFiles();
+                } catch (IOException ex) {
+                    out.println("ERROR: " + ex.getMessage() + "\n");
+                }
                 return;
             case DOWNLOAD:
                 try {
@@ -582,6 +765,8 @@ public final class FishClient {
                     String mask = command.getArgs()[0];
                     obtainSharedFileList(mask);
                     printFoundFiles();
+                } catch (IOException ex) {
+                    out.println("ERROR: " + ex.getMessage() + "\n");
                 } catch (ArrayIndexOutOfBoundsException ex) {
                     out.println("ERROR: Not enough parameters.\n");
                 }
@@ -596,6 +781,10 @@ public final class FishClient {
                     }
                 } catch (ArrayIndexOutOfBoundsException ex) {
                     out.println("ERROR: Not enough parameters.\n");
+                } catch (IOException ex) {
+                    out.println("ERROR: " + ex.getMessage() + "\n");
+                } catch (RejectedException ex) {
+                    out.println("ERROR: Sharing rejected. Reason: " + ex.getMessage() + "\n");
                 }
                 return;
             case REMOVE:
@@ -608,6 +797,10 @@ public final class FishClient {
                     }
                 } catch (ArrayIndexOutOfBoundsException ex) {
                     out.println("ERROR: Not enough parameters.\n");
+                } catch (IOException ex) {
+                    out.println("ERROR: " + ex.getMessage() + "\n");
+                } catch (RejectedException ex) {
+                    out.println("ERROR: Sharing rejected. Reason: " + ex.getMessage() + "\n");
                 }
                 return;
         }
