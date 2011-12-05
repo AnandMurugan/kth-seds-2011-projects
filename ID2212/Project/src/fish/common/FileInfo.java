@@ -4,7 +4,6 @@
  */
 package fish.common;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -14,14 +13,18 @@ import java.io.Serializable;
  */
 public class FileInfo implements Serializable {
     private String ownerHost;
-    private File file;
+    private String fileName;
+    private long fileSize;
+    private String localKey;
 
     public FileInfo() {
     }
 
-    public FileInfo(String ownerHost, File file) {
+    public FileInfo(String ownerHost, String fileName, long fileSize, String localKey) {
         this.ownerHost = ownerHost;
-        this.file = file;
+        this.fileName = fileName;
+        this.fileSize = fileSize;
+        this.localKey = localKey;
     }
 
     public String getOwnerHost() {
@@ -29,15 +32,15 @@ public class FileInfo implements Serializable {
     }
 
     public String getName() {
-        return file.getName();
+        return fileName;
     }
 
     public long getSize() {
-        return file.length();
+        return fileSize;
     }
 
     public String getLocalKey() throws IOException {
-        return file.getPath();
+        return localKey;
     }
 
     @Override
@@ -52,7 +55,7 @@ public class FileInfo implements Serializable {
             return false;
         }
 
-        if (!other.file.equals(this.file)) {
+        if (!other.localKey.equals(this.localKey)) {
             return false;
         }
 
@@ -62,8 +65,8 @@ public class FileInfo implements Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 71 * hash + (this.ownerHost != null ? this.ownerHost.hashCode() : 0);
-        hash = 71 * hash + (this.file != null ? this.file.hashCode() : 0);
+        hash = 67 * hash + (this.ownerHost != null ? this.ownerHost.hashCode() : 0);
+        hash = 67 * hash + (this.localKey != null ? this.localKey.hashCode() : 0);
         return hash;
     }
 }

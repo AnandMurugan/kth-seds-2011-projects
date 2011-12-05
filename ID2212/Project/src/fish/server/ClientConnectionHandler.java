@@ -8,7 +8,6 @@ import fish.common.FileInfo;
 import fish.common.FishMessageType;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
@@ -18,6 +17,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -33,17 +33,21 @@ import org.apache.commons.collections.map.MultiValueMap;
  */
 public class ClientConnectionHandler extends Thread {
     private Socket clientSocket;
-    private final MultiMap files;
+    private final Map<String, MultiValueMap> allFilesMap;
     private boolean alive = true;
 
-    public ClientConnectionHandler(Socket clientSocket, MultiMap files) {
+    public ClientConnectionHandler(Socket clientSocket, Map<String, MultiValueMap> files) {
         this.clientSocket = clientSocket;
-        this.files = files;
+        this.allFilesMap = files;
     }
 
     @Override
     public void run() {
         System.out.println("Handling new client started.");
+
+        String clientAddr = clientSocket.getInetAddress().getHostAddress();
+        final MultiValueMap clientFilesMultiMap = allFilesMap.get(clientAddr);
+
         BufferedReader in = null;
         BufferedWriter out = null;
         ObjectInputStream listIn = null;
@@ -70,15 +74,12 @@ public class ClientConnectionHandler extends Thread {
 
                         try {
                             listIn = new ObjectInputStream(clientSocket.getInputStream());
-                            List<File> clientFiles = (List<File>) listIn.readObject();
-                            System.out.println(Integer.toString(clientSocket.getInputStream().available()));
-                            String host = clientSocket.getInetAddress().getHostAddress();
-                            synchronized (files) {
-                                for (File f : clientFiles) {
-                                    FileInfo fi = new FileInfo(host, f);
-                                    if (!((MultiValueMap) files).containsValue(f.getName(), fi)) {
-                                        files.put(f.getName(), fi);
-                                    }
+                            List<FileInfo> clientFiles = (List<FileInfo>) listIn.readObject();
+                            //System.out.println(Integer.toString(clientSocket.getInputStream().available()));
+                            synchronized (allFilesMap) {
+                                clientFilesMultiMap.clear();
+                                for (FileInfo fi : clientFiles) {
+                                    clientFilesMultiMap.put(fi.getName(), fi);
                                 }
                             }
 
@@ -90,17 +91,8 @@ public class ClientConnectionHandler extends Thread {
                         }
                         break;
                     case CLIENT_UNSHARE:
-                        String host = clientSocket.getInetAddress().getHostAddress();
-
-                        synchronized (files) {
-                            //TODO resolve concurrent issue
-                            for (String key : (Set<String>) files.keySet()) {
-                                for (FileInfo fi : (Collection<FileInfo>) ((MultiValueMap) files).getCollection(key)) {
-                                    if (host.equals(fi.getOwnerHost())) {
-                                        files.remove(key, fi);
-                                    }
-                                }
-                            }
+                        synchronized (allFilesMap) {
+                            clientFilesMultiMap.clear();
                         }
 
                         out.write(FishMessageType.SERVER_OK.name());
@@ -112,28 +104,38 @@ public class ClientConnectionHandler extends Thread {
 //                        out.newLine();
 //                        out.flush();
 
+                        List<FileInfo> listAll = new ArrayList<FileInfo>();
+                        synchronized (allFilesMap) {
+                            for (String key : allFilesMap.keySet()) {
+                                if (!key.equals(clientAddr)) {
+                                    listAll.addAll(allFilesMap.get(key).values());
+                                }
+                            }
+                        }
                         listOut = new ObjectOutputStream(clientSocket.getOutputStream());
                         listOut.reset();
-                        synchronized (files) {
-                            listOut.writeObject(new ArrayList((Collection<FileInfo>) files.values()));
-                        }
+                        listOut.writeObject(listAll);
                         break;
                     case CLIENT_FIND:
                         String mask = tokens.nextToken();
+                        Pattern p = Pattern.compile(mask);
 
 //                        out.write(FishMessageType.SERVER_OK.name());
 //                        out.newLine();
 //                        out.flush();
 
                         List<FileInfo> list = new ArrayList<FileInfo>();
-                        synchronized (files) {
-                            for (String name : (Set<String>) files.keySet()) {
-                                if (match(name, mask)) {
-                                    list.addAll(((MultiValueMap) files).getCollection(name));
+                        synchronized (allFilesMap) {
+                            for (String key : allFilesMap.keySet()) {
+                                if (!key.equals(clientAddr)) {
+                                    for (String name : (Set<String>) allFilesMap.get(key).keySet()) {
+                                        if (match(name, p)) {
+                                            list.addAll(((MultiValueMap) allFilesMap.get(key)).getCollection(name));
+                                        }
+                                    }
                                 }
                             }
                         }
-
                         listOut = new ObjectOutputStream(clientSocket.getOutputStream());
                         listOut.reset();
                         listOut.writeObject(list);
@@ -160,9 +162,8 @@ public class ClientConnectionHandler extends Thread {
         this.alive = alive;
     }
 
-    private boolean match(String name, String mask) {
+    private boolean match(String name, Pattern p) {
         //return name.equalsIgnoreCase(mask);
-        Pattern p = Pattern.compile(mask);
         Matcher m = p.matcher(name);
 
         return m.find();

@@ -245,9 +245,18 @@ public final class FishClient {
                 throw new RejectedException("Server did not respond with OK before sending list");
             }
 
+            List<FileInfo> list = new ArrayList<FileInfo>(mySharedFiles.values().size());
+            for (File f : mySharedFiles.values()) {
+                list.add(new FileInfo(
+                        InetAddress.getLocalHost().getHostAddress(),
+                        f.getName(),
+                        f.length(),
+                        f.getPath()));
+            }
+
             listOut = new ObjectOutputStream(socketToServer.getOutputStream());
             listOut.reset();
-            listOut.writeObject(new ArrayList(mySharedFiles.values()));
+            listOut.writeObject(list);
 
             String response2 = serverIn.readLine();
             if ((response2 == null)
