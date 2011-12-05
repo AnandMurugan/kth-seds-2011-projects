@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import org.apache.commons.collections.map.MultiValueMap;
 
 /**
@@ -34,7 +35,7 @@ public class ClientConnectionHandler extends Thread {
     private Socket clientSocket;
     private final Map<String, MultiValueMap> allFilesMap;
     private boolean alive = true;
-    private EntityManager em = null;
+    private final EntityManager em;
 
     public ClientConnectionHandler(Socket clientSocket, Map<String, MultiValueMap> files, EntityManager em) {
         this.clientSocket = clientSocket;
@@ -48,7 +49,10 @@ public class ClientConnectionHandler extends Thread {
 
         String clientAddr = clientSocket.getInetAddress().getHostAddress();
         final MultiValueMap clientFilesMultiMap = allFilesMap.get(clientAddr);
-
+        /*final List<FileInfo> clientFileInfoDataPersist = em.createNamedQuery(FileInfo.GET_FILE_INFO_LIST_BY_OWNER, FileInfo.class).
+        setParameter("owner", clientAddr).
+        getResultList();
+         */
         BufferedReader in = null;
         BufferedWriter out = null;
         ObjectInputStream listIn = null;
@@ -77,13 +81,19 @@ public class ClientConnectionHandler extends Thread {
                             listIn = new ObjectInputStream(clientSocket.getInputStream());
                             List<FileInfo> clientFiles = (List<FileInfo>) listIn.readObject();
                             //System.out.println(Integer.toString(clientSocket.getInputStream().available()));
+                            EntityTransaction transaction = null;
+
+                            em.getTransaction().begin();
+                            em.createQuery("DELETE FROM FileInfo f WHERE f.ownerHost = :owner").setParameter("owner", clientAddr).executeUpdate();
+
                             synchronized (allFilesMap) {
                                 clientFilesMultiMap.clear();
                                 for (FileInfo fi : clientFiles) {
                                     clientFilesMultiMap.put(fi.getName(), fi);
+                                    em.persist(fi);
                                 }
                             }
-
+                            em.getTransaction().commit();
                             out.write(FishMessageType.SERVER_OK.name());
                             out.newLine();
                             out.flush();
@@ -95,7 +105,10 @@ public class ClientConnectionHandler extends Thread {
                         synchronized (allFilesMap) {
                             clientFilesMultiMap.clear();
                         }
-
+                        em.getTransaction().begin();
+                        int numberModified = em.createQuery("DELETE FROM FileInfo WHERE ownerHost = :owner").setParameter("owner", clientAddr).executeUpdate();
+                        System.out.println("Fish database was modified, " + numberModified + " rows affected.");
+                        em.getTransaction().commit();
                         out.write(FishMessageType.SERVER_OK.name());
                         out.newLine();
                         out.flush();
