@@ -126,7 +126,7 @@ public final class FishClient {
         long t2 = System.currentTimeMillis();
         float t = (t2 - t1) / 1000.0f;
 
-        out.println("INFO: Added " + count + " local files for sharing in " + t + " seconds.\n");
+        out.println("Added " + count + " local files for sharing in " + t + " seconds.\n");
 
         return count;
     }
@@ -149,7 +149,7 @@ public final class FishClient {
         long t2 = System.currentTimeMillis();
         float t = (t2 - t1) / 1000.0f;
 
-        out.println("INFO: Removed " + count + " local files for sharing in " + t + " seconds.\n");
+        out.println("Removed " + count + " local files for sharing in " + t + " seconds.\n");
 
         return count;
     }
@@ -218,7 +218,7 @@ public final class FishClient {
             out.println("ERROR: " + ex.getMessage() + "\n");
             System.exit(2);
         }
-        out.println("INFO: Connected to the server.\n");
+        out.println("Connected to the server.\n");
     }
 
     /**
@@ -268,7 +268,7 @@ public final class FishClient {
             if (!sharing) {
                 sharing = true;
             }
-            out.printf("INFO: List of files for sharing was successfully submitted to the server.\n\n");
+            out.printf("List of files for sharing was successfully submitted to the server.\n\n");
         } catch (UnknownHostException ex) {
             out.println("ERROR: Host not found.");
         } catch (IOException ex) {
@@ -310,7 +310,7 @@ public final class FishClient {
             }
 
             sharing = false;
-            out.printf("INFO: Client stopped sharing.\n\n");
+            out.printf("Client stopped sharing.\n\n");
         } catch (UnknownHostException ex) {
             out.println("ERROR: Host not found.");
         } catch (IOException ex) {
@@ -363,9 +363,9 @@ public final class FishClient {
 
             listIn = new ObjectInputStream(socketToServer.getInputStream());
             foundSharedFiles = (List<FileInfo>) listIn.readObject();
-            System.out.println(Integer.toString(socketToServer.getInputStream().available()));
+            //System.out.println(Integer.toString(socketToServer.getInputStream().available()));
 
-            out.printf("INFO: %d files were found.\n\n", foundSharedFiles.size());
+            out.printf("%d files were found.\n\n", foundSharedFiles.size());
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(FishClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnknownHostException ex) {
@@ -415,9 +415,9 @@ public final class FishClient {
 
             listIn = new ObjectInputStream(socketToServer.getInputStream());
             foundSharedFiles = (List<FileInfo>) listIn.readObject();
-            System.out.println(Integer.toString(socketToServer.getInputStream().available()));
+            //System.out.println(Integer.toString(socketToServer.getInputStream().available()));
 
-            out.printf("INFO: %d files were found.\n\n",
+            out.printf("%d files were found.\n\n",
                     foundSharedFiles.size());
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(FishClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -477,19 +477,27 @@ public final class FishClient {
                 throw new RejectedException("Peer did not respond with OK");
             }
 
+            out.println("Downloading...");
             fileIn = inSocketToPeer.getInputStream();
             File file = new File(filename);
             fileOut = new FileOutputStream(file);
             byte[] buf = new byte[1024];
             int len;
+            long t1 = System.currentTimeMillis();
             while ((len = fileIn.read(buf)) > 0) {
                 fileOut.write(buf, 0, len);
             }
+            long t2 = System.currentTimeMillis();
+            float t = (t2 - t1) / 1e3f;
+            long size = file.length();
+            float rate = (size / t) / 1e6f;
 
-            out.printf("INFO: File %s has been downloaded successfully from %s into %s.\n\n",
+            out.printf("File \"%s\" has been downloaded successfully from %s into \"%s\" in %d seconds (avarage download speed - %dMbps).\n\n",
                     fi.getName(),
                     fi.getOwnerHost(),
-                    file.getCanonicalPath());
+                    file.getCanonicalPath(),
+                    t,
+                    rate);
         } catch (UnknownHostException ex) {
             out.println("ERROR: Host not found.");
         } catch (IOException ex) {
@@ -533,7 +541,7 @@ public final class FishClient {
         Thread prh = new Thread(requestHandlingTask, "Peer-Request-Handler");
         prh.setDaemon(true);
         prh.start();
-        out.println("INFO: Started handling requests from peers.\n");
+        out.println("Started handling requests from peers.\n");
     }
 
     /**
