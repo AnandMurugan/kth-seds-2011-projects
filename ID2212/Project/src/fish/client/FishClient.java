@@ -519,8 +519,10 @@ public final class FishClient {
                 try {
                     outSocketToPeer = new ServerSocket(DEFAULT_PEER_PORT);
                     while (true) {
-                        Socket clientSocket = outSocketToPeer.accept();
-                        new PeerRequestHandler(clientSocket, mySharedFiles).start();
+                        if (sharing) {
+                            Socket clientSocket = outSocketToPeer.accept();
+                            new PeerRequestHandler(clientSocket, mySharedFiles).start();
+                        }
                     }
                 } catch (IOException ex) {
                     out.println("ERROR: " + ex.getMessage() + "\n");
