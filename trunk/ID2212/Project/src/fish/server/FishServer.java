@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import org.apache.commons.collections.map.MultiValueMap;
 
@@ -24,8 +25,7 @@ import org.apache.commons.collections.map.MultiValueMap;
 public class FishServer {
     public static final Integer DEFAULT_PORT = 8080;
     private Map<String, MultiValueMap> allClientFiles;
-    @PersistenceContext(unitName = "FishPU")
-    private EntityManager em;
+    final private EntityManager em = javax.persistence.Persistence.createEntityManagerFactory("FishPU").createEntityManager();
 
     public FishServer() {
         this.allClientFiles = new HashMap<String, MultiValueMap>();
@@ -78,6 +78,11 @@ public class FishServer {
     }
 
     public static void main(String args[]) {
+        try {
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(FishServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
         new FishServer().run();
     }
 }
