@@ -39,4 +39,31 @@ public class FileInfo implements Serializable {
     public String getLocalKey() throws IOException {
         return file.getPath();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof FileInfo)) {
+            return false;
+        }
+
+        FileInfo other = (FileInfo) obj;
+
+        if (!other.ownerHost.equals(this.ownerHost)) {
+            return false;
+        }
+
+        if (!other.file.equals(this.file)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + (this.ownerHost != null ? this.ownerHost.hashCode() : 0);
+        hash = 71 * hash + (this.file != null ? this.file.hashCode() : 0);
+        return hash;
+    }
 }

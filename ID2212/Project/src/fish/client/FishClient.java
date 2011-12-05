@@ -4,7 +4,6 @@
  */
 package fish.client;
 
-import com.sun.security.ntlm.Client;
 import fish.common.FileInfo;
 import fish.common.FishMessageType;
 import fish.common.RejectedException;
@@ -111,8 +110,8 @@ public final class FishClient {
 
     /**
      * Adds files under given path to the list of shared files. These changes are
-     * local only. To notify FISH server about changes, {@link Client#share share} methods should be
-     * called.
+     * local only. To notify FISH server about changes, {@link FishClient#unshare unshare} 
+     * and {@link FishClient#share share} methods should be called.
      * 
      * @param sharedFilePath Path to files
      * @param recursive If {@code true}, then file search would be recursive (looking
@@ -134,8 +133,8 @@ public final class FishClient {
 
     /**
      * Removes files under given path from the list of shared files. These changes are
-     * local only. To notify FISH server about changes, {@link Client#share share} methods should be
-     * called.
+     * local only. To notify FISH server about changes, {@link FishClient#unshare unshare} 
+     * and {@link FishClient#share share} methods should be called.
      * 
      * @param sharedFilePath Path to files
      * @param recursive If {@code true}, then file search would be recursive (looking
@@ -247,6 +246,7 @@ public final class FishClient {
             }
 
             listOut = new ObjectOutputStream(socketToServer.getOutputStream());
+            listOut.reset();
             listOut.writeObject(new ArrayList(mySharedFiles.values()));
 
             String response2 = serverIn.readLine();
@@ -265,15 +265,15 @@ public final class FishClient {
         } catch (IOException ex) {
             out.println("ERROR: " + ex.getMessage());
         } finally {
-            if (listOut != null) {
-                listOut.close();
-            }
-            if (serverIn != null) {
-                serverIn.close();
-            }
-            if (serverIn != null) {
-                serverIn.close();
-            }
+//            if (listOut != null) {
+//                listOut.close();
+//            }
+//            if (serverIn != null) {
+//                serverIn.close();
+//            }
+//            if (serverIn != null) {
+//                serverIn.close();
+//            }
         }
     }
 
@@ -297,7 +297,7 @@ public final class FishClient {
             if ((response == null)
                     || (response.isEmpty())
                     || (FishMessageType.SERVER_OK != FishMessageType.valueOf(response))) {
-                throw new RejectedException("Server did not respond with OK before sending list");
+                throw new RejectedException("Server did not respond with OK");
             }
 
             sharing = false;
@@ -307,12 +307,12 @@ public final class FishClient {
         } catch (IOException ex) {
             out.println("ERROR: " + ex.getMessage());
         } finally {
-            if (serverIn != null) {
-                serverIn.close();
-            }
-            if (serverIn != null) {
-                serverIn.close();
-            }
+//            if (serverIn != null) {
+//                serverIn.close();
+//            }
+//            if (serverIn != null) {
+//                serverIn.close();
+//            }
         }
     }
 
@@ -345,18 +345,18 @@ public final class FishClient {
             serverOut.newLine();
             serverOut.flush();
 
-            String response = serverIn.readLine();
-            if ((response == null)
-                    || (response.isEmpty())
-                    || (FishMessageType.SERVER_OK != FishMessageType.valueOf(response))) {
-                throw new RejectedException("Server did not respond with OK");
-            }
+//            String response = serverIn.readLine();
+//            if ((response == null)
+//                    || (response.isEmpty())
+//                    || (FishMessageType.SERVER_OK != FishMessageType.valueOf(response))) {
+//                throw new RejectedException("Server did not respond with OK");
+//            }
 
             listIn = new ObjectInputStream(socketToServer.getInputStream());
             foundSharedFiles = (List<FileInfo>) listIn.readObject();
+            System.out.println(Integer.toString(socketToServer.getInputStream().available()));
 
-            out.printf("INFO: %d files were found.\n\n",
-                    foundSharedFiles.size());
+            out.printf("INFO: %d files were found.\n\n", foundSharedFiles.size());
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(FishClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnknownHostException ex) {
@@ -364,15 +364,15 @@ public final class FishClient {
         } catch (IOException ex) {
             out.println("ERROR: " + ex.getMessage());
         } finally {
-            if (listIn != null) {
-                listIn.close();
-            }
-            if (serverIn != null) {
-                serverIn.close();
-            }
-            if (serverOut != null) {
-                serverOut.close();
-            }
+//            if (listIn != null) {
+//                listIn.close();
+//            }
+//            if (serverIn != null) {
+//                serverIn.close();
+//            }
+//            if (serverOut != null) {
+//                serverOut.close();
+//            }
         }
         return foundSharedFiles;
     }
@@ -393,19 +393,20 @@ public final class FishClient {
             serverIn = new BufferedReader(
                     new InputStreamReader(socketToServer.getInputStream()));
 
-            serverOut.write(FishMessageType.CLIENT_FIND_ALL + ";" + mask);
+            serverOut.write(FishMessageType.CLIENT_FIND + ";" + mask);
             serverOut.newLine();
             serverOut.flush();
 
-            String response = serverIn.readLine();
-            if ((response == null)
-                    || (response.isEmpty())
-                    || (FishMessageType.SERVER_OK != FishMessageType.valueOf(response))) {
-                throw new RejectedException("Server did not respond with OK");
-            }
+//            String response = serverIn.readLine();
+//            if ((response == null)
+//                    || (response.isEmpty())
+//                    || (FishMessageType.SERVER_OK != FishMessageType.valueOf(response))) {
+//                throw new RejectedException("Server did not respond with OK");
+//            }
 
             listIn = new ObjectInputStream(socketToServer.getInputStream());
             foundSharedFiles = (List<FileInfo>) listIn.readObject();
+            System.out.println(Integer.toString(socketToServer.getInputStream().available()));
 
             out.printf("INFO: %d files were found.\n\n",
                     foundSharedFiles.size());
@@ -416,15 +417,15 @@ public final class FishClient {
         } catch (IOException ex) {
             out.println("ERROR: " + ex.getMessage());
         } finally {
-            if (listIn != null) {
-                listIn.close();
-            }
-            if (serverIn != null) {
-                serverIn.close();
-            }
-            if (serverOut != null) {
-                serverOut.close();
-            }
+//            if (listIn != null) {
+//                listIn.close();
+//            }
+//            if (serverIn != null) {
+//                serverIn.close();
+//            }
+//            if (serverOut != null) {
+//                serverOut.close();
+//            }
         }
         return foundSharedFiles;
     }
@@ -436,6 +437,10 @@ public final class FishClient {
      * @param filename A filepath under which downloaded file would be written (saved)
      */
     public void download(int index, String filename) throws RejectedException, IOException {
+        if (foundSharedFiles == null || foundSharedFiles.isEmpty()) {
+            throw new RejectedException("Empty local shared file list");
+        }
+
         BufferedWriter peerOut = null;
         BufferedReader peerIn = null;
         FileOutputStream fileOut = null;

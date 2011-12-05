@@ -25,6 +25,8 @@ public class FishServer {
     }
 
     public void run() {
+        System.out.println("FISH server started.");
+
         boolean listening = true;
         ServerSocket serverSocket = null;
 
@@ -33,6 +35,7 @@ public class FishServer {
 
             while (listening) {
                 Socket clientSocket = serverSocket.accept();
+                System.out.println("New client accepted.");
                 (new ClientConnectionHandler(clientSocket, files)).start();
                 //TODO add here thread that will check liveness of the client
             }
