@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.persistence.EntityManager;
 import org.apache.commons.collections.map.MultiValueMap;
 
 /**
@@ -33,10 +34,12 @@ public class ClientConnectionHandler extends Thread {
     private Socket clientSocket;
     private final Map<String, MultiValueMap> allFilesMap;
     private boolean alive = true;
+    private EntityManager em = null;
 
-    public ClientConnectionHandler(Socket clientSocket, Map<String, MultiValueMap> files) {
+    public ClientConnectionHandler(Socket clientSocket, Map<String, MultiValueMap> files, EntityManager em) {
         this.clientSocket = clientSocket;
         this.allFilesMap = files;
+        this.em = em;
     }
 
     @Override
