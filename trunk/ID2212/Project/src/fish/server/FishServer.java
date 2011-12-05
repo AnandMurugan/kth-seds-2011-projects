@@ -45,7 +45,6 @@ public class FishServer {
                 System.out.println("New client accepted.");
 
                 String clientAddr = clientSocket.getInetAddress().getHostAddress();
-                MultiValueMap oneClientFiles;
                 if (!allClientFiles.containsKey(clientAddr)) {
                     allClientFiles.put(clientAddr, new MultiValueMap());
                 }
