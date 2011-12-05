@@ -6,17 +6,40 @@ package fish.common;
 
 import java.io.IOException;
 import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  *
  * @author Igor
  */
+@NamedQueries({
+    @NamedQuery(name = FileInfo.GET_ALL_FILE_INFO_LIST,
+    query = "SELECT f "
+    + "FROM FileInfo f")
+})
+@Entity
 public class FileInfo implements Serializable {
+    public static final String GET_ALL_FILE_INFO_LIST = "FileInfo_getAllFileInfo";
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
+    private int id;
+    @Column(name = "owner_host", nullable=false)
     private String ownerHost;
+    @Column(name = "file_name", nullable=false)
     private String fileName;
+    @Column(name = "file_size", nullable=false)
     private long fileSize;
+    @Column(name = "local_key", nullable=false)
     private String localKey;
 
+    
     public FileInfo() {
     }
 
