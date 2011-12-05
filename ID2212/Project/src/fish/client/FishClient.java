@@ -248,7 +248,7 @@ public final class FishClient {
             List<FileInfo> list = new ArrayList<FileInfo>(mySharedFiles.values().size());
             for (File f : mySharedFiles.values()) {
                 list.add(new FileInfo(
-                        InetAddress.getLocalHost().getHostAddress(),
+                        socketToServer.getLocalAddress().getHostAddress(),
                         f.getName(),
                         f.length(),
                         f.getPath()));
