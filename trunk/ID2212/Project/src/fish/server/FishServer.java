@@ -7,6 +7,8 @@ package fish.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.collections.MultiMap;
@@ -18,10 +20,10 @@ import org.apache.commons.collections.map.MultiValueMap;
  */
 public class FishServer {
     public static final Integer DEFAULT_PORT = 8080;
-    private MultiMap files;
+    private Map<String, MultiValueMap> allClientFiles;
 
     public FishServer() {
-        this.files = new MultiValueMap();
+        this.allClientFiles = new HashMap<String, MultiValueMap>();
     }
 
     public void run() {
@@ -36,7 +38,16 @@ public class FishServer {
             while (listening) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("New client accepted.");
-                (new ClientConnectionHandler(clientSocket, files)).start();
+
+                String clientAddr = clientSocket.getInetAddress().getHostAddress();
+                MultiValueMap oneClientFiles;
+                if (!allClientFiles.containsKey(clientAddr)) {
+                    allClientFiles.put(clientAddr, new MultiValueMap());
+                }
+                Thread clientConnectionThread = new Thread(new ClientConnectionHandler(clientSocket, allClientFiles));
+                clientConnectionThread.setDaemon(true);
+                clientConnectionThread.start();
+
                 //TODO add here thread that will check liveness of the client
             }
 
