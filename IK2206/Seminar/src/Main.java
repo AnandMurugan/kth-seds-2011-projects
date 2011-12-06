@@ -64,6 +64,9 @@ public class Main {
         modifiedCover.loadFile("src/resources/testStego1.bmp");
         IWriteStegoFile writeStego = new WriteStegoFileImpl(size);
         lsb.decode(modifiedCover, writeStego);
+        System.out.println(secretMessage.equals(new String(writeStego.getMessage()))
+                ? "PASSED"
+                : "FAILED");
         //System.out.println(new String(writeStego.getMessage()));
     }
 
@@ -110,6 +113,9 @@ public class Main {
         IWriteStegoFile writeStego = new WriteStegoFileImpl(bytes.length);
         lsb.decode(modifiedCover, writeStego);
         //System.out.println(new String(writeStego.getMessage()));
+        System.out.println((new String(bytes)).equals(new String(writeStego.getMessage()))
+                ? "PASSED"
+                : "FAILED");
     }
 
     public void test4() {
@@ -127,6 +133,9 @@ public class Main {
         IWriteStegoFile writeStego = new WriteStegoFileImpl(size);
         lsb.decode(modifiedCover, writeStego);
         //System.out.println(new String(writeStego.getMessage()));
+        System.out.println(secretMessage.equals(new String(writeStego.getMessage()))
+                ? "PASSED"
+                : "FAILED");
     }
 
     public void test5() throws Exception {
@@ -172,5 +181,8 @@ public class Main {
         IWriteStegoFile writeStego = new WriteStegoFileImpl(bytes.length);
         lsb.decode(modifiedCover, writeStego);
         //System.out.println(new String(writeStego.getMessage()));
+        System.out.println((new String(bytes)).equals(new String(writeStego.getMessage()))
+                ? "PASSED"
+                : "FAILED");
     }
 }
