@@ -14,6 +14,7 @@ import common.IStegoStrategy;
 import common.IWriteStegoFile;
 import container.BmpFileContainer;
 import container.WavFileContainer;
+import stegoStrategy.RandomSimpleLSB;
 
 public class Main {
     public static void main(String args[]) {
@@ -22,9 +23,13 @@ public class Main {
         try {
             //m.test1();
             m.test2();
-            m.test4();
+            System.in.read();
             m.test3();
+            System.in.read();
+            m.test4();
+            System.in.read();
             m.test5();
+            System.in.read();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -46,23 +51,24 @@ public class Main {
     }
 
     public void test2() {
-        System.out.println("test2");
+        System.out.println("---test bmp small---");
         IContainerFile cover = new BmpFileContainer();
         cover.loadFile("src/resources/test.bmp");
         String secretMessage = "this is a secret message this is a secret message";
         int size = secretMessage.length();
         IReadStegoFile readStego = new ReadStegoFileImpl(secretMessage.getBytes());
-        IStegoStrategy lsb = new SimpleLSB(2);
+        IStegoStrategy lsb = new RandomSimpleLSB(4, 42);
         lsb.encode(cover, readStego);
         cover.saveFile("src/resources/testStego1.bmp");
         IContainerFile modifiedCover = new BmpFileContainer();
         modifiedCover.loadFile("src/resources/testStego1.bmp");
         IWriteStegoFile writeStego = new WriteStegoFileImpl(size);
         lsb.decode(modifiedCover, writeStego);
-        System.out.println(new String(writeStego.getMessage()));
+        //System.out.println(new String(writeStego.getMessage()));
     }
 
     public void test3() throws Exception {
+        System.out.println("---test bmp big---");
         File file = new File("src/resources/testText.txt");
         InputStream is;
         is = new FileInputStream(file);
@@ -96,34 +102,35 @@ public class Main {
         IContainerFile cover = new BmpFileContainer();
         cover.loadFile("src/resources/test.bmp");
         IReadStegoFile readStego = new ReadStegoFileImpl(bytes);
-        IStegoStrategy lsb = new RandomSeqSimpleLSB(4, 20);
+        IStegoStrategy lsb = new RandomSimpleLSB(4, 42);
         lsb.encode(cover, readStego);
         cover.saveFile("src/resources/testStego2.bmp");
         IContainerFile modifiedCover = new BmpFileContainer();
         modifiedCover.loadFile("src/resources/testStego2.bmp");
         IWriteStegoFile writeStego = new WriteStegoFileImpl(bytes.length);
         lsb.decode(modifiedCover, writeStego);
-        System.out.println(new String(writeStego.getMessage()));
+        //System.out.println(new String(writeStego.getMessage()));
     }
 
     public void test4() {
-        System.out.println("test4");
+        System.out.println("---test wav small---");
         IContainerFile cover = new WavFileContainer();
         cover.loadFile("src/resources/test.wav");
         String secretMessage = "this is a secret message this is a secret message";
         int size = secretMessage.length();
         IReadStegoFile readStego = new ReadStegoFileImpl(secretMessage.getBytes());
-        IStegoStrategy lsb = new SimpleLSB(2);
+        IStegoStrategy lsb = new RandomSimpleLSB(4, 42);
         lsb.encode(cover, readStego);
         cover.saveFile("src/resources/testStego1.wav");
         IContainerFile modifiedCover = new WavFileContainer();
         modifiedCover.loadFile("src/resources/testStego1.wav");
         IWriteStegoFile writeStego = new WriteStegoFileImpl(size);
         lsb.decode(modifiedCover, writeStego);
-        System.out.println(new String(writeStego.getMessage()));
+        //System.out.println(new String(writeStego.getMessage()));
     }
 
     public void test5() throws Exception {
+        System.out.println("---test wav big---");
         File file = new File("src/resources/testText.txt");
         InputStream is;
         is = new FileInputStream(file);
@@ -157,7 +164,7 @@ public class Main {
         IContainerFile cover = new WavFileContainer();
         cover.loadFile("src/resources/test.wav");
         IReadStegoFile readStego = new ReadStegoFileImpl(bytes);
-        IStegoStrategy lsb = new SimpleLSB(8);
+        IStegoStrategy lsb = new RandomSimpleLSB(4, 42);
         lsb.encode(cover, readStego);
         cover.saveFile("src/resources/testStego2.wav");
         IContainerFile modifiedCover = new WavFileContainer();
