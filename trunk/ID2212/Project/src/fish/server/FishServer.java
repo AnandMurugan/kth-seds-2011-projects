@@ -24,6 +24,8 @@ import org.apache.commons.collections.map.MultiValueMap;
  */
 public class FishServer {
     public static final Integer DEFAULT_PORT = 8080;
+    public final static int LIVENESS_CHECK_INTERVAL = 5000;
+    public final static int DEFAULT_LIVENESS_PORT = 8082;
     private Map<String, MultiValueMap> allClientFiles;
     final private EntityManager em = javax.persistence.Persistence.createEntityManagerFactory("FishPU").createEntityManager();
 
@@ -51,7 +53,7 @@ public class FishServer {
                 Thread clientConnectionThread = new Thread(new ClientConnectionHandler(clientSocket, allClientFiles, em));
                 clientConnectionThread.setDaemon(true);
                 clientConnectionThread.start();
-
+                (new Thread(new LivenessConnectionHandler(clientAddr))).start();
                 //TODO add here thread that will check liveness of the client
             }
 
