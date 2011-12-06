@@ -25,12 +25,15 @@ import javax.persistence.NamedQuery;
     @NamedQuery(name = FileInfo.GET_FILE_INFO_LIST_BY_OWNER,
     query = "SELECT f "
     + "FROM FileInfo f "
-    + "WHERE f.ownerHost = :owner")
+    + "WHERE f.ownerHost = :owner"),
+    @NamedQuery(name = FileInfo.DELETE_ALL_FILE_INFO_DATA_BY_OWNER,
+        query = "DELETE FROM FileInfo f WHERE f.ownerHost = :owner")
 })
 @Entity
 public class FileInfo implements Serializable {
     public static final String GET_ALL_FILE_INFO_LIST = "FileInfo_getAllFileInfo";
     public static final String GET_FILE_INFO_LIST_BY_OWNER = "FileInfo_getFileInfoListByOwner";
+    public static final String DELETE_ALL_FILE_INFO_DATA_BY_OWNER = "FileInfo_deleteAllFileInfoDataByOwner";
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)

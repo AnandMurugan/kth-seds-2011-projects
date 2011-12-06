@@ -71,6 +71,7 @@ public final class FishClient {
     private Socket socketToServer;
     private Socket inSocketToPeer;
     private ServerSocket outSocketToPeer;
+    private ServerSocket livenessSocket;
     /*FISHing*/
     private Map<String, File> mySharedFiles;
     private boolean sharing;
@@ -106,6 +107,7 @@ public final class FishClient {
 
         /*Starting handling requests from other peers*/
         startPeerRequestHandling();
+        startLivenessRequestHandling();
     }
 
     /**
@@ -542,6 +544,26 @@ public final class FishClient {
         prh.setDaemon(true);
         prh.start();
         out.println("Started handling requests from peers.\n");
+    }
+
+    private void startLivenessRequestHandling() {
+        Runnable livenessHandlingTask = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    livenessSocket = new ServerSocket(FishServer.DEFAULT_LIVENESS_PORT);
+                    while (true) {
+                        livenessSocket.accept();
+                    }
+                } catch (IOException ex) {
+                    out.println("ERROR: " + ex.getMessage() + "\n");
+                    System.exit(3);
+                }
+            }
+        };
+
+        (new Thread(livenessHandlingTask)).start();
+        out.println("Started liveness handling requests from Server.\n");
     }
 
     /**

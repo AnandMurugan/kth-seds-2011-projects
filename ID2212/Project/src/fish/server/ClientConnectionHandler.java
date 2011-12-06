@@ -84,7 +84,10 @@ public class ClientConnectionHandler extends Thread {
                             EntityTransaction transaction = null;
 
                             em.getTransaction().begin();
-                            em.createQuery("DELETE FROM FileInfo f WHERE f.ownerHost = :owner").setParameter("owner", clientAddr).executeUpdate();
+                            int numberModified = em.createNamedQuery(FileInfo.DELETE_ALL_FILE_INFO_DATA_BY_OWNER).
+                                    setParameter("owner", clientAddr).
+                                    executeUpdate();
+                            System.out.println(numberModified + " FileInfo entries of [host-" + clientAddr + "] will be deleted from the DB.");
 
                             synchronized (allFilesMap) {
                                 clientFilesMultiMap.clear();
@@ -106,8 +109,10 @@ public class ClientConnectionHandler extends Thread {
                             clientFilesMultiMap.clear();
                         }
                         em.getTransaction().begin();
-                        int numberModified = em.createQuery("DELETE FROM FileInfo WHERE ownerHost = :owner").setParameter("owner", clientAddr).executeUpdate();
-                        System.out.println("Fish database was modified, " + numberModified + " rows affected.");
+                        int numberModified = em.createNamedQuery(FileInfo.DELETE_ALL_FILE_INFO_DATA_BY_OWNER).
+                                setParameter("owner", clientAddr).
+                                executeUpdate();
+                        System.out.println(numberModified + " FileInfo entries of [host-" + clientAddr + "] will be deleted from the DB.");
                         em.getTransaction().commit();
                         out.write(FishMessageType.SERVER_OK.name());
                         out.newLine();
