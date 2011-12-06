@@ -18,11 +18,12 @@ import container.WavFileContainer;
 public class Main {
     public static void main(String args[]) {
         Main m = new Main();
-        //m.test1();
-//        m.test2();
-//        m.test4();
+
         try {
-//            m.test3();
+            //m.test1();
+            m.test2();
+            m.test4();
+            m.test3();
             m.test5();
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,9 +54,9 @@ public class Main {
         IReadStegoFile readStego = new ReadStegoFileImpl(secretMessage.getBytes());
         IStegoStrategy lsb = new SimpleLSB(2);
         lsb.encode(cover, readStego);
-        cover.saveFile("src/resources/testStego.bmp");
+        cover.saveFile("src/resources/testStego1.bmp");
         IContainerFile modifiedCover = new BmpFileContainer();
-        modifiedCover.loadFile("src/resources/testStego.bmp");
+        modifiedCover.loadFile("src/resources/testStego1.bmp");
         IWriteStegoFile writeStego = new WriteStegoFileImpl(size);
         lsb.decode(modifiedCover, writeStego);
         System.out.println(new String(writeStego.getMessage()));
@@ -97,9 +98,9 @@ public class Main {
         IReadStegoFile readStego = new ReadStegoFileImpl(bytes);
         IStegoStrategy lsb = new RandomSeqSimpleLSB(4, 20);
         lsb.encode(cover, readStego);
-        cover.saveFile("src/resources/testStego.bmp");
+        cover.saveFile("src/resources/testStego2.bmp");
         IContainerFile modifiedCover = new BmpFileContainer();
-        modifiedCover.loadFile("src/resources/testStego.bmp");
+        modifiedCover.loadFile("src/resources/testStego2.bmp");
         IWriteStegoFile writeStego = new WriteStegoFileImpl(bytes.length);
         lsb.decode(modifiedCover, writeStego);
         System.out.println(new String(writeStego.getMessage()));
@@ -114,16 +115,16 @@ public class Main {
         IReadStegoFile readStego = new ReadStegoFileImpl(secretMessage.getBytes());
         IStegoStrategy lsb = new SimpleLSB(2);
         lsb.encode(cover, readStego);
-        cover.saveFile("src/resources/testStego.wav");
+        cover.saveFile("src/resources/testStego1.wav");
         IContainerFile modifiedCover = new WavFileContainer();
-        modifiedCover.loadFile("src/resources/testStego.wav");
+        modifiedCover.loadFile("src/resources/testStego1.wav");
         IWriteStegoFile writeStego = new WriteStegoFileImpl(size);
         lsb.decode(modifiedCover, writeStego);
         System.out.println(new String(writeStego.getMessage()));
     }
 
     public void test5() throws Exception {
-        File file = new File("src/resources/test.bmp");
+        File file = new File("src/resources/testText.txt");
         InputStream is;
         is = new FileInputStream(file);
 
@@ -156,11 +157,11 @@ public class Main {
         IContainerFile cover = new WavFileContainer();
         cover.loadFile("src/resources/test.wav");
         IReadStegoFile readStego = new ReadStegoFileImpl(bytes);
-        IStegoStrategy lsb = new SimpleLSB(4);
+        IStegoStrategy lsb = new SimpleLSB(8);
         lsb.encode(cover, readStego);
-        cover.saveFile("src/resources/testStego.wav");
+        cover.saveFile("src/resources/testStego2.wav");
         IContainerFile modifiedCover = new WavFileContainer();
-        modifiedCover.loadFile("src/resources/testStego.wav");
+        modifiedCover.loadFile("src/resources/testStego2.wav");
         IWriteStegoFile writeStego = new WriteStegoFileImpl(bytes.length);
         lsb.decode(modifiedCover, writeStego);
         //System.out.println(new String(writeStego.getMessage()));
