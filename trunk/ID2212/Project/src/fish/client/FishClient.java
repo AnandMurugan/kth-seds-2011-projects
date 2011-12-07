@@ -70,7 +70,7 @@ public final class FishClient {
     private final static int LINGER = 100;
     private Socket socketToServer;
     private Socket inSocketToPeer;
-    private ServerSocket outSocketToPeer;
+    private ServerSocket peerSocket;
     private ServerSocket livenessSocket;
     /*FISHing*/
     private Map<String, File> mySharedFiles;
@@ -88,6 +88,12 @@ public final class FishClient {
         mySharedFiles = new HashMap<String, File>();
         sharing = false;
 
+        /*Starting handling requests from other peers*/
+        startPeerRequestHandling();
+
+        /*Starting handling liveness requests from server*/
+        startLivenessRequestHandling();
+
         /*Connecting to the server*/
         connectToServer(host, port);
 
@@ -104,10 +110,6 @@ public final class FishClient {
         } catch (IOException ex) {
             out.println("ERROR: " + ex.getMessage());
         }
-
-        /*Starting handling requests from other peers*/
-        startPeerRequestHandling();
-        startLivenessRequestHandling();
     }
 
     /**
@@ -213,6 +215,8 @@ public final class FishClient {
         try {
             socketToServer = new Socket(host, port);
             socketToServer.setSoLinger(true, LINGER);
+            sendPeerHost(socketToServer);
+            sendPeerAndLivenessPorts(socketToServer);
         } catch (UnknownHostException ex) {
             out.println("ERROR: Host not found.\n");
             System.exit(2);
@@ -221,6 +225,32 @@ public final class FishClient {
             System.exit(2);
         }
         out.println("Connected to the server.\n");
+    }
+
+    private void sendPeerHost(Socket socketToServer) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socketToServer.getOutputStream()));
+            bw.write(InetAddress.getLocalHost().getHostAddress());
+            bw.newLine();
+            bw.flush();
+        } catch (Exception ex) {
+            out.println("ERROR: " + ex.getMessage() + "\n");
+            System.exit(5);
+        }
+    }
+
+    private void sendPeerAndLivenessPorts(Socket socketToServer) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socketToServer.getOutputStream()));
+            bw.write(Integer.toString(peerSocket.getLocalPort()));
+            bw.newLine();
+            bw.write(Integer.toString(livenessSocket.getLocalPort()));
+            bw.newLine();
+            bw.flush();
+        } catch (Exception ex) {
+            out.println("ERROR: " + ex.getMessage() + "\n");
+            System.exit(5);
+        }
     }
 
     /**
@@ -248,16 +278,19 @@ public final class FishClient {
             }
 
             List<FileInfo> list = new ArrayList<FileInfo>(mySharedFiles.values().size());
+            String thisHost = InetAddress.getLocalHost().getHostAddress();
+            int thisPort = peerSocket.getLocalPort();
             for (File f : mySharedFiles.values()) {
                 list.add(new FileInfo(
-                        socketToServer.getLocalAddress().getHostAddress(),
+                        thisHost,
+                        thisPort,
                         f.getName(),
                         f.length(),
                         f.getPath()));
             }
 
             listOut = new ObjectOutputStream(socketToServer.getOutputStream());
-            listOut.reset();
+            //listOut.reset();
             listOut.writeObject(list);
 
             String response2 = serverIn.readLine();
@@ -459,8 +492,10 @@ public final class FishClient {
         try {
             FileInfo fi = foundSharedFiles.get(index);
             String host = fi.getOwnerHost();
+            int port = fi.getOwnerPort();
+            long size = fi.getSize();
 
-            inSocketToPeer = new Socket(host, DEFAULT_PEER_PORT);
+            inSocketToPeer = new Socket(host, port);
 
             peerOut = new BufferedWriter(
                     new OutputStreamWriter(inSocketToPeer.getOutputStream()));
@@ -485,16 +520,23 @@ public final class FishClient {
             fileOut = new FileOutputStream(file);
             byte[] buf = new byte[1024];
             int len;
+            long done = 0l;
+            int i = 1;
             long t1 = System.currentTimeMillis();
             while ((len = fileIn.read(buf)) > 0) {
                 fileOut.write(buf, 0, len);
+                done += len;
+                if (((float) done / size) >= i * 0.1f) {
+                    out.print(".");
+                    i++;
+                }
             }
             long t2 = System.currentTimeMillis();
             float t = (t2 - t1) / 1e3f;
-            long size = file.length();
             float rate = (size / t) / 1e6f;
 
-            out.printf("File \"%s\" has been downloaded successfully from %s into \"%s\" in %d seconds (avarage download speed - %dMbps).\n\n",
+            out.println("\nDone!");
+            out.printf("\nFile \"%s\" has been downloaded successfully from %s into \"%s\" in %f seconds (avarage download speed - %fMbps).\n\n",
                     fi.getName(),
                     fi.getOwnerHost(),
                     file.getCanonicalPath(),
@@ -518,52 +560,66 @@ public final class FishClient {
                 peerOut.close();
             }
 
-            inSocketToPeer.close();
+            if (inSocketToPeer != null) {
+                inSocketToPeer.close();
+            }
         }
     }
 
     private void startPeerRequestHandling() {
-        Runnable requestHandlingTask = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    outSocketToPeer = new ServerSocket(DEFAULT_PEER_PORT);
-                    while (true) {
-                        if (sharing) {
-                            Socket clientSocket = outSocketToPeer.accept();
-                            new PeerRequestHandler(clientSocket, mySharedFiles).start();
+        try {
+            peerSocket = new ServerSocket(0);
+            Runnable requestHandlingTask = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        while (true) {
+                            Socket clientSocket = peerSocket.accept();
+                            if (sharing) {
+                                new PeerRequestHandler(clientSocket, mySharedFiles).start();
+                            }
                         }
+                    } catch (IOException ex) {
+                        out.println("ERROR: " + ex.getMessage() + "\n");
+                        //System.exit(3);
                     }
-                } catch (IOException ex) {
-                    out.println("ERROR: " + ex.getMessage() + "\n");
-                    System.exit(3);
                 }
-            }
-        };
-        Thread prh = new Thread(requestHandlingTask, "Peer-Request-Handler");
-        prh.setDaemon(true);
-        prh.start();
-        out.println("Started handling requests from peers.\n");
+            };
+            Thread prh = new Thread(requestHandlingTask, "Peer-Request-Handler");
+            prh.setDaemon(true);
+            prh.start();
+            out.println("Started handling requests from peers on port " + peerSocket.getLocalPort() + ".\n");
+        } catch (IOException ex) {
+            out.println("ERROR: " + ex.getMessage() + "\n");
+            System.exit(3);
+        }
     }
 
     private void startLivenessRequestHandling() {
-        Runnable livenessHandlingTask = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    livenessSocket = new ServerSocket(FishServer.DEFAULT_LIVENESS_PORT);
-                    while (true) {
-                        livenessSocket.accept();
+        try {
+            livenessSocket = new ServerSocket(0);
+            Runnable livenessHandlingTask = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        while (true) {
+                            livenessSocket.accept();
+                        }
+                    } catch (IOException ex) {
+                        out.println("ERROR: " + ex.getMessage() + "\n");
+                        //System.exit(3);
                     }
-                } catch (IOException ex) {
-                    out.println("ERROR: " + ex.getMessage() + "\n");
-                    System.exit(3);
                 }
-            }
-        };
+            };
 
-        (new Thread(livenessHandlingTask)).start();
-        out.println("Started liveness handling requests from Server.\n");
+            Thread lh = new Thread(livenessHandlingTask, "Liveness-Handler");
+            lh.setDaemon(true);
+            lh.start();
+            out.println("Started liveness handling requests from server on port " + livenessSocket.getLocalPort() + ".\n");
+        } catch (IOException ex) {
+            out.println("ERROR: " + ex.getMessage() + "\n");
+            System.exit(3);
+        }
     }
 
     /**
@@ -643,7 +699,7 @@ public final class FishClient {
                     Integer.toString(i),
                     fi.getName(),
                     Long.toString(fi.getSize()),
-                    fi.getOwnerHost());
+                    fi.getOwnerHost() + ":" + fi.getOwnerPort());
             ++i;
         }
 
