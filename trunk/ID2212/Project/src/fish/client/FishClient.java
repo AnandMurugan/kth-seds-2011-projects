@@ -237,16 +237,20 @@ public final class FishClient {
      * 
      * @return True, if successfully reconnected
      */
-    public boolean tryReconnectToServer(String host, int port, int tries) {
+    public boolean tryReconnectToServer(String host, int port, int tries, boolean quiet) {
         int i = 1;
         while (i <= tries) {
-            out.println("Trying to reconnect to server: try #" + i);
+            if (!quiet) {
+                out.println("Trying to reconnect to server: try #" + i);
+            }
             try {
                 connect(host, port);
                 out.println("Reconnected to the server.\n");
                 return true;
             } catch (Exception ex) {
-                out.println("ERROR: " + ex.getMessage() + "\n");
+                if (!quiet) {
+                    out.println("ERROR: " + ex.getMessage() + "\n");
+                }
                 ++i;
                 try {
                     TimeUnit.MILLISECONDS.sleep(RECONNECT_SLEEP_MS);
@@ -857,8 +861,8 @@ public final class FishClient {
                 try {
                     share();
                 } catch (IOException ex) {
-                    out.println("ERROR: " + ex.getMessage());
-                    boolean success = tryReconnectToServer(socketToServer.getInetAddress().getHostAddress(), socketToServer.getPort(), MAX_RECONNECT_TRIES);
+                    out.println("ERROR: " + ex.getMessage() + "\n");
+                    boolean success = tryReconnectToServer(socketToServer.getInetAddress().getHostAddress(), socketToServer.getPort(), MAX_RECONNECT_TRIES, true);
                     if (success) {
                         execute(command);
                     }
@@ -871,7 +875,7 @@ public final class FishClient {
                     unshare();
                 } catch (IOException ex) {
                     out.println("ERROR: " + ex.getMessage());
-                    boolean success = tryReconnectToServer(socketToServer.getInetAddress().getHostAddress(), socketToServer.getPort(), MAX_RECONNECT_TRIES);
+                    boolean success = tryReconnectToServer(socketToServer.getInetAddress().getHostAddress(), socketToServer.getPort(), MAX_RECONNECT_TRIES, true);
                     if (success) {
                         execute(command);
                     }
@@ -889,7 +893,7 @@ public final class FishClient {
                     out.println("ERROR: " + ex.getMessage() + "\n");
                 } catch (IOException ex) {
                     out.println("ERROR: " + ex.getMessage() + "\n");
-                    boolean success = tryReconnectToServer(socketToServer.getInetAddress().getHostAddress(), socketToServer.getPort(), MAX_RECONNECT_TRIES);
+                    boolean success = tryReconnectToServer(socketToServer.getInetAddress().getHostAddress(), socketToServer.getPort(), MAX_RECONNECT_TRIES, true);
                     if (success) {
                         execute(command);
                     }
@@ -936,7 +940,7 @@ public final class FishClient {
                     out.println("ERROR: " + ex.getMessage() + "\n");
                 } catch (IOException ex) {
                     out.println("ERROR: " + ex.getMessage() + "\n");
-                    tryReconnectToServer(socketToServer.getInetAddress().getHostAddress(), socketToServer.getPort(), MAX_RECONNECT_TRIES);
+                    tryReconnectToServer(socketToServer.getInetAddress().getHostAddress(), socketToServer.getPort(), MAX_RECONNECT_TRIES, true);
                 } catch (ArrayIndexOutOfBoundsException ex) {
                     out.println("ERROR: Not enough parameters.\n");
                 }
@@ -953,7 +957,7 @@ public final class FishClient {
                     out.println("ERROR: Not enough parameters.\n");
                 } catch (IOException ex) {
                     out.println("ERROR: " + ex.getMessage() + "\n");
-                    boolean success = tryReconnectToServer(socketToServer.getInetAddress().getHostAddress(), socketToServer.getPort(), MAX_RECONNECT_TRIES);
+                    boolean success = tryReconnectToServer(socketToServer.getInetAddress().getHostAddress(), socketToServer.getPort(), MAX_RECONNECT_TRIES, true);
                     if (success) {
                         execute(command);
                     }
@@ -973,7 +977,7 @@ public final class FishClient {
                     out.println("ERROR: Not enough parameters.\n");
                 } catch (IOException ex) {
                     out.println("ERROR: " + ex.getMessage() + "\n");
-                    boolean success = tryReconnectToServer(socketToServer.getInetAddress().getHostAddress(), socketToServer.getPort(), MAX_RECONNECT_TRIES);
+                    boolean success = tryReconnectToServer(socketToServer.getInetAddress().getHostAddress(), socketToServer.getPort(), MAX_RECONNECT_TRIES, true);
                     if (success) {
                         execute(command);
                     }
@@ -982,7 +986,7 @@ public final class FishClient {
                 }
                 return;
             case RECONNECT:
-                tryReconnectToServer(socketToServer.getInetAddress().getHostAddress(), socketToServer.getPort(), MAX_RECONNECT_TRIES);
+                tryReconnectToServer(socketToServer.getInetAddress().getHostAddress(), socketToServer.getPort(), MAX_RECONNECT_TRIES, false);
                 return;
         }
     }
