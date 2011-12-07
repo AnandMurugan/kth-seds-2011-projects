@@ -13,7 +13,6 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
@@ -24,12 +23,22 @@ import org.apache.commons.collections.map.MultiValueMap;
  * @author julio
  */
 public class FishServer {
+    /**
+     * 
+     */
     public static final Integer DEFAULT_PORT = 8080;
+    /**
+     * 
+     */
     public final static int LIVENESS_CHECK_INTERVAL = 5000;
     //public final static int DEFAULT_LIVENESS_PORT = 8082;
     private Map<String, MultiValueMap> allClientFiles;
     final private EntityManager em = javax.persistence.Persistence.createEntityManagerFactory("FishPU").createEntityManager();
 
+    /**
+     * 
+     * @param args
+     */
     public static void main(String args[]) {
         try {
             Class.forName("org.apache.derby.jdbc.ClientDriver");
@@ -39,10 +48,16 @@ public class FishServer {
         new FishServer().run();
     }
 
+    /**
+     * 
+     */
     public FishServer() {
         this.allClientFiles = new HashMap<String, MultiValueMap>();
     }
 
+    /**
+     * 
+     */
     public void run() {
         System.out.println("FISH server started.");
         System.out.println("Restoring shared files directory from DB...");
@@ -50,11 +65,11 @@ public class FishServer {
         //the code in this place is running in the very beginning
         //and EntityManager seems to may not have time to "prepare" named queries.
         //Until we find more correct solution, this thread will sleep a bit...
-        try {
-            TimeUnit.MILLISECONDS.sleep(1000);
-        } catch (Exception ex) {
-            Logger.getLogger(FishServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            //TimeUnit.MILLISECONDS.sleep(1000);
+//        } catch (Exception ex) {
+//            Logger.getLogger(FishServer.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         restoreDirectoryInfo();
         System.out.println("Shared files directory was successfully restored from DB.");
 
@@ -68,8 +83,9 @@ public class FishServer {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("New client accepted.");
 
-                String clientPeerHost = getPeerHost(clientSocket);
-                int[] ports = getPeerAndLivenessPorts(clientSocket);
+                BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                String clientPeerHost = getPeerHost(br);
+                int[] ports = getPeerAndLivenessPorts(br);
                 if (ports == null) {
                     System.out.println("New client rejected (failed to get peer port).");
                     clientSocket.close();
@@ -114,21 +130,25 @@ public class FishServer {
         }
     }
 
-    private String getPeerHost(Socket clientSocket) {
+    private String getPeerHost(BufferedReader br) {
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            return br.readLine();
+            String host = br.readLine();
+            System.out.println(host);
+            return host;
         } catch (Exception ex) {
             Logger.getLogger(FishServer.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }
 
-    private int[] getPeerAndLivenessPorts(Socket clientSocket) {
+    private int[] getPeerAndLivenessPorts(BufferedReader br) {
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            int peerPort = Integer.parseInt(br.readLine());
-            int livenessPort = Integer.parseInt(br.readLine());
+            String peerPortStr = br.readLine();
+            System.out.println(peerPortStr);
+            String livenessPortStr = br.readLine();
+            System.out.println(livenessPortStr);
+            int peerPort = Integer.parseInt(peerPortStr);
+            int livenessPort = Integer.parseInt(livenessPortStr);
             return new int[]{peerPort, livenessPort};
         } catch (Exception ex) {
             Logger.getLogger(FishServer.class.getName()).log(Level.SEVERE, null, ex);

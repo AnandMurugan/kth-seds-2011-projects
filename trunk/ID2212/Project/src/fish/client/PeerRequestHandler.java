@@ -27,6 +27,11 @@ public class PeerRequestHandler extends Thread {
     private Socket clientSocket;
     private Map<String, File> sharedFiles;
 
+    /**
+     * 
+     * @param clientSocket
+     * @param sharedFiles
+     */
     public PeerRequestHandler(Socket clientSocket, Map<String, File> sharedFiles) {
         this.clientSocket = clientSocket;
         this.sharedFiles = sharedFiles;

@@ -38,6 +38,14 @@ public class ClientConnectionHandler extends Thread {
     private boolean alive = true;
     private final EntityManager em;
 
+    /**
+     * 
+     * @param clientSocket
+     * @param clientPeerHost
+     * @param clientPeerPort
+     * @param files
+     * @param em
+     */
     public ClientConnectionHandler(Socket clientSocket, String clientPeerHost, int clientPeerPort, Map<String, MultiValueMap> files, EntityManager em) {
         this.clientSocket = clientSocket;
         this.clientPeerHost = clientPeerHost;
@@ -183,6 +191,10 @@ public class ClientConnectionHandler extends Thread {
         }
     }
 
+    /**
+     * 
+     * @param alive
+     */
     public void setAlive(boolean alive) {
         this.alive = alive;
     }

@@ -20,6 +20,13 @@ public class LivenessConnectionHandler extends Thread {
     private int clientLivenessPort;
     private final EntityManager em;
 
+    /**
+     * 
+     * @param clientHost
+     * @param clientPeerPort
+     * @param clientLivenessPort
+     * @param em
+     */
     public LivenessConnectionHandler(String clientHost, int clientPeerPort, int clientLivenessPort, EntityManager em) {
         this.clientHost = clientHost;
         this.isAlive = true;

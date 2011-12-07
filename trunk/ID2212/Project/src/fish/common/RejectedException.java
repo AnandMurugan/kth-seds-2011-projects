@@ -9,6 +9,10 @@ package fish.common;
  * @author Igor
  */
 public class RejectedException extends Exception {
+    /**
+     * 
+     * @param message
+     */
     public RejectedException(String message) {
         super(message);
     }
