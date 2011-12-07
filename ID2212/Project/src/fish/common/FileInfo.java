@@ -31,8 +31,17 @@ import javax.persistence.NamedQuery;
 })
 @Entity
 public class FileInfo implements Serializable {
+    /**
+     * 
+     */
     public static final String GET_ALL_FILE_INFO_LIST = "FileInfo_getAllFileInfo";
+    /**
+     * 
+     */
     public static final String GET_FILE_INFO_LIST_BY_OWNER = "FileInfo_getFileInfoListByOwner";
+    /**
+     * 
+     */
     public static final String DELETE_ALL_FILE_INFO_DATA_BY_OWNER = "FileInfo_deleteAllFileInfoDataByOwner";
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -49,9 +58,20 @@ public class FileInfo implements Serializable {
     @Column(name = "local_key", nullable = false)
     private String localKey;
 
+    /**
+     * 
+     */
     public FileInfo() {
     }
 
+    /**
+     * 
+     * @param ownerHost
+     * @param ownerPort
+     * @param fileName
+     * @param fileSize
+     * @param localKey
+     */
     public FileInfo(String ownerHost, int ownerPort, String fileName, long fileSize, String localKey) {
         this.ownerHost = ownerHost;
         this.ownerPort = ownerPort;
@@ -60,22 +80,43 @@ public class FileInfo implements Serializable {
         this.localKey = localKey;
     }
 
+    /**
+     * 
+     * @return
+     */
     public String getOwnerHost() {
         return ownerHost;
     }
 
+    /**
+     * 
+     * @return
+     */
     public int getOwnerPort() {
         return ownerPort;
     }
 
+    /**
+     * 
+     * @return
+     */
     public String getName() {
         return fileName;
     }
 
+    /**
+     * 
+     * @return
+     */
     public long getSize() {
         return fileSize;
     }
 
+    /**
+     * 
+     * @return
+     * @throws IOException
+     */
     public String getLocalKey() throws IOException {
         return localKey;
     }
