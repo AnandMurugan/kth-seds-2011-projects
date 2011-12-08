@@ -103,7 +103,7 @@ public class FishServer {
                 clientConnectionThread.start();
 
                 Thread livenessConnectionThread =
-                        new Thread(new LivenessConnectionHandler(clientPeerHost, ports[0], ports[1], em));
+                        new Thread(new LivenessConnectionHandler(clientPeerHost, ports[0], ports[1], em, allClientFiles));
                 livenessConnectionThread.setDaemon(true);
                 livenessConnectionThread.start();
             }

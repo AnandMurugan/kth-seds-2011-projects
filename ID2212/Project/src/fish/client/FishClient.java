@@ -47,7 +47,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 /**
- * {@code Client} class represents a peer in a FISH.
+ * {@code FishClient} class represents a peer in a FISH.
  * 
  * @author Igor
  */
