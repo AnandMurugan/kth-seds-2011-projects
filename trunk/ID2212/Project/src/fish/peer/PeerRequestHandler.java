@@ -4,6 +4,7 @@
  */
 package fish.peer;
 
+import fish.common.FileInfo;
 import fish.common.FishMessageType;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,8 +15,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -61,8 +64,12 @@ public class PeerRequestHandler extends Thread {
         BufferedWriter out = null;
         ObjectInputStream listIn = null;
         ObjectOutputStream listOut = null;
+
         List<PeerAddress> peerNeighbours;
         Socket psfp = null; //peerSocketForPeers - the one which is used for handling requests
+        int ttl;
+        String senderHost;
+        int senderPort;
 
         try {
             in = new BufferedReader(new InputStreamReader(peerSocket.getInputStream()));
@@ -115,7 +122,7 @@ public class PeerRequestHandler extends Thread {
 
                         neighbourSockets.add(psfp);
                         for (Socket socket : neighbourSockets) {
-                            if (socket == psfp) {
+                            if (socket.equals(psfp)) {
                                 socket = peerSocket;
                             }
                             BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -153,6 +160,92 @@ public class PeerRequestHandler extends Thread {
 
                         peerAddress = new PeerAddress(remotePeerHost, remotePeerPort);
                         break;
+                    case PEER_FIND:
+                        str = in.readLine();
+                        ttl = Integer.parseInt(str);
+                        str = in.readLine();
+                        String mask = str;
+                        str = in.readLine();
+                        senderHost = str;
+                        str = in.readLine();
+                        senderPort = Integer.parseInt(str);
+
+                        if (myFishPeer.isSharing()) {
+                            List<FileInfo> listMask = new ArrayList<FileInfo>();
+                            Pattern p = Pattern.compile(mask);
+                            for (String filename : (Set<String>) myFileInfos.keySet()) {
+                                if (match(filename, p)) {
+                                    listMask.addAll(myFileInfos.getCollection(filename));
+                                }
+                            }
+                            if (!listMask.isEmpty()) {
+                                Socket senderSocket = new Socket(senderHost, senderPort);
+                                listOut = new ObjectOutputStream(senderSocket.getOutputStream());
+                                listOut.writeObject(listMask);
+                                //senderSocket.close();
+                            }
+                        }
+
+                        --ttl;
+                        if (ttl > 0) {
+                            Socket prev = findSocketByPeerAddress();
+                            for (Socket socket : neighbourSockets) {
+                                if (!socket.equals(prev)) {
+                                    BufferedWriter socketOut = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+                                    socketOut.write(FishMessageType.PEER_FIND.name());
+                                    socketOut.newLine();
+                                    socketOut.write(Integer.toString(ttl));
+                                    socketOut.newLine();
+                                    socketOut.write(mask);
+                                    socketOut.newLine();
+                                    socketOut.write(senderHost);
+                                    socketOut.newLine();
+                                    socketOut.write(Integer.toString(senderPort));
+                                    socketOut.newLine();
+                                    socketOut.flush();
+                                }
+                            }
+                        }
+                        break;
+                    case PEER_FIND_ALL:
+                        str = in.readLine();
+                        ttl = Integer.parseInt(str);
+                        str = in.readLine();
+                        senderHost = str;
+                        str = in.readLine();
+                        senderPort = Integer.parseInt(str);
+
+                        if (myFishPeer.isSharing()) {
+                            List<FileInfo> listAll = new ArrayList<FileInfo>(myFileInfos.values());
+                            if (!listAll.isEmpty()) {
+                                Socket senderSocket = new Socket(senderHost, senderPort);
+                                listOut = new ObjectOutputStream(senderSocket.getOutputStream());
+                                listOut.writeObject(listAll);
+                                //senderSocket.close();
+                            }
+                        }
+
+                        --ttl;
+                        if (ttl > 0) {
+                            Socket prev = findSocketByPeerAddress();
+                            for (Socket socket : neighbourSockets) {
+                                if (!socket.equals(prev)) {
+                                    BufferedWriter socketOut = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+                                    socketOut.write(FishMessageType.PEER_FIND_ALL.name());
+                                    socketOut.newLine();
+                                    socketOut.write(Integer.toString(ttl));
+                                    socketOut.newLine();
+                                    socketOut.write(senderHost);
+                                    socketOut.newLine();
+                                    socketOut.write(Integer.toString(senderPort));
+                                    socketOut.newLine();
+                                    socketOut.flush();
+                                }
+                            }
+                        }
+                        break;
                 }
             }
         } catch (ClassNotFoundException ex) {
@@ -164,15 +257,7 @@ public class PeerRequestHandler extends Thread {
 
             myNeighbourNeighbours.remove(peerAddress);
             myNeighbours.remove(peerAddress);
-            Socket toDelete = null;
-            for (Socket s : neighbourSockets) {
-                if (s.getInetAddress().getHostAddress().equals(peerAddress.getHost())
-                        && s.getPort() == peerAddress.getPort()) {
-                    toDelete = s;
-                    break;
-                }
-            }
-            neighbourSockets.remove(toDelete);
+            neighbourSockets.remove(findSocketByPeerAddress());
 
             int pos = list.indexOf(new PeerAddress(peerSocket.getLocalAddress().getHostAddress(), peerSocket.getLocalPort()));
             if (pos > 0) {
@@ -198,6 +283,18 @@ public class PeerRequestHandler extends Thread {
                 Logger.getLogger(PeerRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    private Socket findSocketByPeerAddress() {
+        Socket toDelete = null;
+        for (Socket s : neighbourSockets) {
+            if (s.getInetAddress().getHostAddress().equals(peerAddress.getHost())
+                    && s.getPort() == peerAddress.getPort()) {
+                toDelete = s;
+                break;
+            }
+        }
+        return toDelete;
     }
 
     private boolean match(String name, Pattern p) {

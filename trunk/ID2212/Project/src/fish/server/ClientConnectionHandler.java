@@ -46,7 +46,12 @@ public class ClientConnectionHandler extends Thread {
      * @param files
      * @param em
      */
-    public ClientConnectionHandler(Socket clientSocket, String clientPeerHost, int clientPeerPort, Map<String, MultiValueMap> files, EntityManager em) {
+    public ClientConnectionHandler(
+            Socket clientSocket, 
+            String clientPeerHost, 
+            int clientPeerPort, 
+            Map<String, MultiValueMap> files, 
+            EntityManager em) {
         this.clientSocket = clientSocket;
         this.clientPeerHost = clientPeerHost;
         this.clientPeerPort = clientPeerPort;
