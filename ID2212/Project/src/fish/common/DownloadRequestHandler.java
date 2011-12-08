@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package fish.client;
+package fish.common;
 
 import fish.common.FishMessageType;
 import java.io.BufferedReader;
@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  *
  * @author Igor
  */
-public class PeerRequestHandler extends Thread {
+public class DownloadRequestHandler extends Thread {
     private Socket clientSocket;
     private Map<String, File> sharedFiles;
 
@@ -32,7 +32,7 @@ public class PeerRequestHandler extends Thread {
      * @param clientSocket
      * @param sharedFiles
      */
-    public PeerRequestHandler(Socket clientSocket, Map<String, File> sharedFiles) {
+    public DownloadRequestHandler(Socket clientSocket, Map<String, File> sharedFiles) {
         this.clientSocket = clientSocket;
         this.sharedFiles = sharedFiles;
     }
@@ -87,7 +87,7 @@ public class PeerRequestHandler extends Thread {
                 fileOut.flush();
             }
         } catch (IOException ex) {
-            Logger.getLogger(PeerRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DownloadRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 if (fileIn != null) {
@@ -105,7 +105,7 @@ public class PeerRequestHandler extends Thread {
 
                 clientSocket.close();
             } catch (IOException ex) {
-                Logger.getLogger(PeerRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DownloadRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
