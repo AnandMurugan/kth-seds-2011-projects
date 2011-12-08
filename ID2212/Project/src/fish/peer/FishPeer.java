@@ -236,7 +236,7 @@ public final class FishPeer {
         }
     }
 
-    public boolean connectToPeer(String host, int port) {
+    private boolean connectToPeer(String host, int port) {
         try {
             connect(host, port);
             out.println("Connected to the peer.\n");
@@ -326,20 +326,38 @@ public final class FishPeer {
         }
     }
 
+    /**
+     * Set sharing ON
+     */
     public void share() {
         sharing = true;
         out.printf("Sharing is ENABLED.\n\n");
     }
 
+    /**
+     * Sets sharing OFF
+     */
     public void unshare() {
         sharing = false;
         out.printf("Sharing is DISABLED.\n\n");
     }
 
+    /**
+     * Tests whether peer is sharing
+     * 
+     * @return {@code true} if sharing
+     */
     public boolean isSharing() {
         return sharing;
     }
 
+    /**
+     * Sends requests over network to get list of all files
+     * 
+     * @param ttl Time-To-Live
+     * 
+     * @throws IOException Network problems
+     */
     public void find(int ttl) throws IOException {
         foundSharedFiles.clear();
         for (Socket s : neighbourSockets) {
@@ -357,6 +375,14 @@ public final class FishPeer {
         }
     }
 
+    /**
+     * Sends requests over network to get list of files by mask
+     * 
+     * @param mask Filename mask     
+     * @param ttl Time-To-Live
+     * 
+     * @throws IOException Network problems
+     */
     public void find(String mask, int ttl) throws IOException {
         foundSharedFiles.clear();
         for (Socket s : neighbourSockets) {
@@ -381,8 +407,9 @@ public final class FishPeer {
      * 
      * @param index An index of file in the list of shared files
      * @param filename A filepath under which downloaded file would be written (saved)
-     * @throws RejectedException 
-     * @throws IOException  
+     * 
+     * @throws RejectedException If peer didn't respond according to protocol
+     * @throws IOException Network problems
      */
     public void download(int index, String filename) throws RejectedException, IOException {
         if (foundSharedFiles == null || foundSharedFiles.isEmpty()) {
@@ -504,7 +531,6 @@ public final class FishPeer {
                             Socket peerSocket = peerServerSocket.accept();
                             new PeerRequestHandler(
                                     peerSocket,
-                                    myFiles,
                                     myFileInfos,
                                     myNeighbours,
                                     myNeighbourNeighbours,
@@ -561,7 +587,7 @@ public final class FishPeer {
     }
 
     /**
-     * Gets the collection of client's files for sharing
+     * Gets the collection of peer's files for sharing
      * 
      * @return Collection of files for sharing
      */
@@ -690,6 +716,9 @@ public final class FishPeer {
         out.println();
     }
 
+    /**
+     * Print the list of neighbours' neighbours.
+     */
     public void printNeighbourNeighbours() {
         for (Entry<PeerAddress, List<PeerAddress>> entry : myNeighbourNeighbours.entrySet()) {
             PeerAddress n = entry.getKey();
@@ -703,7 +732,7 @@ public final class FishPeer {
     }
 
     /**
-     * Starts CLI for FISH client
+     * Starts CLI for FISH peer
      */
     public void run() {
         String inputString = null;
@@ -862,7 +891,7 @@ public final class FishPeer {
     }
 
     /**
-     * Main method: creates and runs FISH client.
+     * Main method: creates and runs FISH peer.
      * 
      * @param args Command-line arguments provided by user 
      */

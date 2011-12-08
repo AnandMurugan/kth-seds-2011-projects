@@ -27,7 +27,7 @@ import javax.persistence.EntityManager;
 import org.apache.commons.collections.map.MultiValueMap;
 
 /**
- *
+ * Class that handles all requests from client to server
  * @author julio
  */
 public class ClientConnectionHandler extends Thread {
@@ -39,18 +39,19 @@ public class ClientConnectionHandler extends Thread {
     private final EntityManager em;
 
     /**
+     * Creates a new {@code ClientConnectionHandler
      * 
-     * @param clientSocket
-     * @param clientPeerHost
-     * @param clientPeerPort
-     * @param files
-     * @param em
+     * @param clientSocket socket to a client
+     * @param clientPeerHost client's host
+     * @param clientPeerPort client's port
+     * @param files shared file directory
+     * @param em an {@code EntityManager}
      */
     public ClientConnectionHandler(
-            Socket clientSocket, 
-            String clientPeerHost, 
-            int clientPeerPort, 
-            Map<String, MultiValueMap> files, 
+            Socket clientSocket,
+            String clientPeerHost,
+            int clientPeerPort,
+            Map<String, MultiValueMap> files,
             EntityManager em) {
         this.clientSocket = clientSocket;
         this.clientPeerHost = clientPeerHost;
@@ -196,13 +197,13 @@ public class ClientConnectionHandler extends Thread {
         }
     }
 
-    /**
-     * 
-     * @param alive
-     */
-    public void setAlive(boolean alive) {
-        this.alive = alive;
-    }
+//    /**
+//     * 
+//     * @param alive
+//     */
+//    public void setAlive(boolean alive) {
+//        this.alive = alive;
+//    }
 
     private boolean match(String name, Pattern p) {
         //return name.equalsIgnoreCase(mask);
