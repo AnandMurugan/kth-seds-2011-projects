@@ -12,7 +12,7 @@ import javax.persistence.EntityManager;
 import org.apache.commons.collections.map.MultiValueMap;
 
 /**
- *
+ * Simple handler that check whether the client is alive
  * @author julio
  */
 public class LivenessConnectionHandler extends Thread {
@@ -24,11 +24,13 @@ public class LivenessConnectionHandler extends Thread {
     private final Map<String, MultiValueMap> allFilesMap;
 
     /**
+     * Creates a {@code LivenessConnectionHandler}
      * 
-     * @param clientHost
-     * @param clientPeerPort
-     * @param clientLivenessPort
-     * @param em
+     * @param clientHost client's host
+     * @param clientPeerPort client's port for other external communication
+     * @param clientLivenessPort client's port for liveness checking
+     * @param em an {@code EntityManager}
+     * @param files shared file directory 
      */
     public LivenessConnectionHandler(
             String clientHost,

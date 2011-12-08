@@ -54,7 +54,6 @@ import org.apache.commons.cli.ParseException;
 public final class FishClient {
     /*CLI*/
     private final static String USAGE_SHORT = "java fish.client.FishClient";
-    //private final static String USAGE = "java fish.client.FishClient [-path <shared_file_path>] [-host <server_address>] [-port <server_port>]";
     private final static PrintStream out = System.out;
     private final static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     /*Networking*/
@@ -234,7 +233,8 @@ public final class FishClient {
      * 
      * @param host FISH server host
      * @param port FISH server port
-     * @param tries Number of tries
+     * @param tries Number of tries     
+     * @param quiet If {@code true}, it will not notify user about tries
      * 
      * @return True, if successfully reconnected
      */
@@ -287,8 +287,9 @@ public final class FishClient {
 
     /**
      * Sends FISH server the list of shared files 
-     * @throws RejectedException
-     * @throws IOException  
+     * 
+     * @throws RejectedException If server did not respond according to protocol
+     * @throws IOException Network problems
      */
     public void share() throws RejectedException, IOException {
         BufferedWriter serverOut = null;
@@ -357,8 +358,9 @@ public final class FishClient {
 
     /**
      * Tells FISH server to remove all client's shared files
-     * @throws RejectedException
-     * @throws IOException  
+     * 
+     * @throws RejectedException If server did not respond according to protocol
+     * @throws IOException Network problems
      */
     public void unshare() throws RejectedException, IOException {
         BufferedWriter serverOut = null;
@@ -399,10 +401,11 @@ public final class FishClient {
     /**
      * Retrieves the list of all shared files from FISH server (client's shared 
      * files are not included).
-     * @return 
-     * @throws RejectedException
-     * @throws IOException 
-     * @throws ClassNotFoundException  
+     * 
+     * @return Found shared files
+     * @throws RejectedException If server did not respond according to protocol
+     * @throws IOException Network problems
+     * @throws ClassNotFoundException If server did not respond according to protocol
      */
     public List<FileInfo> obtainSharedFileList() throws RejectedException, IOException, ClassNotFoundException {
         /*FOR DEBUGGING ONLY start*/
@@ -466,10 +469,12 @@ public final class FishClient {
      * (client's shared files are not included)
      * 
      * @param mask File name mask
-     * @return 
-     * @throws RejectedException
-     * @throws IOException
-     * @throws ClassNotFoundException  
+     * 
+     * @return Found files
+     * 
+     * @throws RejectedException If server did not respond according to protocol
+     * @throws IOException Network problems
+     * @throws ClassNotFoundException If server did not respond according to protocol
      */
     public List<FileInfo> obtainSharedFileList(String mask) throws RejectedException, IOException, ClassNotFoundException {
         BufferedWriter serverOut = null;
@@ -519,12 +524,13 @@ public final class FishClient {
     }
 
     /**
-     * Downloads a shared file from peer and saves it under given name.
+     * Downloads a shared file from client and saves it under given name.
      * 
      * @param index An index of file in the list of shared files
      * @param filename A filepath under which downloaded file would be written (saved)
-     * @throws RejectedException 
-     * @throws IOException  
+     * 
+     * @throws RejectedException If client did not respond according to protocol
+     * @throws IOException Network problem
      */
     public void download(int index, String filename) throws RejectedException, IOException {
         if (foundSharedFiles == null || foundSharedFiles.isEmpty()) {

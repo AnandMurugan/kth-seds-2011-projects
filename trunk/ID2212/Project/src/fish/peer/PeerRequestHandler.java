@@ -26,12 +26,12 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections.map.MultiValueMap;
 
 /**
- *
+ * A handler that process and executes all requests from the peers except 
+ * download requests and search responses
  * @author julio
  */
 public class PeerRequestHandler extends Thread {
     private Socket peerSocket;
-    private Map<String, File> myFiles;
     private MultiValueMap myFileInfos;
     private List<PeerAddress> myNeighbours;
     private Map<PeerAddress, List<PeerAddress>> myNeighbourNeighbours;
@@ -39,16 +39,24 @@ public class PeerRequestHandler extends Thread {
     private List<Socket> neighbourSockets;
     private FishPeer myFishPeer;
 
+    /**
+     * Creates a new {@code PeerRequestHandler}
+     * 
+     * @param peerSocket socket to peer 
+     * @param myFileInfos information about local files for sharing
+     * @param myNeighbours nearest neighbours
+     * @param myNeighbourNeighbours neighbours of nearest neighbours
+     * @param neighbourSockets socket for communicating with neighbours
+     * @param myFishPeer a reference to {@code FishPeer} object (parent)
+     */
     public PeerRequestHandler(
             Socket peerSocket,
-            Map<String, File> myFiles,
             MultiValueMap myFileInfos,
             List<PeerAddress> myNeighbours,
             Map<PeerAddress, List<PeerAddress>> myNeighbourNeighbours,
             List<Socket> neighbourSockets,
             FishPeer myFishPeer) {
         this.peerSocket = peerSocket;
-        this.myFiles = myFiles;
         this.myFileInfos = myFileInfos;
         this.myNeighbours = myNeighbours;
         this.myNeighbourNeighbours = myNeighbourNeighbours;

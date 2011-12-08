@@ -7,22 +7,35 @@ package fish.peer;
 import java.io.Serializable;
 
 /**
- *
+ * Simple structure for storing network address of the peer
  * @author Igor
  */
 public class PeerAddress implements Serializable {
     private String host;
     private int port;
 
+    /**
+     * Creates a new {@code PeerAddress}
+     * @param host Peer host
+     * @param port Peer port
+     */
     public PeerAddress(String host, int port) {
         this.host = host;
         this.port = port;
     }
 
+    /**
+     * Gets peer host
+     * @return host
+     */
     public String getHost() {
         return host;
     }
 
+    /**
+     * Gets peer port
+     * @return port
+     */
     public int getPort() {
         return port;
     }

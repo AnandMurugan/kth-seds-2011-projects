@@ -4,7 +4,6 @@
  */
 package fish.common;
 
-import fish.common.FishMessageType;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,7 +19,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ *  Simple handler of download requests from other peers/clients
+ * 
  * @author Igor
  */
 public class DownloadRequestHandler extends Thread {
@@ -28,9 +28,10 @@ public class DownloadRequestHandler extends Thread {
     private Map<String, File> sharedFiles;
 
     /**
+     * Creates a handler
      * 
-     * @param clientSocket
-     * @param sharedFiles
+     * @param clientSocket Socket to a client/peer
+     * @param sharedFiles Shared files
      */
     public DownloadRequestHandler(Socket clientSocket, Map<String, File> sharedFiles) {
         this.clientSocket = clientSocket;

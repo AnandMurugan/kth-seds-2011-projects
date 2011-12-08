@@ -19,16 +19,16 @@ import javax.persistence.EntityManager;
 import org.apache.commons.collections.map.MultiValueMap;
 
 /**
- *
+ * Server in FISH network
  * @author julio
  */
 public class FishServer {
     /**
-     * 
+     * Server default port
      */
     public static final Integer DEFAULT_PORT = 8080;
     /**
-     * 
+     * Interval of checking liveness of clients
      */
     public final static int LIVENESS_CHECK_INTERVAL = 5000;
     //public final static int DEFAULT_LIVENESS_PORT = 8082;
@@ -36,8 +36,8 @@ public class FishServer {
     final private EntityManager em = javax.persistence.Persistence.createEntityManagerFactory("FishPU").createEntityManager();
 
     /**
-     * 
-     * @param args
+     * Main method: creates and runs {@code FishServer}
+     * @param args Command-line arguments provided by user 
      */
     public static void main(String args[]) {
         try {
@@ -49,14 +49,14 @@ public class FishServer {
     }
 
     /**
-     * 
+     * Creates a new {@code FishServer}
      */
     public FishServer() {
         this.allClientFiles = new HashMap<String, MultiValueMap>();
     }
 
     /**
-     * 
+     * Start {@code FishServer}
      */
     public void run() {
         System.out.println("FISH server started.");
