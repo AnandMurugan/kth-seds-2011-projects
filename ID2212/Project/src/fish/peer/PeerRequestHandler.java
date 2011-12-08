@@ -98,10 +98,19 @@ public class PeerRequestHandler extends Thread {
                         peerNeighbours = (List<PeerAddress>) listIn.readObject();
                         myNeighbourNeighbours.put(peerAddress, peerNeighbours);
 
-                        Socket peerSocketForPeers = new Socket(peerAddress.getHost(), peerAddress.getPort());
-                        neighbourSockets.add(peerSocketForPeers);
+                        Socket psfp = new Socket(peerAddress.getHost(), peerAddress.getPort());
+                        BufferedWriter psfpOut = new BufferedWriter(new OutputStreamWriter(psfp.getOutputStream()));
+                        psfpOut.write(FishMessageType.PEER_ADDRESS.name());
+                        psfpOut.newLine();
+                        psfpOut.write(peerSocket.getLocalAddress().getHostAddress());
+                        psfpOut.newLine();
+                        psfpOut.write(Integer.toString(peerSocket.getLocalPort()));
+                        psfpOut.newLine();
+                        psfpOut.flush();
+
+                        neighbourSockets.add(psfp);
                         for (Socket socket : neighbourSockets) {
-                            if (socket == peerSocketForPeers) {
+                            if (socket == psfp) {
                                 socket = peerSocket;
                             }
                             BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -122,16 +131,24 @@ public class PeerRequestHandler extends Thread {
                         }
                         break;
                     case PEER_NEIGHBOURS:
-                        //Send OK message
                         out.write(FishMessageType.PEER_OK.name());
                         out.newLine();
                         out.flush();
 
-                        //Get list of peer's neighbours
                         listIn = new ObjectInputStream(peerSocket.getInputStream());
                         peerNeighbours = (List<PeerAddress>) listIn.readObject();
                         myNeighbourNeighbours.put(peerAddress, peerNeighbours);
                         break;
+                    case PEER_ADDRESS:
+                        str = in.readLine();
+                        String remotePeerHost = str;
+
+                        str = in.readLine();
+                        int remotePeerPort = Integer.parseInt(str);
+
+                        peerAddress = new PeerAddress(remotePeerHost, remotePeerPort);
+                        break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {

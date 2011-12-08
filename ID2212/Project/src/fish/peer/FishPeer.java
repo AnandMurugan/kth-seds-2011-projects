@@ -319,15 +319,6 @@ public final class FishPeer {
         ObjectInputStream listIn = new ObjectInputStream(peerSocket.getInputStream());
         List<PeerAddress> peerNeighbours = (List<PeerAddress>) listIn.readObject();
         myNeighbourNeighbours.put(pa, peerNeighbours);
-
-//        //Start handling requests from the peer
-//        new PeerRequestHandler(
-//                peerSocket,
-//                myFiles,
-//                myFileInfos,
-//                myNeighbours,
-//                myNeighbourNeighbours,
-//                neighbourSockets).start();
     }
 
     public void share() {
@@ -566,7 +557,7 @@ public final class FishPeer {
                     }
                 }
             };
-            Thread prh = new Thread(requestHandlingTask, "Peer-Request-Handler");
+            Thread prh = new Thread(requestHandlingTask, "Download-Handler");
             prh.setDaemon(true);
             prh.start();
             out.println("Started handling download requests from peers on port " + downloadServerSocket.getLocalPort() + ".\n");
@@ -739,6 +730,18 @@ public final class FishPeer {
         out.println();
     }
 
+    public void printNeighbourNeighbours() {
+        for (Entry<PeerAddress, List<PeerAddress>> entry : myNeighbourNeighbours.entrySet()) {
+            PeerAddress n = entry.getKey();
+            List<PeerAddress> nList = entry.getValue();
+            out.println(n);
+            for (PeerAddress nn : nList) {
+                out.println("\t" + nn);
+            }
+        }
+        out.println();
+    }
+
     /**
      * Starts CLI for FISH client
      */
@@ -882,8 +885,11 @@ public final class FishPeer {
                     out.println("ERROR: Not enough parameters.\n");
                 }
                 return;
-            case NEIGHBOURS:
+            case N:
                 printNeighbours();
+                return;
+            case NN:
+                printNeighbourNeighbours();
                 return;
             case CONNECT:
                 try {
@@ -974,7 +980,8 @@ public final class FishPeer {
         LAST("Show last retrieved shared file list"),
         FIND("Search shared files by given name",
         new String[]{"<name> - name mask", "<TTL> - Time To Live ('radius' of lookup)"}),
-        NEIGHBOURS("Print list of neighbours"),
+        N("Print list of neighbours"),
+        NN("Print lists of all neighbour neighbours"),
         CONNECT("Connect to peer",
         new String[]{"<host> - peer host", "<port> - peer port"});
         /*End commands*/
