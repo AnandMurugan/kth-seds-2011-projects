@@ -60,5 +60,7 @@ public enum FishMessageType {
     /**
      * 
      */
-    SERVER_ALIVE
+    SERVER_ALIVE,
+    PEER_CONNECT,
+    PEER_NEIGHBOURS
 }
