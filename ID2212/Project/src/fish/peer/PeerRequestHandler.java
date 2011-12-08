@@ -183,6 +183,13 @@ public class PeerRequestHandler extends Thread {
                 } catch (Exception ex1) {
                     System.out.println("\nReconnect failed!");
                 }
+            } else if (pos == 0) {
+                try {
+                    myFishPeer.propagateNeighbourList();
+                } catch (Exception ex1) {
+                    System.out.println("\nMulticasting neighbour list failed!");
+                }
+
             }
         } finally {
             try {
