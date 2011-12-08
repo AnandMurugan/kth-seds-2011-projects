@@ -35,6 +35,8 @@ public class DownloadRequestHandler extends Thread {
     public DownloadRequestHandler(Socket clientSocket, Map<String, File> sharedFiles) {
         this.clientSocket = clientSocket;
         this.sharedFiles = sharedFiles;
+
+        setDaemon(true);
     }
 
     @Override
