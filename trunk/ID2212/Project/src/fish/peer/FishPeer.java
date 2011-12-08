@@ -283,25 +283,7 @@ public final class FishPeer {
         }
 
         //Send peer list of my neighbours
-        for (Socket socket : neighbourSockets) {
-            BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            BufferedWriter socketOut = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            ObjectOutputStream listSocketOut = null;
-
-            socketOut.write(FishMessageType.PEER_NEIGHBOURS.name());
-            socketOut.newLine();
-            socketOut.flush();
-
-            msg = socketIn.readLine();
-            if (FishMessageType.valueOf(msg) != FishMessageType.PEER_OK) {
-                //TODO
-            }
-
-            listSocketOut = new ObjectOutputStream(socket.getOutputStream());
-            listSocketOut.writeObject(myNeighbours);
-        }
-//        ObjectOutputStream listOut = new ObjectOutputStream(peerSocket.getOutputStream());
-//        listOut.writeObject(myNeighbours);
+        propagateNeighbourList();
 
         //Get NEIGHBOURS message
         msg = peerIn.readLine();
@@ -319,6 +301,27 @@ public final class FishPeer {
         ObjectInputStream listIn = new ObjectInputStream(peerSocket.getInputStream());
         List<PeerAddress> peerNeighbours = (List<PeerAddress>) listIn.readObject();
         myNeighbourNeighbours.put(pa, peerNeighbours);
+    }
+
+    void propagateNeighbourList() throws IOException {
+        String msg;
+        for (Socket socket : neighbourSockets) {
+            BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            BufferedWriter socketOut = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            ObjectOutputStream listSocketOut = null;
+
+            socketOut.write(FishMessageType.PEER_NEIGHBOURS.name());
+            socketOut.newLine();
+            socketOut.flush();
+
+            msg = socketIn.readLine();
+            if (FishMessageType.valueOf(msg) != FishMessageType.PEER_OK) {
+                //TODO
+            }
+
+            listSocketOut = new ObjectOutputStream(socket.getOutputStream());
+            listSocketOut.writeObject(myNeighbours);
+        }
     }
 
     public void share() {
