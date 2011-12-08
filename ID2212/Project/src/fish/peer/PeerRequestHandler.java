@@ -34,6 +34,7 @@ public class PeerRequestHandler extends Thread {
     private Map<PeerAddress, List<PeerAddress>> myNeighbourNeighbours;
     private PeerAddress peerAddress;
     private List<Socket> neighbourSockets;
+    private FishPeer myFishPeer;
 
     public PeerRequestHandler(
             Socket peerSocket,
@@ -41,13 +42,15 @@ public class PeerRequestHandler extends Thread {
             MultiValueMap myFileInfos,
             List<PeerAddress> myNeighbours,
             Map<PeerAddress, List<PeerAddress>> myNeighbourNeighbours,
-            List<Socket> neighbourSockets) {
+            List<Socket> neighbourSockets,
+            FishPeer myFishPeer) {
         this.peerSocket = peerSocket;
         this.myFiles = myFiles;
         this.myFileInfos = myFileInfos;
         this.myNeighbours = myNeighbours;
         this.myNeighbourNeighbours = myNeighbourNeighbours;
         this.neighbourSockets = neighbourSockets;
+        this.myFishPeer = myFishPeer;
 
         this.setDaemon(true);
     }
@@ -59,6 +62,8 @@ public class PeerRequestHandler extends Thread {
         ObjectInputStream listIn = null;
         ObjectOutputStream listOut = null;
         List<PeerAddress> peerNeighbours;
+        Socket psfp = null; //peerSocketForPeers - the one which is used for handling requests
+
         try {
             in = new BufferedReader(new InputStreamReader(peerSocket.getInputStream()));
             out = new BufferedWriter(new OutputStreamWriter(peerSocket.getOutputStream()));
@@ -98,7 +103,7 @@ public class PeerRequestHandler extends Thread {
                         peerNeighbours = (List<PeerAddress>) listIn.readObject();
                         myNeighbourNeighbours.put(peerAddress, peerNeighbours);
 
-                        Socket psfp = new Socket(peerAddress.getHost(), peerAddress.getPort());
+                        psfp = new Socket(peerAddress.getHost(), peerAddress.getPort());
                         BufferedWriter psfpOut = new BufferedWriter(new OutputStreamWriter(psfp.getOutputStream()));
                         psfpOut.write(FishMessageType.PEER_ADDRESS.name());
                         psfpOut.newLine();
@@ -148,13 +153,37 @@ public class PeerRequestHandler extends Thread {
 
                         peerAddress = new PeerAddress(remotePeerHost, remotePeerPort);
                         break;
-
                 }
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(PeerRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(PeerRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
+            //Peer died! Well, we assume that...
+            System.out.println("\nPeer died!");
+            List<PeerAddress> list = myNeighbourNeighbours.get(peerAddress);
+
+            myNeighbourNeighbours.remove(peerAddress);
+            myNeighbours.remove(peerAddress);
+            Socket toDelete = null;
+            for (Socket s : neighbourSockets) {
+                if (s.getInetAddress().getHostAddress().equals(peerAddress.getHost())
+                        && s.getPort() == peerAddress.getPort()) {
+                    toDelete = s;
+                    break;
+                }
+            }
+            neighbourSockets.remove(toDelete);
+
+            int pos = list.indexOf(new PeerAddress(peerSocket.getLocalAddress().getHostAddress(), peerSocket.getLocalPort()));
+            if (pos > 0) {
+                PeerAddress newNeighbour = list.get(0);
+                try {
+                    myFishPeer.connect(newNeighbour.getHost(), newNeighbour.getPort());
+                    System.out.println("\nReconnect successful!");
+                } catch (Exception ex1) {
+                    System.out.println("\nReconnect failed!");
+                }
+            }
         } finally {
             try {
                 peerSocket.close();

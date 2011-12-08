@@ -22,11 +22,11 @@ import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -75,17 +75,17 @@ public final class FishPeer {
      * @param sharedFilePath Path to the shared file
      */
     public FishPeer(String sharedFilePath) {
-        myFiles = new HashMap<String, File>();
+        myFiles = Collections.synchronizedMap(new HashMap<String, File>());
         myFileInfos = new MultiValueMap();
-        myNeighbours = new ArrayList<PeerAddress>();
-        myNeighbourNeighbours = new HashMap<PeerAddress, List<PeerAddress>>();
+        myNeighbours = Collections.synchronizedList(new ArrayList<PeerAddress>());
+        myNeighbourNeighbours = Collections.synchronizedMap(new HashMap<PeerAddress, List<PeerAddress>>());
         sharing = false;
         try {
             localAddr = InetAddress.getLocalHost();
         } catch (UnknownHostException ex) {
             Logger.getLogger(FishPeer.class.getName()).log(Level.SEVERE, null, ex);
         }
-        neighbourSockets = new ArrayList<Socket>();
+        neighbourSockets = Collections.synchronizedList(new ArrayList<Socket>());
 
         /*Starting handling download requests from other peers*/
         startDownloadRequestHandling();
@@ -245,7 +245,7 @@ public final class FishPeer {
         }
     }
 
-    private void connect(String host, int port) throws IOException, SocketException, ClassNotFoundException, RejectedException {
+    void connect(String host, int port) throws IOException, ClassNotFoundException, RejectedException {
         //Establish conenction
         Socket peerSocket = new Socket(host, port, localAddr, 0);
         PeerAddress pa = new PeerAddress(host, port);
@@ -570,6 +570,7 @@ public final class FishPeer {
     private void startRequestHandling() {
         try {
             peerServerSocket = new ServerSocket(0);
+            final FishPeer thisPeer = this;
             Runnable requestHandlingTask = new Runnable() {
                 @Override
                 public void run() {
@@ -582,7 +583,8 @@ public final class FishPeer {
                                     myFileInfos,
                                     myNeighbours,
                                     myNeighbourNeighbours,
-                                    neighbourSockets).start();
+                                    neighbourSockets,
+                                    thisPeer).start();
                         }
                     } catch (IOException ex) {
                         out.println("ERROR: " + ex.getMessage() + "\n");
