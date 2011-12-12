@@ -5,19 +5,38 @@
 package agents;
 
 import items.TourItem;
+import jade.core.Agent;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 
 /**
  *
  * @author Igor
  */
-public class TourGuideAgent {
+public class TourGuideAgent extends Agent {
     TourItem[][][] tourItems;
 
-    public TourGuideAgent() {
-        InitializeTourItems();
+    @Override
+    protected void setup() {
+        initializeTourItems();
+
+        //Register service in DF
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType("tourguide");
+        sd.setName("tourguide");
+        dfd.addServices(sd);
+        try {
+            DFService.register(this, dfd);
+        } catch (FIPAException ex) {
+            ex.printStackTrace();
+        }
     }
 
-    private void InitializeTourItems() {
+    private void initializeTourItems() {
         tourItems = new TourItem[2][3][15];
 
         // Profile 1
@@ -38,7 +57,7 @@ public class TourGuideAgent {
         tourItems[0][0][12] = new TourItem("urn:imss:instrument:403017", "Case of mathematical instruments@en");
         tourItems[0][0][13] = new TourItem("urn:imss:instrument:402015", "Horizontal dial@en");
         tourItems[0][0][14] = new TourItem("urn:imss:instrument:404016", "Galileo and Viviani@en");
-        
+
 
         // Interesting Tour
         tourItems[0][1][0] = new TourItem("urn:imss:instrument:416015", "Multi-lever apparatus@en");
@@ -56,7 +75,7 @@ public class TourGuideAgent {
         tourItems[0][1][12] = new TourItem("urn:imss:instrument:414137", "Dial telegraph@en");
         tourItems[0][1][13] = new TourItem("urn:imss:instrument:414022", "Portable plate electrical machine, English type@en");
         tourItems[0][1][14] = new TourItem("urn:imss:instrument:402011", "Reel@en");
-        
+
         // Very Interesting Tour
         tourItems[0][2][0] = new TourItem("urn:imss:instrument:403052", "Quadrant@en");
         tourItems[0][2][1] = new TourItem("urn:imss:instrument:401051", "Sundial@en");
@@ -73,7 +92,7 @@ public class TourGuideAgent {
         tourItems[0][2][12] = new TourItem("urn:imss:instrument:401008", "Astrolabe@en");
         tourItems[0][2][13] = new TourItem("urn:imss:instrument:401032", "Polyhedral dial@en");
         tourItems[0][2][14] = new TourItem("urn:imss:instrument:401020", "Nocturnal@en");
-        
+
         // Profile 2 
         // ------------
         // Aleatory Tour
@@ -92,7 +111,7 @@ public class TourGuideAgent {
         tourItems[1][0][12] = new TourItem("urn:imss:instrument:404002", "Galileo Galilei, \"Sidereus Nuncius\"@en");
         tourItems[1][0][13] = new TourItem("urn:imss:instrument:414078", "Nobili's thermoelectric galvanometer@en");
         tourItems[1][0][14] = new TourItem("urn:imss:instrument:414118", "Demonstration model of Oersted's experiment@en");
-        
+
         // Interesting Tour
         tourItems[1][1][0] = new TourItem("urn:imss:instrument:401133", "Pantograph@en");
         tourItems[1][1][1] = new TourItem("urn:imss:instrument:414118", "Demonstration model of Oersted's experiment@en");
@@ -109,7 +128,7 @@ public class TourGuideAgent {
         tourItems[1][1][12] = new TourItem("urn:imss:instrument:401088", "Measuring rule@en");
         tourItems[1][1][13] = new TourItem("urn:imss:instrument:402018", "Box for mining instruments@en");
         tourItems[1][1][14] = new TourItem("urn:imss:instrument:401083", "Ruler@en");
-       
+
         // Very Interesting tour
         tourItems[1][2][0] = new TourItem("urn:imss:instrument:402077", "Square@en");
         tourItems[1][2][1] = new TourItem("urn:imss:instrument:401119", "Ramrods@en");
