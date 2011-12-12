@@ -63,6 +63,18 @@ public class TourGuideAgent extends Agent {
         int getPrebuildTourId() {
             return this.prebuiltTourId;
         }
+
+        void updateInfo(String[] newInfo) {
+            for (String info : newInfo) {
+                if (info.equals("p1")) {
+                    profilerInfo[0] = "p1";
+                } else if (info.equals("p2")) {
+                    profilerInfo[1] = "p2";
+                } else if (info.equals("p3")) {
+                    profilerInfo[2] = "p3";
+                }
+            }
+        }
     }
 
     @Override
@@ -121,9 +133,13 @@ public class TourGuideAgent extends Agent {
 
                         if (profilerInfo.getCurrentTour() < MAXIMUM_TOURS) {
                             profilerInfo.setCurrentTour(profilerInfo.getCurrentTour() + 1);
+                        } else {
+                            // Handle more than maximum tours;
+                            return;
                         }
                     } else {
-                        int builtinTourId = 0;
+                        int builtinTourId = 0; // tour according to agent preferences
+
                         if (preferences.equals(ASTRONOMY_PREFERENCE)) {
                             builtinTourId = 0;
                         } else if (preferences.equals(GEOMETRY_PREFERENCE)) {
@@ -131,31 +147,38 @@ public class TourGuideAgent extends Agent {
                         }
 
                         profilerInfo = new ProfilerInfo(preferences);
-
-                        profilerNextTourMap.put(profilerId, profilerInfo); // start tour
+                        profilerInfo.setPrebuiltTourId(builtinTourId);
+                        profilerNextTourMap.put(profilerId, profilerInfo); // create  new profiler info.
                     }
 
-                    // TODO. send tour information
+                    // Send the new tour info
                     ACLMessage reply = msg.createReply();
                     reply.setContent("T" + profilerInfo.getCurrentTour() + ";" + prices[profilerInfo.getCurrentTour() - 1]);
+                    reply.setPerformative(ACLMessage.INFORM);
                     myAgent.send(reply);
 
                 } else if (msg.getPerformative() == ACLMessage.INFORM) {  // case tour agent accepts tour
                     // get the profile payment
                     AID profilerAID = msg.getSender();
-                    String profilePayment = msg.getContent();
-                    String[] payment = profilePayment.split(";");
+                    String profilerData = msg.getContent();
 
-                    try {
-                        // send the tour
-                        ACLMessage reply = msg.createReply();
+                    if (!profilerData.isEmpty()) {
+                        String[] newInfo = profilerData.split(";");
                         ProfilerInfo profilerInfo = profilerNextTourMap.get(profilerAID);
-                        if (profilerInfo != null) {
-                            reply.setContentObject(tourItems[profilerInfo.getPrebuildTourId()][profilerInfo.getCurrentTour() - 1]);
+                        profilerInfo.updateInfo(newInfo);
+                        try {
+                            // send the tour value
+                            if (profilerInfo != null) {
+                                ACLMessage reply = msg.createReply();
+                                reply.setPerformative(ACLMessage.INFORM);
+                                reply.setContentObject(tourItems[profilerInfo.getPrebuildTourId()][profilerInfo.getCurrentTour() - 1]);
+                                myAgent.send(reply);
+                            }
+                        } catch (IOException ex) {
+                            Logger.getLogger(TourGuideAgent.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                    } catch (IOException ex) {
-                        Logger.getLogger(TourGuideAgent.class.getName()).log(Level.SEVERE, null, ex);
-
+                    } else {
+                        // Profiler doesnt have more info to send
                     }
                 }
             } else {
