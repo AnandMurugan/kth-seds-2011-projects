@@ -158,20 +158,6 @@ public class TourGuideAgent extends Agent {
 
                     }
                 }
-
-                /*AID curator = msg.getSender();
-                System.out.println(myAgent.getAID().getName() + " has got response from the curator " + curator.getName() + "!");
-                List<Artifact> artifacts;
-                try {
-                artifacts = (List<Artifact>) msg.getContentObject();
-                for (Artifact a : artifacts) {
-                if (!containsArtifact(a)) {
-                artifactsAndCurators.put(a, curator);
-                }
-                }
-                } catch (UnreadableException ex) {
-                ex.printStackTrace();
-                }*/
             } else {
                 block();
             }
