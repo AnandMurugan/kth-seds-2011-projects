@@ -6,12 +6,6 @@ package agents;
 
 import com.myprofile.profile.ProfileType;
 import daiia.ProfileManager;
-import items.MuseumItem;
-import items.TourItem;
-import jade.content.ContentElement;
-import jade.content.lang.sl.SLCodec;
-import jade.content.onto.basic.Action;
-import jade.content.onto.basic.Result;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.Location;
@@ -22,8 +16,6 @@ import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
-import jade.domain.JADEAgentManagement.QueryPlatformLocationsAction;
-import jade.domain.mobility.MobilityOntology;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
@@ -45,6 +37,9 @@ public class ProfilerAgent extends Agent {
     private TourItem[] currentTour;
     private boolean museumVisited;
     private Location home = here();
+    String profilerName = "anonymous";
+    private AID tourGuideAgent;
+    private static long counter = 1;
 
     @Override
     protected void setup() {
@@ -59,6 +54,7 @@ public class ProfilerAgent extends Agent {
 
         if (args != null && args.length > 0) {
             profilePath = (String) args[0];
+            profilerName = (String) args[1];
         }
 
         if (!profilePath.isEmpty()) {
@@ -67,17 +63,20 @@ public class ProfilerAgent extends Agent {
             this.profile = profileManager.loadProfile(DEFAULT_PROFILE_PATH);
         }
 
+        //Register service in DF
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType("profiler");
+        sd.setName(profilerName + "_profiler" + (counter++));
+        dfd.addServices(sd);
+        try {
+            DFService.register(this, dfd);
+        } catch (FIPAException ex) {
+            ex.printStackTrace();
+        }
+        
         addBehaviour(new MuseumVisitorBehaviour(this));
-    }
-
-    public TourItem[] getCurrentTour() {
-        return currentTour;
-    }
-
-    public void setCurrentTour(TourItem[] currentTour) {
-        this.currentTour = currentTour;
-    }
-
     public boolean isMuseumVisited() {
         return museumVisited;
     }
@@ -151,36 +150,68 @@ public class ProfilerAgent extends Agent {
     private class MuseumVisitorBehaviour extends FSMBehaviour {
         private MessageTemplate msgTemplate;
         // define states
+        private static final String SEARCH_GUIDE_STATE = "search_guide";
         private static final String REQUEST_TOUR_STATE = "request_tour";
         private static final String NEGOTIATE_TOUR_STATE = "wait_tour";
         private static final String VISIT_MUSEUM_STATE = "visit_museum";
         private static final String END_VISITOR_STATE = "end_visitor";
         // define transitions
+        private final int FOUND_TOUR_GUIDE = 6;
         private final int REQUESTED_TOUR_TRANSTION = 1;
         private final int RECEIVED_TOUR_TRANSITION = 2;
         private final int COMPLETED_MUSEUM_VISIT_TRANSITION = 3;
         private final int END_TRANSITION = 4;
         private final int DEFAULT_ERROR_STATE = 5;
 
-        public MuseumVisitorBehaviour(Agent a) {
+        MuseumVisitorBehaviour(Agent a) {
             super(a);
         }
-
+        
         @Override
         public void onStart() {
             msgTemplate = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
 
             // Register States
-            registerFirstState(new RequestTourBehavior(myAgent), REQUEST_TOUR_STATE);
+            registerFirstState(new SearchTourGuideBehaviour(myAgent), SEARCH_GUIDE_STATE);
+            registerState(new RequestTourBehavior(myAgent), REQUEST_TOUR_STATE);
             registerState(new NegotiateTourBehaviour(myAgent), NEGOTIATE_TOUR_STATE);
             registerState(new VisitTourBehaviour(myAgent), VISIT_MUSEUM_STATE);
             registerLastState(new EndMuseumVisitorBehaviour(myAgent), END_VISITOR_STATE);
 
             // Register Transitions
+            registerTransition(SEARCH_GUIDE_STATE, REQUEST_TOUR_STATE, FOUND_TOUR_GUIDE);
             registerTransition(REQUEST_TOUR_STATE, NEGOTIATE_TOUR_STATE, REQUESTED_TOUR_TRANSTION);
             registerTransition(NEGOTIATE_TOUR_STATE, VISIT_MUSEUM_STATE, RECEIVED_TOUR_TRANSITION);
             registerTransition(NEGOTIATE_TOUR_STATE, END_VISITOR_STATE, END_TRANSITION);
-            registerTransition(VISIT_MUSEUM_STATE, REQUEST_TOUR_STATE, COMPLETED_MUSEUM_VISIT_TRANSITION);
+
+        }
+
+        private class SearchTourGuideBehaviour extends OneShotBehaviour {
+            SearchTourGuideBehaviour(Agent a) {
+                super(a);
+            }
+            
+            @Override
+            public void action() {
+                System.out.println(myAgent.getAID().getName() + " is searching for tour-guides...");
+                DFAgentDescription template = new DFAgentDescription();
+                ServiceDescription sd = new ServiceDescription();
+                sd.setType("tourguide");
+                template.addServices(sd);
+                try {
+                    DFAgentDescription[] result = DFService.search(myAgent, template);
+                    if (result.length == 0) {
+                        System.out.println(myAgent.getAID().getName() + ": ERROR - No tour-guides found...");
+                        myAgent.doDelete();
+                        return;
+                    }
+
+                    System.out.println(myAgent.getAID().getName() + " has found a tour agent.");
+                    tourGuideAgent = result[0].getName();
+                } catch (FIPAException fe) {
+                    fe.printStackTrace();
+                }
+            }
         }
 
         private class RequestTourBehavior extends Behaviour {
@@ -190,6 +221,9 @@ public class ProfilerAgent extends Agent {
 
             @Override
             public void action() {
+                ACLMessage requestMsg = new ACLMessage(ACLMessage.REQUEST);
+                
+
                 throw new UnsupportedOperationException("Not supported yet.");
             }
 
