@@ -4,6 +4,8 @@
  */
 package items;
 
+import java.util.Arrays;
+
 /**
  *
  * @author Igor
@@ -13,7 +15,7 @@ public class MuseumItem extends TourItem {
     private String[] objectType;
     private String[] material;
 
-    public MuseumItem(String[] subject, String[] objectType, String[] material, String id, String name) {
+    public MuseumItem(String id, String name, String[] subject, String[] objectType, String[] material) {
         super(id, name);
         this.subject = subject;
         this.objectType = objectType;
@@ -30,5 +32,10 @@ public class MuseumItem extends TourItem {
 
     public String[] getSubject() {
         return subject;
+    }
+
+    @Override
+    public String toString() {
+        return "MuseumItem{" + "id=" + id + ", title=" + title + ", subject=" + Arrays.deepToString(subject) + ", objectType=" + Arrays.deepToString(objectType) + ", material=" + Arrays.deepToString(material) + '}';
     }
 }

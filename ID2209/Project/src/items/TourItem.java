@@ -9,19 +9,19 @@ package items;
  * @author Igor
  */
 public class TourItem {
-    private String id;
-    private String name;
+    protected String id;
+    protected String title;
 
-    public TourItem(String id, String name) {
+    public TourItem(String id, String title) {
         this.id = id;
-        this.name = name;
+        this.title = title;
     }
 
     public String getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 }
