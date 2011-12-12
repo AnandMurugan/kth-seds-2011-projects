@@ -209,6 +209,11 @@ public class ProfilerAgent extends Agent {
                     fe.printStackTrace();
                 }
             }
+
+            @Override
+            public int onEnd() {
+                return FOUND_TOUR_GUIDE;
+            }
         }
 
         private class RequestTourBehavior extends OneShotBehaviour {
@@ -221,6 +226,13 @@ public class ProfilerAgent extends Agent {
                 ACLMessage requestMsg = new ACLMessage(ACLMessage.REQUEST);
                 requestMsg.addReceiver(tourGuideAgent);
                 requestMsg.setContent(((ProfilerAgent) myAgent).profile.getAttitude());
+
+                myAgent.send(requestMsg);
+            }
+
+            @Override
+            public int onEnd() {
+                return REQUESTED_TOUR_TRANSTION;
             }
         }
 
@@ -235,7 +247,7 @@ public class ProfilerAgent extends Agent {
             public void action() {
                 ACLMessage reply = blockingReceive();
                 ACLMessage reply2 = reply.createReply();
-                String attitude = ((ProfilerAgent) myAgent).profile.getAttitude();
+                String attitude = ((ProfilerAgent) myAgent).profile.getInterests().getInterest().get(0);
                 boolean[] parts = ((ProfilerAgent) myAgent).parts;
                 result = RECEIVED_TOUR_TRANSITION;
                 if (attitude.equals("greedy")) {

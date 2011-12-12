@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<profileType xmlns="http://www.MyProfile.com/Profile">
+    <Age>33</Age>
+    <MotivationOfVisit>educational</MotivationOfVisit>
+    <Education>higher education</Education>
+    <Attitude>greedy</Attitude>
+    <Privacy>0.5</Privacy>
+    <VisitedItems>        
+    </VisitedItems>
+    <Interests>
+        <Interest>astronomy</Interest>
+    </Interests>
+</profileType>
