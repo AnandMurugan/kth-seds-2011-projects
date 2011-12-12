@@ -9,6 +9,7 @@ import daiia.ProfileManager;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
@@ -18,12 +19,14 @@ import jade.lang.acl.MessageTemplate;
  */
 public class ProfilerAgent extends Agent {
     private ProfileType profile;
+    ProfileManager profileManager;
     final String DEFAULT_PROFILE_PATH = "Profile.xml";
+    String profilePath = "";
 
     @Override
     protected void setup() {
-        ProfileManager profiler = new ProfileManager();
-        String profilePath = "";
+        profileManager = new ProfileManager();
+
         Object[] args = getArguments();
 
         if (args != null && args.length > 0) {
@@ -31,10 +34,12 @@ public class ProfilerAgent extends Agent {
         }
 
         if (!profilePath.isEmpty()) {
-            this.profile = profiler.loadProfile(profilePath);
+            this.profile = profileManager.loadProfile(profilePath);
         } else {
-            this.profile = profiler.loadProfile(DEFAULT_PROFILE_PATH);
+            this.profile = profileManager.loadProfile(DEFAULT_PROFILE_PATH);
         }
+
+
     }
 
     @Override
@@ -65,14 +70,14 @@ public class ProfilerAgent extends Agent {
             registerState(new NegotiateTourBehaviour(myAgent), NEGOTIATE_TOUR_STATE);
             registerState(new VisitTourBehaviour(myAgent), VISIT_MUSEUM_STATE);
             registerLastState(new EndMuseumVisitorBehaviour(myAgent), END_VISITOR_STATE);
-            
+
             // Register Transitions
             registerTransition(REQUEST_TOUR_STATE, NEGOTIATE_TOUR_STATE, REQUESTED_TOUR_TRANSTION);
             registerTransition(NEGOTIATE_TOUR_STATE, VISIT_MUSEUM_STATE, RECEIVED_TOUR_TRANSITION);
-            
+
             registerTransition(NEGOTIATE_TOUR_STATE, END_VISITOR_STATE, END_TRANSITION);
-            
-            
+
+
         }
 
         private class RequestTourBehavior extends Behaviour {
@@ -92,7 +97,6 @@ public class ProfilerAgent extends Agent {
         }
 
         private class NegotiateTourBehaviour extends Behaviour {
-            
             NegotiateTourBehaviour(Agent aAgent) {
                 super(aAgent);
             }
@@ -109,7 +113,6 @@ public class ProfilerAgent extends Agent {
         }
 
         private class VisitTourBehaviour extends Behaviour {
-            
             VisitTourBehaviour(Agent aAgent) {
                 super(aAgent);
             }
@@ -124,8 +127,8 @@ public class ProfilerAgent extends Agent {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         }
-        
-         private class EndMuseumVisitorBehaviour extends Behaviour {
+
+        private class EndMuseumVisitorBehaviour extends OneShotBehaviour {
             boolean gotReply = false;
             int transition = DEFAULT_ERROR_STATE;
 
@@ -135,21 +138,13 @@ public class ProfilerAgent extends Agent {
 
             @Override
             public void action() {
-                ACLMessage replyMsg = myAgent.receive(msgTemplate);
-                if (replyMsg != null) {
-                    gotReply = true;
-                    System.out.println(getAID().getName() + " museum visitor finished. ");
+                if (profilePath.isEmpty()) {
+                    profileManager.dumpProfile(profile, DEFAULT_PROFILE_PATH);
+                } else {
+                    profileManager.dumpProfile(profile, profilePath);
                 }
-            }
 
-            @Override
-            public boolean done() {
-                return gotReply;
-            }
-
-            @Override
-            public int onEnd() {
-                return transition;
+                System.out.println(getAID().getName() + " museum visitor finished. ");
             }
         }
     }
