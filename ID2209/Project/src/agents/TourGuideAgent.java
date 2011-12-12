@@ -161,10 +161,10 @@ public class TourGuideAgent extends Agent {
                     // get the profile payment
                     AID profilerAID = msg.getSender();
                     String profilerData = msg.getContent();
-
+                    ProfilerInfo profilerInfo = profilerNextTourMap.get(profilerAID);
+                    
                     if (!profilerData.isEmpty()) {
                         String[] newInfo = profilerData.split(";");
-                        ProfilerInfo profilerInfo = profilerNextTourMap.get(profilerAID);
                         profilerInfo.updateInfo(newInfo);
                         try {
                             // send the tour value
@@ -178,7 +178,10 @@ public class TourGuideAgent extends Agent {
                             Logger.getLogger(TourGuideAgent.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     } else {
-                        // Profiler doesnt have more info to send
+                        // Profiler doesnt have more info to send, next tour should be set to unreachable tours
+                        if (profilerInfo != null) {
+                            profilerInfo.setCurrentTour(MAXIMUM_TOURS);
+                        }
                     }
                 }
             } else {
