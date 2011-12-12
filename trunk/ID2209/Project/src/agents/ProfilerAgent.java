@@ -38,8 +38,8 @@ import java.util.logging.Logger;
  * @author Igor
  */
 public class ProfilerAgent extends Agent {
-    private ProfileType profile;
-    private ProfileManager profileManager;
+    private transient ProfileType profile;
+    private transient ProfileManager profileManager;
     final String DEFAULT_PROFILE_PATH = "Profile.xml";
     private String profilePath = "";
     private TourItem[] currentTour;
@@ -91,12 +91,15 @@ public class ProfilerAgent extends Agent {
     @Override
     protected void afterMove() {
         if (!museumVisited) {
+            profileManager = new ProfileManager();
+            this.profile = profileManager.loadProfile(profilePath);
+
             //Find Inventory agent
             DFAgentDescription template = new DFAgentDescription();
-            ServiceDescription sdInventory = new ServiceDescription();
-            sdInventory.setType("inventory");
+            ServiceDescription sd = new ServiceDescription();
+            sd.setType("curator");
 
-            template.addServices(sdInventory);
+            template.addServices(sd);
             DFAgentDescription[] result = null;
             try {
                 result = DFService.search(this, template);
@@ -329,7 +332,7 @@ public class ProfilerAgent extends Agent {
 
                 Location curatorLocation = locations.get("Container-1");
 
-                doWait(5000);
+                //doWait(5000);
 
                 myAgent.doMove(curatorLocation);
             }
