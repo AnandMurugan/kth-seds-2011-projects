@@ -126,7 +126,8 @@ public class TourGuideAgent extends Agent {
                             profilerInfo.setCurrentTour(profilerInfo.getCurrentTour() + 1);
                             System.out.println(myAgent.getAID().getName() + " setting next tour for: [" + profilerId.toString() + "]");
                         } else {
-                            // Handle more than maximum tours;
+                            ACLMessage reply = msg.createReply();
+                            myAgent.send(reply);
                             System.out.println(myAgent.getAID().getName() + " MAXIMUM_TOURS limit over-passed: [" + profilerId.toString() + "]");
 
                         }
@@ -151,6 +152,9 @@ public class TourGuideAgent extends Agent {
                         reply.setPerformative(ACLMessage.INFORM);
                         myAgent.send(reply);
                         System.out.println(myAgent.getAID().getName() + " sending tour#" + profilerInfo.getCurrentTour() + " description for: [" + profilerId.toString() + "]");
+                    } else {
+                        ACLMessage reply = msg.createReply();
+                        myAgent.send(reply);
                     }
                 } else if (msg.getPerformative() == ACLMessage.INFORM) {  // case tour agent accepts tour
                     // get the profile payment

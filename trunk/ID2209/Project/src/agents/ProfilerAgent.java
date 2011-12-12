@@ -44,16 +44,12 @@ public class ProfilerAgent extends Agent {
     private String profilePath = "";
     private TourItem[] currentTour;
     private boolean museumVisited;
-    private Location home = here();
+    private Location home;
     private AID tourGuideAgent;
     private boolean[] parts = new boolean[]{true, true, true};
 
     @Override
     protected void setup() {
-        // Register language and ontology
-        getContentManager().registerLanguage(new SLCodec());
-        getContentManager().registerOntology(MobilityOntology.getInstance());
-
         //
         profileManager = new ProfileManager();
 
@@ -118,6 +114,8 @@ public class ProfilerAgent extends Agent {
                 ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
                 msg.addReceiver(curatorAgent);
                 msg.setContent(ti.getId());
+
+                send(msg);
             }
 
             repliesCount = currentTour.length;
@@ -140,6 +138,7 @@ public class ProfilerAgent extends Agent {
                     Logger.getLogger(ProfilerAgent.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            profileManager.dumpProfile(profile, profilePath);
 
             museumVisited = true;
             doMove(home);
@@ -169,6 +168,7 @@ public class ProfilerAgent extends Agent {
 
         @Override
         public void onStart() {
+            ((ProfilerAgent) myAgent).home = here();
             msgTemplate = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
 
             // Register States
@@ -226,6 +226,9 @@ public class ProfilerAgent extends Agent {
 
             @Override
             public void action() {
+                profileManager = new ProfileManager();
+                profile = profileManager.loadProfile(profilePath);
+
                 ACLMessage requestMsg = new ACLMessage(ACLMessage.REQUEST);
                 requestMsg.addReceiver(tourGuideAgent);
                 requestMsg.setContent(((ProfilerAgent) myAgent).profile.getInterests().getInterest().get(0));
@@ -248,8 +251,10 @@ public class ProfilerAgent extends Agent {
 
             @Override
             public void action() {
+                result = END_TRANSITION;
                 ACLMessage reply = blockingReceive();
                 ACLMessage reply2 = reply.createReply();
+                reply2.setPerformative(ACLMessage.INFORM);
                 String attitude = ((ProfilerAgent) myAgent).profile.getAttitude();
                 boolean[] parts = ((ProfilerAgent) myAgent).parts;
                 result = RECEIVED_TOUR_TRANSITION;
@@ -288,6 +293,7 @@ public class ProfilerAgent extends Agent {
                 ACLMessage tourMsg = myAgent.blockingReceive();
                 try {
                     ((ProfilerAgent) myAgent).currentTour = (TourItem[]) tourMsg.getContentObject();
+                    ((ProfilerAgent) myAgent).setMuseumVisited(false);
                 } catch (UnreadableException ex) {
                     Logger.getLogger(ProfilerAgent.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -311,30 +317,35 @@ public class ProfilerAgent extends Agent {
 
             @Override
             public void action() {
-                Map<String, Location> locations = new HashMap<String, Location>();
-                sendRequest(new Action(getAMS(), new QueryPlatformLocationsAction()));
-                MessageTemplate mt = MessageTemplate.and(
-                        MessageTemplate.MatchSender(getAMS()),
-                        MessageTemplate.MatchPerformative(ACLMessage.INFORM));
-                ACLMessage resp = blockingReceive(mt);
-                ContentElement ce;
-                try {
-                    ce = getContentManager().extractContent(resp);
-                    Result result = (Result) ce;
-                    Iterator it = result.getItems().iterator();
-                    while (it.hasNext()) {
-                        Location loc = (Location) it.next();
-                        locations.put(loc.getName(), loc);
+                if (myAgent.here().equals(home) && !museumVisited && currentTour.length != 0) {
+                    // Register language and ontology
+                    getContentManager().registerLanguage(new SLCodec());
+                    getContentManager().registerOntology(MobilityOntology.getInstance());
+
+                    Map<String, Location> locations = new HashMap<String, Location>();
+                    sendRequest(new Action(getAMS(), new QueryPlatformLocationsAction()));
+                    MessageTemplate mt = MessageTemplate.and(
+                            MessageTemplate.MatchSender(getAMS()),
+                            MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+                    ACLMessage resp = blockingReceive(mt);
+                    ContentElement ce;
+                    try {
+                        ce = getContentManager().extractContent(resp);
+                        Result result = (Result) ce;
+                        Iterator it = result.getItems().iterator();
+                        while (it.hasNext()) {
+                            Location loc = (Location) it.next();
+                            locations.put(loc.getName(), loc);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+
+                    Location curatorLocation = locations.get("Container-1");
+
+                    myAgent.doMove(curatorLocation);
+                    doWait(5000);
                 }
-
-                Location curatorLocation = locations.get("Container-1");
-
-                //doWait(5000);
-
-                myAgent.doMove(curatorLocation);
             }
 
             void sendRequest(Action action) {
@@ -366,11 +377,11 @@ public class ProfilerAgent extends Agent {
 
             @Override
             public void action() {
-                if (profilePath.isEmpty()) {
-                    profileManager.dumpProfile(profile, DEFAULT_PROFILE_PATH);
-                } else {
-                    profileManager.dumpProfile(profile, profilePath);
-                }
+//                if (profilePath.isEmpty()) {
+//                    profileManager.dumpProfile(profile, DEFAULT_PROFILE_PATH);
+//                } else {
+//                    profileManager.dumpProfile(profile, profilePath);
+//                }
 
                 System.out.println(getAID().getName() + " museum visitor finished. ");
             }
