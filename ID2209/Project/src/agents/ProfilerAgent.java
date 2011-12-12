@@ -45,9 +45,8 @@ public class ProfilerAgent extends Agent {
     private TourItem[] currentTour;
     private boolean museumVisited;
     private Location home = here();
-    
     private AID tourGuideAgent;
-    
+    private boolean[] parts = new boolean[]{true, true, true};
 
     @Override
     protected void setup() {
@@ -188,7 +187,7 @@ public class ProfilerAgent extends Agent {
             SearchTourGuideBehaviour(Agent a) {
                 super(a);
             }
-            
+
             @Override
             public void action() {
                 System.out.println(myAgent.getAID().getName() + " is searching for tour-guides...");
@@ -212,7 +211,7 @@ public class ProfilerAgent extends Agent {
             }
         }
 
-        private class RequestTourBehavior extends Behaviour {
+        private class RequestTourBehavior extends OneShotBehaviour {
             public RequestTourBehavior(Agent aAgent) {
                 super(aAgent);
             }
@@ -220,36 +219,72 @@ public class ProfilerAgent extends Agent {
             @Override
             public void action() {
                 ACLMessage requestMsg = new ACLMessage(ACLMessage.REQUEST);
-                
-
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            @Override
-            public boolean done() {
-                throw new UnsupportedOperationException("Not supported yet.");
+                requestMsg.addReceiver(tourGuideAgent);
+                requestMsg.setContent(((ProfilerAgent) myAgent).profile.getAttitude());
             }
         }
 
-        private class NegotiateTourBehaviour extends Behaviour {
+        private class NegotiateTourBehaviour extends OneShotBehaviour {
+            private int result;
+
             public NegotiateTourBehaviour(Agent aAgent) {
                 super(aAgent);
             }
 
             @Override
             public void action() {
-                throw new UnsupportedOperationException("Not supported yet.");
+                ACLMessage reply = blockingReceive();
+                ACLMessage reply2 = reply.createReply();
+                String attitude = ((ProfilerAgent) myAgent).profile.getAttitude();
+                boolean[] parts = ((ProfilerAgent) myAgent).parts;
+                result = RECEIVED_TOUR_TRANSITION;
+                if (attitude.equals("greedy")) {
+                    if (parts[0]) {
+                        parts[0] = false;
+                        reply2.setContent("P1");
+                    } else if (parts[1]) {
+                        parts[1] = false;
+                        reply2.setContent("P2");
+                    } else if (parts[2]) {
+                        parts[2] = false;
+                        reply2.setContent("P3");
+                    } else {
+                        result = END_TRANSITION;
+                        return;
+                    }
+                } else if (attitude.equals("conservative")) {
+                    if (parts[0]) {
+                        parts[0] = false;
+                        reply2.setContent("P1");
+                    } else if (parts[1]) {
+                        parts[1] = false;
+                        reply2.setContent("P2");
+                    } else if (parts[2]) {
+                        parts[2] = false;
+                        reply2.setContent("P3");
+                    } else {
+                        result = END_TRANSITION;
+                        return;
+                    }
+
+                }
+                myAgent.send(reply2);
+
+                ACLMessage tourMsg = myAgent.blockingReceive();
+                try {
+                    ((ProfilerAgent) myAgent).currentTour = (TourItem[]) tourMsg.getContentObject();
+                } catch (UnreadableException ex) {
+                    Logger.getLogger(ProfilerAgent.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
             @Override
-            public boolean done() {
-                throw new UnsupportedOperationException("Not supported yet.");
+            public int onEnd() {
+                return result;
             }
         }
 
         private class VisitTourBehaviour extends Behaviour {
-            private int repliesCount;
-
             public VisitTourBehaviour(Agent aAgent) {
                 super(aAgent);
             }
