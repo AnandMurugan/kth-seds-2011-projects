@@ -6,6 +6,12 @@ package agents;
 
 import com.myprofile.profile.ProfileType;
 import daiia.ProfileManager;
+import items.MuseumItem;
+import items.TourItem;
+import jade.content.ContentElement;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.basic.Action;
+import jade.content.onto.basic.Result;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.Location;
@@ -16,6 +22,8 @@ import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
+import jade.domain.JADEAgentManagement.QueryPlatformLocationsAction;
+import jade.domain.mobility.MobilityOntology;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
@@ -37,9 +45,9 @@ public class ProfilerAgent extends Agent {
     private TourItem[] currentTour;
     private boolean museumVisited;
     private Location home = here();
-    String profilerName = "anonymous";
+    
     private AID tourGuideAgent;
-    private static long counter = 1;
+    
 
     @Override
     protected void setup() {
@@ -54,7 +62,6 @@ public class ProfilerAgent extends Agent {
 
         if (args != null && args.length > 0) {
             profilePath = (String) args[0];
-            profilerName = (String) args[1];
         }
 
         if (!profilePath.isEmpty()) {
@@ -63,20 +70,17 @@ public class ProfilerAgent extends Agent {
             this.profile = profileManager.loadProfile(DEFAULT_PROFILE_PATH);
         }
 
-        //Register service in DF
-        DFAgentDescription dfd = new DFAgentDescription();
-        dfd.setName(getAID());
-        ServiceDescription sd = new ServiceDescription();
-        sd.setType("profiler");
-        sd.setName(profilerName + "_profiler" + (counter++));
-        dfd.addServices(sd);
-        try {
-            DFService.register(this, dfd);
-        } catch (FIPAException ex) {
-            ex.printStackTrace();
-        }
-        
         addBehaviour(new MuseumVisitorBehaviour(this));
+    }
+
+    public TourItem[] getCurrentTour() {
+        return currentTour;
+    }
+
+    public void setCurrentTour(TourItem[] currentTour) {
+        this.currentTour = currentTour;
+    }
+
     public boolean isMuseumVisited() {
         return museumVisited;
     }
@@ -106,42 +110,36 @@ public class ProfilerAgent extends Agent {
             }
             final AID curatorAgent = result[0].getName();
 
-            addBehaviour(new OneShotBehaviour(this) {
-                private int repliesCount;
+            //
+            int repliesCount;
+            for (TourItem ti : currentTour) {
+                ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+                msg.addReceiver(curatorAgent);
+                msg.setContent(ti.getId());
+            }
 
-                @Override
-                public void action() {
-                    for (TourItem ti : ((ProfilerAgent) myAgent).getCurrentTour()) {
-                        ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
-                        msg.addReceiver(curatorAgent);
-                        msg.setContent(ti.getId());
-                    }
+            repliesCount = currentTour.length;
+            for (int i = 0; i < repliesCount; i++) {
+                ACLMessage reply = blockingReceive();
+                try {
+                    MuseumItem mi = (MuseumItem) reply.getContentObject();
+                    System.out.println(i + ": " + mi);
 
-                    repliesCount = ((ProfilerAgent) myAgent).getCurrentTour().length;
-                    for (int i = 0; i < repliesCount; i++) {
-                        ACLMessage reply = myAgent.blockingReceive();
-                        try {
-                            MuseumItem mi = (MuseumItem) reply.getContentObject();
-                            System.out.println(i + ": " + mi);
+                    com.myprofile.profile.MuseumItem otherMi = new com.myprofile.profile.MuseumItem();
+                    otherMi.setId(mi.getId());
+                    otherMi.setName(mi.getTitle());
+                    otherMi.setSubject(mi.getSubject()[0]);
+                    otherMi.setObjectType(mi.getObjectType()[0]);
+                    otherMi.setMaterial(mi.getMaterial()[0]);
+                    otherMi.setRating(i % 5 + 1);
 
-                            com.myprofile.profile.MuseumItem otherMi = new com.myprofile.profile.MuseumItem();
-                            otherMi.setId(mi.getId());
-                            otherMi.setName(mi.getTitle());
-                            otherMi.setSubject(mi.getSubject()[0]);
-                            otherMi.setObjectType(mi.getObjectType()[0]);
-                            otherMi.setMaterial(mi.getMaterial()[0]);
-                            otherMi.setRating(i % 5 + 1);
-
-                            profile.getVisitedItems().getVisitedItem().add(otherMi);
-                        } catch (UnreadableException ex) {
-                            Logger.getLogger(ProfilerAgent.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-
-                    ((ProfilerAgent) myAgent).setMuseumVisited(true);
+                    profile.getVisitedItems().getVisitedItem().add(otherMi);
+                } catch (UnreadableException ex) {
+                    Logger.getLogger(ProfilerAgent.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            });
+            }
 
+            museumVisited = true;
             doMove(home);
         } else {
         }
@@ -163,10 +161,10 @@ public class ProfilerAgent extends Agent {
         private final int END_TRANSITION = 4;
         private final int DEFAULT_ERROR_STATE = 5;
 
-        MuseumVisitorBehaviour(Agent a) {
+        public MuseumVisitorBehaviour(Agent a) {
             super(a);
         }
-        
+
         @Override
         public void onStart() {
             msgTemplate = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
@@ -183,7 +181,7 @@ public class ProfilerAgent extends Agent {
             registerTransition(REQUEST_TOUR_STATE, NEGOTIATE_TOUR_STATE, REQUESTED_TOUR_TRANSTION);
             registerTransition(NEGOTIATE_TOUR_STATE, VISIT_MUSEUM_STATE, RECEIVED_TOUR_TRANSITION);
             registerTransition(NEGOTIATE_TOUR_STATE, END_VISITOR_STATE, END_TRANSITION);
-
+            registerTransition(VISIT_MUSEUM_STATE, REQUEST_TOUR_STATE, COMPLETED_MUSEUM_VISIT_TRANSITION);
         }
 
         private class SearchTourGuideBehaviour extends OneShotBehaviour {
@@ -283,6 +281,8 @@ public class ProfilerAgent extends Agent {
                 }
 
                 Location curatorLocation = locations.get("Container-1");
+
+                doWait(5000);
 
                 myAgent.doMove(curatorLocation);
             }
