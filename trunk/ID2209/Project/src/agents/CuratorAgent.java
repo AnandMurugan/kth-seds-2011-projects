@@ -84,7 +84,7 @@ public class CuratorAgent extends Agent {
                 msg2.addReceiver(inventoryAgent);
                 myAgent.send(msg2);
 
-                ACLMessage reply2 = myAgent.receive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+                ACLMessage reply2 = myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
                 MuseumItem item = null;
                 try {
                     item = (MuseumItem) reply2.getContentObject();
