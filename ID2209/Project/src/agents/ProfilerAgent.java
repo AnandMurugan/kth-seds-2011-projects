@@ -225,7 +225,7 @@ public class ProfilerAgent extends Agent {
             public void action() {
                 ACLMessage requestMsg = new ACLMessage(ACLMessage.REQUEST);
                 requestMsg.addReceiver(tourGuideAgent);
-                requestMsg.setContent(((ProfilerAgent) myAgent).profile.getAttitude());
+                requestMsg.setContent(((ProfilerAgent) myAgent).profile.getInterests().getInterest().get(0));
 
                 myAgent.send(requestMsg);
             }
@@ -247,7 +247,7 @@ public class ProfilerAgent extends Agent {
             public void action() {
                 ACLMessage reply = blockingReceive();
                 ACLMessage reply2 = reply.createReply();
-                String attitude = ((ProfilerAgent) myAgent).profile.getInterests().getInterest().get(0);
+                String attitude = ((ProfilerAgent) myAgent).profile.getAttitude();
                 boolean[] parts = ((ProfilerAgent) myAgent).parts;
                 result = RECEIVED_TOUR_TRANSITION;
                 if (attitude.equals("greedy")) {
