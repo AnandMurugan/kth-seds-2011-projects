@@ -4,11 +4,13 @@
  */
 package items;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Igor
  */
-public class TourItem {
+public class TourItem implements Serializable {
     protected String id;
     protected String title;
 
