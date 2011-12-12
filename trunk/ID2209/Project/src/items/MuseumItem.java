@@ -4,13 +4,14 @@
  */
 package items;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  *
  * @author Igor
  */
-public class MuseumItem extends TourItem {
+public class MuseumItem extends TourItem implements Serializable {
     private String[] subject;
     private String[] objectType;
     private String[] material;
