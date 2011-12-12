@@ -26,7 +26,6 @@ import java.util.logging.Logger;
  */
 public class TourGuideAgent extends Agent {
     TourItem[][][] tourItems;
-    private String targetMuseum;
     private Map<AID, ProfilerInfo> profilerNextTourMap = new HashMap<AID, ProfilerInfo>();
     private final int MAXIMUM_TOURS = 3;
     private int[] prices = new int[MAXIMUM_TOURS];
@@ -79,20 +78,12 @@ public class TourGuideAgent extends Agent {
 
     @Override
     protected void setup() {
-        //Setting the target museum name
-        Object[] args = getArguments();
-        if (args != null && args.length > 0) {
-            targetMuseum = (String) args[0];
-        } else {
-            doDelete();
-        }
-
         //Register service in DF
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(getAID());
         ServiceDescription sd = new ServiceDescription();
         sd.setType("tourguide");
-        sd.setName(targetMuseum + "tourguide");
+        sd.setName("tourguide");
         dfd.addServices(sd);
         try {
             DFService.register(this, dfd);
@@ -204,7 +195,7 @@ public class TourGuideAgent extends Agent {
         // Profile 1
         // -------------
         // Aleatory Tour
-        tourItems[0][0][15] = new TourItem("urn:imss:instrument:401076", "Geometrical square@en");
+        tourItems[0][0][0] = new TourItem("urn:imss:instrument:401076", "Geometrical square@en");
         tourItems[0][0][1] = new TourItem("urn:imss:instrument:401001", "Arab celestial globe@en");
         tourItems[0][0][2] = new TourItem("urn:imss:instrument:405036", "Terrestrial telescope@en");
         tourItems[0][0][3] = new TourItem("urn:imss:instrument:414002", "Azimuth compass@en");
