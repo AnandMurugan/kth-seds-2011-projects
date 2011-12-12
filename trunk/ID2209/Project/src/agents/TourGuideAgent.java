@@ -5,11 +5,20 @@
 package agents;
 
 import items.TourItem;
+import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,22 +26,155 @@ import jade.domain.FIPAException;
  */
 public class TourGuideAgent extends Agent {
     TourItem[][][] tourItems;
+    private String targetMuseum;
+    private Map<AID, ProfilerInfo> profilerNextTourMap = new HashMap<AID, ProfilerInfo>();
+    private final int MAXIMUM_TOURS = 3;
+    private int[] prices = new int[MAXIMUM_TOURS];
+    private final String ASTRONOMY_PREFERENCE = "astronomy";
+    private final String GEOMETRY_PREFERENCE = "geometry";
+
+    private class ProfilerInfo {
+        int currentTour, prebuiltTourId;
+        String preferences;
+        String[] profilerInfo;
+
+        ProfilerInfo(String preferences) {
+            this.preferences = preferences;
+            currentTour = 1;
+            // Init info
+            profilerInfo = new String[3];
+            profilerInfo[0] = "";  // P1
+            profilerInfo[1] = "";  // P2
+            profilerInfo[2] = "";  // P3
+        }
+
+        int getCurrentTour() {
+            return currentTour;
+        }
+
+        void setCurrentTour(int currentTour) {
+            this.currentTour = currentTour;
+        }
+
+        void setPrebuiltTourId(int prebuiltId) {
+            prebuiltTourId = prebuiltId;
+        }
+
+        int getPrebuildTourId() {
+            return this.prebuiltTourId;
+        }
+    }
 
     @Override
     protected void setup() {
-        initializeTourItems();
+        //Setting the target museum name
+        Object[] args = getArguments();
+        if (args != null && args.length > 0) {
+            targetMuseum = (String) args[0];
+        } else {
+            doDelete();
+        }
 
         //Register service in DF
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(getAID());
         ServiceDescription sd = new ServiceDescription();
         sd.setType("tourguide");
-        sd.setName("tourguide");
+        sd.setName(targetMuseum + "tourguide");
         dfd.addServices(sd);
         try {
             DFService.register(this, dfd);
         } catch (FIPAException ex) {
             ex.printStackTrace();
+        }
+
+        InitializeTourItems();
+        // Set prices
+        prices[0] = 0;
+        prices[1] = 15;
+        prices[2] = 30;
+
+        addBehaviour(new TourGuideBehaviour(this));
+    }
+
+    class TourGuideBehaviour extends CyclicBehaviour {
+        private MessageTemplate msgTemplate;
+
+        public TourGuideBehaviour(Agent a) {
+            super(a);
+        }
+
+        @Override
+        public void action() {
+            ACLMessage msg = myAgent.receive();
+            if (msg != null) {
+
+                // Case it is a request
+                if (msg.getPerformative() == ACLMessage.REQUEST) {
+                    AID profilerId = msg.getSender();
+                    String preferences = msg.getContent();
+
+                    ProfilerInfo profilerInfo = null;
+
+                    if (profilerNextTourMap.containsKey(profilerId)) {
+                        profilerInfo = profilerNextTourMap.get(profilerId);
+
+                        if (profilerInfo.getCurrentTour() < MAXIMUM_TOURS) {
+                            profilerInfo.setCurrentTour(profilerInfo.getCurrentTour() + 1);
+                        }
+                    } else {
+                        int builtinTourId = 0;
+                        if (preferences.equals(ASTRONOMY_PREFERENCE)) {
+                            builtinTourId = 0;
+                        } else if (preferences.equals(GEOMETRY_PREFERENCE)) {
+                            builtinTourId = 1;
+                        }
+
+                        profilerInfo = new ProfilerInfo(preferences);
+
+                        profilerNextTourMap.put(profilerId, profilerInfo); // start tour
+                    }
+
+                    // TODO. send tour information
+                    ACLMessage reply = msg.createReply();
+                    reply.setContent("T" + profilerInfo.getCurrentTour() + ";" + prices[profilerInfo.getCurrentTour() - 1]);
+                    myAgent.send(reply);
+
+                } else if (msg.getPerformative() == ACLMessage.INFORM) {  // case tour agent accepts tour
+                    // get the profile payment
+                    AID profilerAID = msg.getSender();
+                    String profilePayment = msg.getContent();
+                    String[] payment = profilePayment.split(";");
+
+                    try {
+                        // send the tour
+                        ACLMessage reply = msg.createReply();
+                        ProfilerInfo profilerInfo = profilerNextTourMap.get(profilerAID);
+                        if (profilerInfo != null) {
+                            reply.setContentObject(tourItems[profilerInfo.getPrebuildTourId()][profilerInfo.getCurrentTour() - 1]);
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(TourGuideAgent.class.getName()).log(Level.SEVERE, null, ex);
+
+                    }
+                }
+
+                /*AID curator = msg.getSender();
+                System.out.println(myAgent.getAID().getName() + " has got response from the curator " + curator.getName() + "!");
+                List<Artifact> artifacts;
+                try {
+                artifacts = (List<Artifact>) msg.getContentObject();
+                for (Artifact a : artifacts) {
+                if (!containsArtifact(a)) {
+                artifactsAndCurators.put(a, curator);
+                }
+                }
+                } catch (UnreadableException ex) {
+                ex.printStackTrace();
+                }*/
+            } else {
+                block();
+            }
         }
     }
 
