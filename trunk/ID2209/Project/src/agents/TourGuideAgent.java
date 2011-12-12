@@ -120,10 +120,10 @@ public class TourGuideAgent extends Agent {
         public void action() {
             ACLMessage msg = myAgent.receive();
             if (msg != null) {
-
                 // Case it is a request
                 if (msg.getPerformative() == ACLMessage.REQUEST) {
                     AID profilerId = msg.getSender();
+                    System.out.println(myAgent.getAID().getName() + " received tour-request from " + profilerId.toString());
                     String preferences = msg.getContent();
 
                     ProfilerInfo profilerInfo = null;
@@ -133,9 +133,11 @@ public class TourGuideAgent extends Agent {
 
                         if (profilerInfo.getCurrentTour() < MAXIMUM_TOURS) {
                             profilerInfo.setCurrentTour(profilerInfo.getCurrentTour() + 1);
+                            System.out.println(myAgent.getAID().getName() + " setting next tour for: [" + profilerId.toString() + "]");
                         } else {
                             // Handle more than maximum tours;
-                            return;
+                            System.out.println(myAgent.getAID().getName() + " MAXIMUM_TOURS limit over-passed: [" + profilerId.toString() + "]");
+
                         }
                     } else {
                         int builtinTourId = 0; // tour according to agent preferences
@@ -152,17 +154,22 @@ public class TourGuideAgent extends Agent {
                     }
 
                     // Send the new tour info
-                    ACLMessage reply = msg.createReply();
-                    reply.setContent("T" + profilerInfo.getCurrentTour() + ";" + prices[profilerInfo.getCurrentTour() - 1]);
-                    reply.setPerformative(ACLMessage.INFORM);
-                    myAgent.send(reply);
-
+                    if (profilerInfo.getCurrentTour() < MAXIMUM_TOURS) {
+                        ACLMessage reply = msg.createReply();
+                        reply.setContent("T" + profilerInfo.getCurrentTour() + ";" + prices[profilerInfo.getCurrentTour() - 1]);
+                        reply.setPerformative(ACLMessage.INFORM);
+                        myAgent.send(reply);
+                        System.out.println(myAgent.getAID().getName() + " sending tour#" + profilerInfo.getCurrentTour() + " description for: [" + profilerId.toString() + "]");
+                    }
                 } else if (msg.getPerformative() == ACLMessage.INFORM) {  // case tour agent accepts tour
                     // get the profile payment
                     AID profilerAID = msg.getSender();
+                    System.out.println(myAgent.getAID().getName() + " received profile data from: [" + profilerAID.toString() + "]");
                     String profilerData = msg.getContent();
+                    System.out.println(myAgent.getAID().getName() + " data from: [" + profilerAID.toString() + "]");
+                    System.out.println(myAgent.getAID().getName() + " data: [" + profilerData + "]");
                     ProfilerInfo profilerInfo = profilerNextTourMap.get(profilerAID);
-                    
+
                     if (!profilerData.isEmpty()) {
                         String[] newInfo = profilerData.split(";");
                         profilerInfo.updateInfo(newInfo);
@@ -173,6 +180,7 @@ public class TourGuideAgent extends Agent {
                                 reply.setPerformative(ACLMessage.INFORM);
                                 reply.setContentObject(tourItems[profilerInfo.getPrebuildTourId()][profilerInfo.getCurrentTour() - 1]);
                                 myAgent.send(reply);
+                                System.out.println(myAgent.getAID().getName() + "sending tour #" + profilerInfo.getCurrentTour() + " to : [" + profilerAID.toString() + "]");
                             }
                         } catch (IOException ex) {
                             Logger.getLogger(TourGuideAgent.class.getName()).log(Level.SEVERE, null, ex);
