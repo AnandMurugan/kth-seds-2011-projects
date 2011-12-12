@@ -6,6 +6,13 @@ package agents;
 
 import items.MuseumItem;
 import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,6 +39,21 @@ public class InventoryAgent extends Agent {
         } catch (Exception ex) {
             Logger.getLogger(InventoryAgent.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        //Register service in DF
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType("inventory");
+        sd.setName("inventory");
+        dfd.addServices(sd);
+        try {
+            DFService.register(this, dfd);
+        } catch (FIPAException ex) {
+            ex.printStackTrace();
+        }
+
+        addBehaviour(new InventoryBehaviour(this));
     }
 
     private void initItems() throws FileNotFoundException, IOException {
@@ -70,6 +92,30 @@ public class InventoryAgent extends Agent {
 
     private MuseumItem getItem(String id) {
         return items.get(id);
+    }
+
+    private class InventoryBehaviour extends CyclicBehaviour {
+        public InventoryBehaviour(Agent a) {
+            super(a);
+        }
+
+        @Override
+        public void action() {
+            ACLMessage msg = myAgent.receive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+            if (msg != null) {
+                String id = msg.getContent();
+                ACLMessage reply = msg.createReply();
+                reply.setPerformative(ACLMessage.INFORM);
+                try {
+                    reply.setContentObject(((InventoryAgent) myAgent).getItem(id));
+                } catch (IOException ex) {
+                    Logger.getLogger(CuratorAgent.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                myAgent.send(reply);
+            } else {
+                block();
+            }
+        }
     }
 //    public static void main(String[] args) throws IOException {
 //        InventoryAgent a = new InventoryAgent();
