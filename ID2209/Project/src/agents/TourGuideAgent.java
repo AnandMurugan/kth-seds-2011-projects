@@ -88,7 +88,7 @@ public class TourGuideAgent extends Agent {
             ex.printStackTrace();
         }
 
-        InitializeTourItems();
+        initializeTourItems();
         // Set prices
         prices[0] = 0;
         prices[1] = 15;
