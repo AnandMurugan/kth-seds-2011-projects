@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transcript  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <name>Shahab  Mokarizadeh</name>
+    <university>KTH</university>
+    <degree>Master Software Engineering of Distributed Systems</degree>
+    <year>2005</year>
+    <courses>
+        <course>
+            <course-name>Distributed Systems, Basic Course</course-name>            
+        </course>
+        <course>
+            <course-name>Modern Methods in Software Engineering</course-name>
+        </course>
+        <course>
+            <course-name>Distributed Artificial Intelligence and Intelligent Agents</course-name>
+        </course>
+        <course>
+            <course-name>Network Programming in Java</course-name>
+        </course>
+    </courses>
+</transcript>
