@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<xsd:schema version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified">
+    <xsd:element name="transcript">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="name" type="xsd:string"/>
+                <xsd:element name="university" type="xsd:string"/>
+                <xsd:element name="degree" type="xsd:string"/>
+                <xsd:element name="year" type="xsd:int"/>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element maxOccurs="unbounded" name="course">
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element name="name" type="string" />
+                                    <xsd:element name="code" type="string" />
+                                    <xsd:element name="credits" type="decimal" />
+                                    <xsd:element name="grade" type="string" />
+                                </xsd:sequence>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
