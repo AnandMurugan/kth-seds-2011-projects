@@ -4,9 +4,8 @@ To change this template, choose Tools | Templates
 and open the template in the editor.
 -->
 
-<xsd:schema version="1.0"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           elementFormDefault="qualified">
+<xsd:schema version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified">
   <xsd:element name="resume">
     <xsd:complexType>
       <xsd:sequence>
