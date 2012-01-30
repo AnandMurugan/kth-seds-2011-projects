@@ -14,20 +14,47 @@ and open the template in the editor.
                 <xsd:element name="university" type="xsd:string"/>
                 <xsd:element name="degree" type="xsd:string"/>
                 <xsd:element name="year" type="xsd:int"/>
-                <xsd:complexType>
-                    <xsd:sequence>
-                        <xsd:element maxOccurs="unbounded" name="course">
-                            <xsd:complexType>
-                                <xsd:sequence>
-                                    <xsd:element name="name" type="string" />
-                                    <xsd:element name="code" type="string" />
-                                    <xsd:element name="credits" type="decimal" />
-                                    <xsd:element name="grade" type="string" />
-                                </xsd:sequence>
-                            </xsd:complexType>
-                        </xsd:element>
-                    </xsd:sequence>
-                </xsd:complexType>
+                <xsd:element name="courses">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element maxOccurs="unbounded" name="course">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="name" type="string" />
+                                        <xsd:element name="code">
+                                            <xsd:simpleType>
+                                                <xsd:restriction base="xsd:string">
+                                                    <xsd:pattern value="\[B-K]{2}\d{4}"/>
+                                                </xsd:restriction>
+                                            </xsd:simpleType>
+                                        </xsd:element>
+                                        <xsd:element name="credits">
+                                            <xsd:simpleType>
+                                                <xsd:restriction base="xsd:decimal">
+                                                    <xsd:minInclusive value="1.0"/>
+                                                    <xsd:maxInclusive value="10.0"/>
+                                                </xsd:restriction>
+                                            </xsd:simpleType>
+                                        </xsd:element>
+                                        <xsd:element name="grade"> 
+                                            <xsd:simpleType>
+                                                <xsd:restriction base="xsd:string">
+                                                    <xsd:length value="1"/>
+                                                    <xsd:enumeration value="A"/>
+                                                    <xsd:enumeration value="B"/>
+                                                    <xsd:enumeration value="C"/>
+                                                    <xsd:enumeration value="D"/>
+                                                    <xsd:enumeration value="E"/>
+                                                    <xsd:enumeration value="F"/>
+                                                </xsd:restriction>
+                                            </xsd:simpleType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
