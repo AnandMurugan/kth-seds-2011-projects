@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<ns1:applicant_profile
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xmlns:ns1='http://xml.netbeans.org/schema/applicantProfileXmlSchema'
+    xsi:schemaLocation='http://xml.netbeans.org/schema/applicantProfileXmlSchema ../schemas/applicantProfileXmlSchema.xsd'>
+    <ns1:name>Anand</ns1:name>
+    <ns1:mail_id>m.anand@gmail.com</ns1:mail_id>
+    <ns1:phone_number>0987654321</ns1:phone_number>
+    <ns1:Address>
+        <ns1:doorno>49-1020 hanstavagen</ns1:doorno>
+        <ns1:street></ns1:street>
+        <ns1:county>kista</ns1:county>
+        <ns1:postal_code>16453</ns1:postal_code>
+        <ns1:city>stockholm</ns1:city>
+    </ns1:Address>
+    <ns1:summary>Description of student's skills and objectives</ns1:summary>
+    <ns1:education>
+        <ns1:qualification>
+            <ns1:university>Anna university</ns1:university>
+            <ns1:year>2007</ns1:year>
+            <ns1:degree>Bachelor of engineering</ns1:degree>
+            <ns1:major>computer science</ns1:major>
+        </ns1:qualification>
+        <ns1:qualification>
+            <ns1:university>KTH</ns1:university>
+            <ns1:year>2013</ns1:year>
+            <ns1:degree>Master of science</ns1:degree>
+            <ns1:major>software engineering of distributed systems</ns1:major>
+        </ns1:qualification>
+    </ns1:education>
+    <ns1:professional_experience>
+        <ns1:company>
+            <ns1:company_profile>
+                <ns1:name></ns1:name>
+                <ns1:description></ns1:description>
+            </ns1:company_profile>
+            <ns1:start_date></ns1:start_date>
+            <ns1:end_date></ns1:end_date>
+            <ns1:domain></ns1:domain>
+            <ns1:project>
+                <ns1:description></ns1:description>
+                <ns1:responsiblities></ns1:responsiblities>
+                <ns1:role></ns1:role>
+                <ns1:responsibilities></ns1:responsibilities>
+                <ns1:technology></ns1:technology>
+            </ns1:project>
+            <ns1:project>
+                <ns1:description></ns1:description>
+                <ns1:responsiblities></ns1:responsiblities>
+                <ns1:role></ns1:role>
+                <ns1:responsibilities></ns1:responsibilities>
+                <ns1:technology></ns1:technology>
+            </ns1:project>
+            <ns1:project>
+                <ns1:description></ns1:description>
+                <ns1:responsiblities></ns1:responsiblities>
+                <ns1:role></ns1:role>
+                <ns1:responsibilities></ns1:responsibilities>
+                <ns1:technology></ns1:technology>
+            </ns1:project>
+        </ns1:company>
+    </ns1:professional_experience>
+    <ns1:Technical_skills>
+        <ns1:skill>
+            <ns1:type></ns1:type>
+            <ns1:technology></ns1:technology>
+        </ns1:skill>
+        <ns1:skill>
+            <ns1:type></ns1:type>
+            <ns1:technology></ns1:technology>
+        </ns1:skill>
+        <ns1:skill>
+            <ns1:type></ns1:type>
+            <ns1:technology></ns1:technology>
+        </ns1:skill>
+    </ns1:Technical_skills>
+    <ns1:certifications>
+        <ns1:certification>
+            <ns1:name></ns1:name>
+            <ns1:organization></ns1:organization>
+        </ns1:certification>
+        <ns1:certification>
+            <ns1:name></ns1:name>
+            <ns1:organization></ns1:organization>
+        </ns1:certification>
+        <ns1:certification>
+            <ns1:name></ns1:name>
+            <ns1:organization></ns1:organization>
+        </ns1:certification>
+    </ns1:certifications>
+    <ns1:Extracurricular_activities>
+        <ns1:activity>
+            <ns1:name></ns1:name>
+            <ns1:achievement></ns1:achievement>
+        </ns1:activity>
+    </ns1:Extracurricular_activities>
+    <ns1:motivation_letter> I am interested in the Coordinator position advertised on XYZ. My resume is enclosed for your review. Given my related experience and excellent capabilities I would appreciate your consideration for this job opening. My skills are an ideal match for this position.</ns1:motivation_letter>
+    <ns1:Preferred_WorkLocation>
+        <ns1:location>
+            <ns1:name>stockholm</ns1:name>
+            <ns1:preference>1</ns1:preference>
+        </ns1:location>
+        <ns1:location>
+            <ns1:name>gothenberg</ns1:name>
+            <ns1:preference>2</ns1:preference>
+        </ns1:location>
+        <ns1:location>
+            <ns1:name>linkoping</ns1:name>
+            <ns1:preference>3</ns1:preference>
+        </ns1:location>
+    </ns1:Preferred_WorkLocation>
+    <ns1:Job_type_applied>permanent</ns1:Job_type_applied>
+    <ns1:Reference>
+        <ns1:referee_detail>
+            <ns1:name>bjorn dahlgren</ns1:name>
+            <ns1:position>associate professor</ns1:position>
+            <ns1:relation_to_candidate>Teacher for 4 courses</ns1:relation_to_candidate>
+        </ns1:referee_detail>
+        <ns1:reference_comment>good</ns1:reference_comment>
+    </ns1:Reference>
+    <ns1:Reference>
+        <ns1:referee_detail>
+            <ns1:name>edmund</ns1:name>
+            <ns1:position>professor</ns1:position>
+            <ns1:relation_to_candidate>supervisor of degree project</ns1:relation_to_candidate>
+        </ns1:referee_detail>
+        <ns1:reference_comment>good</ns1:reference_comment>
+    </ns1:Reference>
+    <ns1:Work_Permit>
+        <ns1:type>residence permit</ns1:type>
+        <ns1:expiry_date>2012-10-10</ns1:expiry_date>
+    </ns1:Work_Permit>
+
+</ns1:applicant_profile>
