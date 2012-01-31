@@ -3,157 +3,157 @@
 <xsd:schema version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             targetNamespace="http://xml.netbeans.org/schema/applicantProfileXmlSchema"
             elementFormDefault="qualified">
-  <xsd:element name="applicant_profile">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element name="name" type="xsd:string" />
-        <xsd:element name="mail_id" type="xsd:string" />
-        <xsd:element name="phone_number" type="xsd:unsignedInt" />
-        <xsd:element name="Address">
-          <xsd:complexType>
+    <xsd:element name="applicant_profile">
+        <xsd:complexType>
             <xsd:sequence>
-              <xsd:element name="doorno" type="xsd:string" />
-              <xsd:element name="street" type="xsd:string" />
-              <xsd:element name="county" type="xsd:string" />
-              <xsd:element name="postal_code" type="xsd:unsignedShort" />
-              <xsd:element name="city" type="xsd:string" />
-            </xsd:sequence>
-          </xsd:complexType>
-        </xsd:element>
-        <xsd:element name="summary" type="xsd:string" />
-        <xsd:element name="education">
-          <xsd:complexType>
-            <xsd:sequence>
-              <xsd:element maxOccurs="unbounded" name="qualification">
-                <xsd:complexType>
-                  <xsd:sequence>
-                    <xsd:element name="university" type="xsd:string" />
-                    <xsd:element name="year" type="xsd:unsignedShort" />
-                    <xsd:element name="degree" type="xsd:string" />
-                    <xsd:element name="major" type="xsd:string" />
-                  </xsd:sequence>
-                </xsd:complexType>
-              </xsd:element>
-            </xsd:sequence>
-          </xsd:complexType>
-        </xsd:element>
-        <xsd:element name="professional_experience">
-          <xsd:complexType>
-            <xsd:sequence>
-              <xsd:element name="company">
-                <xsd:complexType>
-                  <xsd:sequence>
-                    <xsd:element name="company_profile">
-                      <xsd:complexType>
+                <xsd:element name="name" type="xsd:string" />
+                <xsd:element name="mail_id" type="xsd:string" />
+                <xsd:element name="phone_number" type="xsd:unsignedInt" />
+                <xsd:element name="Address">
+                    <xsd:complexType>
                         <xsd:sequence>
-                          <xsd:element name="name" type="xsd:string" />
-                          <xsd:element name="description" type="xsd:string" />
+                            <xsd:element name="doorno" type="xsd:string" />
+                            <xsd:element name="street" type="xsd:string" />
+                            <xsd:element name="county" type="xsd:string" />
+                            <xsd:element name="postal_code" type="xsd:unsignedShort" />
+                            <xsd:element name="city" type="xsd:string" />
                         </xsd:sequence>
-                      </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="start_date" type="xsd:string" />
-                    <xsd:element name="end_date" type="xsd:string" />
-                    <xsd:element name="domain" type="xsd:string" />
-                    <xsd:element maxOccurs="unbounded" name="project">
-                      <xsd:complexType>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="summary" type="xsd:string" />
+                <xsd:element name="education">
+                    <xsd:complexType>
                         <xsd:sequence>
-                          <xsd:element name="description" type="xsd:string" />
-                          <xsd:element minOccurs="0" name="responsiblities" type="xsd:string" />
-                          <xsd:element name="role" type="xsd:string" />
-                          <xsd:element minOccurs="0" name="responsibilities" type="xsd:string" />
-                          <xsd:element name="technology" type="xsd:string" />
+                            <xsd:element maxOccurs="unbounded" name="qualification">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="university" type="xsd:string" />
+                                        <xsd:element name="year" type="xsd:unsignedShort" />
+                                        <xsd:element name="degree" type="xsd:string" />
+                                        <xsd:element name="major" type="xsd:string" />
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
                         </xsd:sequence>
-                      </xsd:complexType>
-                    </xsd:element>
-                  </xsd:sequence>
-                </xsd:complexType>
-              </xsd:element>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="professional_experience">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="company">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="company_profile">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="name" type="xsd:string" />
+                                                    <xsd:element name="description" type="xsd:string" />
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="start_date" type="xsd:string" />
+                                        <xsd:element name="end_date" type="xsd:string" />
+                                        <xsd:element name="domain" type="xsd:string" />
+                                        <xsd:element maxOccurs="unbounded" name="project">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="description" type="xsd:string" />
+                                                    <xsd:element minOccurs="0" name="responsiblities" type="xsd:string" />
+                                                    <xsd:element name="role" type="xsd:string" />
+                                                    <xsd:element minOccurs="0" name="responsibilities" type="xsd:string" />
+                                                    <xsd:element name="technology" type="xsd:string" />
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="technical_skills">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element maxOccurs="unbounded" name="skill">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="type" type="xsd:string" />
+                                        <xsd:element name="technology" type="xsd:string" />
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="certifications">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element maxOccurs="unbounded" name="certification">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="name" type="xsd:string" />
+                                        <xsd:element name="organization" type="xsd:string" />
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="Extracurricular_activities">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="activity">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="name" type="xsd:string" />
+                                        <xsd:element name="achievement" type="xsd:string" />
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="motivation_letter" type="xsd:string" />
+                <xsd:element name="Preferred_WorkLocation">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element maxOccurs="unbounded" name="location">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="name" type="xsd:string" />
+                                        <xsd:element name="preference" type="xsd:unsignedByte" />
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="Job_type_applied" type="xsd:string" />
+                <xsd:element maxOccurs="unbounded" name="Reference">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="referee_detail">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="name" type="xsd:string" />
+                                        <xsd:element name="position" type="xsd:string" />
+                                        <xsd:element name="relation_to_candidate" type="xsd:string" />
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="reference_comment" type="xsd:string" />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="Work_Permit">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="type" type="xsd:string" />
+                            <xsd:element name="expiry_date" type="xsd:date" />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
             </xsd:sequence>
-          </xsd:complexType>
-        </xsd:element>
-        <xsd:element name="Technical_skills">
-          <xsd:complexType>
-            <xsd:sequence>
-              <xsd:element maxOccurs="unbounded" name="skill">
-                <xsd:complexType>
-                  <xsd:sequence>
-                    <xsd:element name="type" type="xsd:string" />
-                    <xsd:element name="technology" type="xsd:string" />
-                  </xsd:sequence>
-                </xsd:complexType>
-              </xsd:element>
-            </xsd:sequence>
-          </xsd:complexType>
-        </xsd:element>
-        <xsd:element name="certifications">
-          <xsd:complexType>
-            <xsd:sequence>
-              <xsd:element maxOccurs="unbounded" name="certification">
-                <xsd:complexType>
-                  <xsd:sequence>
-                    <xsd:element name="name" type="xsd:string" />
-                    <xsd:element name="organization" type="xsd:string" />
-                  </xsd:sequence>
-                </xsd:complexType>
-              </xsd:element>
-            </xsd:sequence>
-          </xsd:complexType>
-        </xsd:element>
-        <xsd:element name="Extracurricular_activities">
-          <xsd:complexType>
-            <xsd:sequence>
-              <xsd:element name="activity">
-                <xsd:complexType>
-                  <xsd:sequence>
-                    <xsd:element name="name" type="xsd:string" />
-                    <xsd:element name="achievement" type="xsd:string" />
-                  </xsd:sequence>
-                </xsd:complexType>
-              </xsd:element>
-            </xsd:sequence>
-          </xsd:complexType>
-        </xsd:element>
-        <xsd:element name="motivation_letter" type="xsd:string" />
-        <xsd:element name="Preferred_WorkLocation">
-          <xsd:complexType>
-            <xsd:sequence>
-              <xsd:element maxOccurs="unbounded" name="location">
-                <xsd:complexType>
-                  <xsd:sequence>
-                    <xsd:element name="name" type="xsd:string" />
-                    <xsd:element name="preference" type="xsd:unsignedByte" />
-                  </xsd:sequence>
-                </xsd:complexType>
-              </xsd:element>
-            </xsd:sequence>
-          </xsd:complexType>
-        </xsd:element>
-        <xsd:element name="Job_type_applied" type="xsd:string" />
-        <xsd:element maxOccurs="unbounded" name="Reference">
-          <xsd:complexType>
-            <xsd:sequence>
-              <xsd:element name="referee_detail">
-                <xsd:complexType>
-                  <xsd:sequence>
-                    <xsd:element name="name" type="xsd:string" />
-                    <xsd:element name="position" type="xsd:string" />
-                    <xsd:element name="relation_to_candidate" type="xsd:string" />
-                  </xsd:sequence>
-                </xsd:complexType>
-              </xsd:element>
-              <xsd:element name="reference_comment" type="xsd:string" />
-            </xsd:sequence>
-          </xsd:complexType>
-        </xsd:element>
-        <xsd:element name="Work_Permit">
-          <xsd:complexType>
-            <xsd:sequence>
-              <xsd:element name="type" type="xsd:string" />
-              <xsd:element name="expiry_date" type="xsd:date" />
-            </xsd:sequence>
-          </xsd:complexType>
-        </xsd:element>
-      </xsd:sequence>
-    </xsd:complexType>
-  </xsd:element>
+        </xsd:complexType>
+    </xsd:element>
 </xsd:schema>
