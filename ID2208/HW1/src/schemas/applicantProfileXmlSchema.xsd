@@ -9,7 +9,7 @@
                 <xsd:element name="name" type="xsd:string" />
                 <xsd:element name="mail_id" type="xsd:string" />
                 <xsd:element name="phone_number" type="xsd:unsignedInt" />
-                <xsd:element name="Address">
+                <xsd:element name="address">
                     <xsd:complexType>
                         <xsd:sequence>
                             <xsd:element name="doorno" type="xsd:string" />
@@ -99,7 +99,7 @@
                         </xsd:sequence>
                     </xsd:complexType>
                 </xsd:element>
-                <xsd:element name="Extracurricular_activities">
+                <xsd:element name="extracurricular_activities">
                     <xsd:complexType>
                         <xsd:sequence>
                             <xsd:element name="activity">
@@ -114,7 +114,7 @@
                     </xsd:complexType>
                 </xsd:element>
                 <xsd:element name="motivation_letter" type="xsd:string" />
-                <xsd:element name="Preferred_WorkLocation">
+                <xsd:element name="preferred_workLocation">
                     <xsd:complexType>
                         <xsd:sequence>
                             <xsd:element maxOccurs="unbounded" name="location">
@@ -128,8 +128,8 @@
                         </xsd:sequence>
                     </xsd:complexType>
                 </xsd:element>
-                <xsd:element name="Job_type_applied" type="xsd:string" />
-                <xsd:element maxOccurs="unbounded" name="Reference">
+                <xsd:element name="job_type_applied" type="xsd:string" />
+                <xsd:element maxOccurs="unbounded" name="reference">
                     <xsd:complexType>
                         <xsd:sequence>
                             <xsd:element name="referee_detail">
@@ -145,7 +145,7 @@
                         </xsd:sequence>
                     </xsd:complexType>
                 </xsd:element>
-                <xsd:element name="Work_Permit">
+                <xsd:element name="work_permit">
                     <xsd:complexType>
                         <xsd:sequence>
                             <xsd:element name="type" type="xsd:string" />
