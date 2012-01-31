@@ -1,27 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <applicant_profile>
-    <name>Anand</name>
-    <mail_id>m.anand@gmail.com</mail_id>
-    <phone_number>0760665443</phone_number>
+    <name/>
+    <mail_id/>
+    <phone_number/>
     <address>
-        <doorno>49-1210 hanstavagan</doorno>
+        <doorno/>
         <street/>
-        <county>kista</county>
-        <city>stockholm</city>
+        <county/>
+        <city/>
     </address>
-    <summary>Description of student's skills and objectives</summary>
+    <summary/>
     <education>
         <qualification>
-            <university>Anna university</university>
-            <degree/>
-            <year/>
-            <major/>
-        </qualification>
-        <qualification>
             <university>KTH</university>
-            <degree/>
-            <year/>
-            <major/>
+            <degree>Master of science</degree>
+            <year>2013</year>
+            <major>software engineering of distributed systems</major>
+            <gpa>9.25</gpa>
         </qualification>
     </education>
     <professional_experience/>
