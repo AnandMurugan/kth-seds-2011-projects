@@ -9,4 +9,31 @@
         <county>kista</county>
         <city>stockholm</city>
     </address>
+    <summary>Description of student's skills and objectives</summary>
+    <education>
+        <qualification>
+            <university>Anna university</university>
+            <degree/>
+            <year/>
+            <major/>
+        </qualification>
+        <qualification>
+            <university>KTH</university>
+            <degree/>
+            <year/>
+            <major/>
+        </qualification>
+    </education>
+    <professional_experience/>
+    <technical_skills/>
+    <certifications/>
+    <extracurricular_activities/>
+    <motivation_letter/>
+    <preferred_workLocation/>
+    <job_type_applied/>
+    <reference/>
+    <work_permit>
+        <type/>
+        <expiry_date/>
+    </work_permit>
 </applicant_profile>
