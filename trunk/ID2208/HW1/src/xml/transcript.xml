@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ns1:transcript
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xmlns:ns1='http://xml.netbeans.org/schema/transcriptSchema'
+    xsi:schemaLocation='http://xml.netbeans.org/schema/transcriptSchema ../schemas/transcriptSchema.xsd'>
+    <ns1:name>Anand</ns1:name>
+    <ns1:university>KTH</ns1:university>
+    <ns1:degree>Master of science</ns1:degree>
+    <ns1:year>2013</ns1:year>
+    <ns1:major>software engineering of distributed systems</ns1:major>
+    <ns1:courses>
+        <ns1:course>
+            <ns1:name>Modern methods in Software Engineering</ns1:name>
+            <ns1:code>ID2207</ns1:code>
+            <ns1:credits>7.5</ns1:credits>
+            <ns1:grade>B</ns1:grade>
+        </ns1:course>
+        <ns1:course>
+            <ns1:name>Distributed system, basic course</ns1:name>
+            <ns1:code>ID2201</ns1:code>
+            <ns1:credits>7.5</ns1:credits>
+            <ns1:grade>B</ns1:grade>
+        </ns1:course>
+        <ns1:course>
+            <ns1:name>Distributed Artificial Intelligence and Intelligent Agents</ns1:name>
+            <ns1:code>ID2209</ns1:code>
+            <ns1:credits>7.5</ns1:credits>
+            <ns1:grade>B</ns1:grade>
+        </ns1:course>
+        <ns1:course>
+            <ns1:name>Network Programming with Java</ns1:name>
+            <ns1:code>ID2212</ns1:code>
+            <ns1:credits>7.5</ns1:credits>
+            <ns1:grade>A</ns1:grade>
+        </ns1:course>
+    </ns1:courses>
+</ns1:transcript>
