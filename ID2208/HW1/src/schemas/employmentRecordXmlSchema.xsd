@@ -61,7 +61,20 @@
                 <xsd:sequence>
                     <xsd:element name="hoursPerWeek" type="xsd:integer"/>
                     <xsd:element name="location" type="xsd:string"/>
-                    <xsd:element name="exitReason" type="xsd:string"/>
+                    <xsd:element name="exitReason">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="discharged"/>    
+                                <xsd:enumeration value="laidOff"/>
+                                <xsd:enumeration value="quit"/>
+                                <xsd:enumeration value="transferred"/>
+                                <xsd:enumeration value="sickness"/>
+                                <xsd:enumeration value="gaveNotice"/>
+                                <xsd:enumeration value="dissatisfied"/>
+                                <xsd:enumeration value="promoted"/>
+                            </xsd:restriction>    
+                        </xsd:simpleType>    
+                    </xsd:element>
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>
