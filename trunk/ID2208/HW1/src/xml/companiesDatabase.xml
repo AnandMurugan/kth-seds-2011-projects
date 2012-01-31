@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : companyInfoXmlSchema.xml
+    Created on : January 31, 2012, 10:26 PM
+    Author     : julio
+    Description:
+        Purpose of the document follows.
+-->
+
+<ns0:companies  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+   xmlns:ns0='http://xml.netbeans.org/schema/companyInfoXmlSchema'
+   xsi:schemaLocation='http://xml.netbeans.org/schema/companyInfoXmlSchema companyInfoXmlSchema.xsd'>
+    <ns0:companyInfo name="Microsoft">
+        <ns0:description>Is an American multinational corporation headquartered in Redmond, Washington, United States that develops, manufactures, licenses, and supports a wide range of products and services predominantly related to computing through its various product divisions.</ns0:description>
+        <ns0:contactInfo>
+            <ns0:email>support@microsoft.com</ns0:email>
+            <ns0:phone>(425) 882-8080</ns0:phone>
+            <ns0:website>www.microsoft.com</ns0:website>
+        </ns0:contactInfo>
+        <ns0:location>
+            <ns0:country>USA</ns0:country>
+            <ns0:city>Seattle</ns0:city>
+            <ns0:address>Redmond, WA 98052</ns0:address>
+            <ns0:postalCode>7329</ns0:postalCode>
+        </ns0:location>
+        <ns0:businessType>IT</ns0:businessType>
+        <ns0:employees>92000</ns0:employees>
+        <ns0:anualRevenue>23000000</ns0:anualRevenue>
+        <ns0:years>25</ns0:years>
+        <ns0:products>
+            <ns0:product name="Windows"></ns0:product>
+            <ns0:product name="Microsoft Office"></ns0:product>
+            <ns0:product name="Xbox"></ns0:product>
+        </ns0:products>
+    </ns0:companyInfo>
+</ns0:companies>
