@@ -18,7 +18,7 @@
     </xsd:complexType>
     <xsd:complexType name="locationType">
         <xsd:sequence>
-            <xsd:element name="country" type="xsd:string"/>
+            <xsd:element name="country" minOccurs="0" type="xsd:string"/>
             <xsd:element name="city" type="xsd:string"/>
             <xsd:element name="address" type="xsd:string"/>
         </xsd:sequence>
@@ -27,8 +27,8 @@
         <xsd:complexContent>
             <xsd:extension base="tns:contactInfoType">
                 <xsd:sequence>
-                    <xsd:element name="website" type="xsd:string" minOcurrs="0"/>
-                    <xsd:element name="contactPerson" type="xsd:string" minOcurrs="0"/>
+                    <xsd:element name="website" type="xsd:string"/>
+                    <xsd:element name="contactPerson" type="xsd:string"/>
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>    
@@ -48,7 +48,6 @@
                 <xsd:element name="companyInfo" maxOccurs="unbounded">
                     <xsd:complexType>
                         <xsd:sequence>
-                            <xsd:element name="name" type="xsd:string"/>
                             <xsd:element name="description" type="xsd:string"/>
                             <xsd:element name="contactInfo" type="tns:companyInfoType"/>
                             <xsd:element name="location" type="tns:companyLocationType"/>
@@ -82,6 +81,7 @@
                                 </xsd:complexType>
                             </xsd:element>
                         </xsd:sequence>
+                        <xsd:attribute name="name"/>
                     </xsd:complexType>
                 </xsd:element>
             </xsd:sequence>
