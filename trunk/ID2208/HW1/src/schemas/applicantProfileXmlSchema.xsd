@@ -31,6 +31,7 @@
                                         <xsd:element name="year" type="xsd:unsignedShort" />
                                         <xsd:element name="degree" type="xsd:string" />
                                         <xsd:element name="major" type="xsd:string" />
+                                        <xsd:element name="gpa" type="xsd:decimal" />
                                     </xsd:sequence>
                                 </xsd:complexType>
                             </xsd:element>
