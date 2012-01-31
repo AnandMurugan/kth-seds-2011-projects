@@ -4,9 +4,34 @@
     targetNamespace="http://xml.netbeans.org/schema/employmentRecordXmlSchema"
     xmlns:tns="http://xml.netbeans.org/schema/employmentRecordXmlSchema"
     elementFormDefault="qualified">
-    <xsd:complexType name="contactInfoType">
+    <xsd:complexType name="basicInformationType">    
         <xsd:sequence>
-            <xsd:element name="name" type="xsd:string" />
+            <xsd:element name="firstName" type="xsd:string"/>
+            <xsd:element name="lastName" type="xsd:string"/>
+            <xsd:element name="id" type="xsd:string"/>
+            <xsd:element name="gender">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="M"/>
+                        <xsd:enumeration value="F"/>
+                    </xsd:restriction>    
+                </xsd:simpleType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="extendedInformationType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:basicInformationType">
+                <xsd:sequence>
+                    <xsd:element name="birthDate" type="xsd:date"/>
+                    <xsd:element name="homeCountry" type="xsd:string"/>
+                    <xsd:element name="race" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="contactInformationType">
+        <xsd:sequence>
             <xsd:element name="email" type="xsd:string" />
             <xsd:element name="phone" type="xsd:string" />
         </xsd:sequence>    
@@ -47,8 +72,9 @@
                 <xsd:element name="employmentRecord" maxOccurs="unbounded">
                     <xsd:complexType>
                         <xsd:sequence>
+                            <xsd:element name="employeeInfo" type="tns:extendedInformationType"/>
                             <xsd:element name="companyName" type="xsd:string"/>
-                            <xsd:element name="companyContactInfo" type="tns:contactInfoType"/>
+                            <xsd:element name="companyContactInfo" type="tns:contactInformationType"/>
                             <xsd:element name="companyLocation" type="tns:locationType"/>                
                             <xsd:element name="startDate" type="tns:minBoundedDate"/>
                             <xsd:element name="endDate" type="tns:minBoundedDate"/>
