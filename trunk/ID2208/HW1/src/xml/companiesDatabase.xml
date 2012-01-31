@@ -14,7 +14,7 @@
     <ns0:companyInfo name="Microsoft">
         <ns0:description>Is an American multinational corporation headquartered in Redmond, Washington, United States that develops, manufactures, licenses, and supports a wide range of products and services predominantly related to computing through its various product divisions.</ns0:description>
         <ns0:contactInfo>
-            <ns0:email>support@microsoft.com</ns0:email>
+            <ns0:email>contact@microsoft.com</ns0:email>
             <ns0:phone>(425) 882-8080</ns0:phone>
             <ns0:website>www.microsoft.com</ns0:website>
         </ns0:contactInfo>
