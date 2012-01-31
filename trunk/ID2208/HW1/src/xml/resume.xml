@@ -7,13 +7,13 @@
     <ns1:name>Anand</ns1:name>
     <ns1:mail_id>m.anand@gmail.com</ns1:mail_id>
     <ns1:phone_number>0760665443</ns1:phone_number>
-    <ns1:Address>
+    <ns1:address>
         <ns1:doorno>49-1210 hanstavagan</ns1:doorno>
         <ns1:street></ns1:street>
         <ns1:county>kista</ns1:county>
         <ns1:postal_code>16453</ns1:postal_code>
         <ns1:city>stockholm</ns1:city>
-    </ns1:Address>
+    </ns1:address>
     <ns1:summary>Description of student's skills and objectives</ns1:summary>
     <ns1:education>
         <ns1:qualification>
@@ -84,10 +84,10 @@
             <ns1:organization>Insurance institute of America Association</ns1:organization>
         </ns1:certification>
     </ns1:certifications>
-    <ns1:Extracurricular_activities>
+    <ns1:extracurricular_activities>
         <ns1:activity>
             <ns1:name>Chairman of computer association</ns1:name>
             <ns1:achievement>successfully led 250 students as chairman and organized technical symposiums</ns1:achievement>
         </ns1:activity>
-    </ns1:Extracurricular_activities>
+    </ns1:extracurricular_activities>
 </ns1:resume>
