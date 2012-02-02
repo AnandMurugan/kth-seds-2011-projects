@@ -57,6 +57,7 @@ public class ApplicantProfileGenerator {
             // Create Application Profile Model
             ApplicantProfileXmlModel profileModel = new ApplicantProfileXmlModel(this.profileSchemaPath, profileXmlPath);
 
+            
             //SAX Parsing
             // Create Parser
             SAXParserFactory saxpf = SAXParserFactory.newInstance();
@@ -68,6 +69,7 @@ public class ApplicantProfileGenerator {
             //specifies the XML schema document to be used for validation.
             saxp.setProperty(JAXP_SCHEMA_SOURCE, new File("src/schemas/companyInfoXmlSchema.xsd"));
             saxp.parse(companiesXmlPath, new CompanyInfoParser(profileModel));
+            // JAXB parsing
             parseEmpRecordJAXB("employment.po", employmentRecordXmlPath, profileModel);
             profileModel.overriteXmlFile();
         } catch (IOException ex) {
