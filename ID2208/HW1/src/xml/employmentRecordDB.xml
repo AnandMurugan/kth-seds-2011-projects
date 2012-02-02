@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : employmentRecordXmlSchema.xml
+    Created on : February 2, 2012, 4:27 PM
+    Author     : julio
+    Description:
+        Purpose of the document follows.
+-->
+
+<ns0:records  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+   xmlns:ns1='http://xml.netbeans.org/schema/commonSchema'
+   xmlns:ns0='http://xml.netbeans.org/schema/employmentRecordXmlSchema'
+   xsi:schemaLocation='http://xml.netbeans.org/schema/employmentRecordXmlSchema ../schemas/employmentRecordXmlSchema.xsd'>
+    <ns0:record personNumber="881201-1234">
+        <ns0:employmentRecord>
+            <ns0:companyInfo name="Microsoft">
+                <ns0:contactInfo>
+                    <ns1:email>contact@microsoft.com
+                    </ns1:email>
+                    <ns1:phone>(425) 882-8080
+                    </ns1:phone>
+                </ns0:contactInfo>
+            </ns0:companyInfo>
+            <ns0:startDate>2010-01-01</ns0:startDate>
+            <ns0:endDate>2011-06-01</ns0:endDate>
+            <ns0:positions>
+                <ns0:position>
+                    <ns1:positionTitle>Intern</ns1:positionTitle>
+                    <ns1:entranceDate>2010-01-01</ns1:entranceDate>
+                    <ns1:exitDate>2010-05-30</ns1:exitDate>
+                    <ns1:hoursPerWeek>30</ns1:hoursPerWeek>
+                    <ns1:location>USA</ns1:location>
+                    <ns1:exitReason>promoted</ns1:exitReason>
+                </ns0:position>
+                <ns0:position>
+                    <ns1:positionTitle>developer</ns1:positionTitle>
+                    <ns1:entranceDate>2010-06-01</ns1:entranceDate>
+                    <ns1:exitDate>2011-06-01</ns1:exitDate>
+                    <ns1:hoursPerWeek>40</ns1:hoursPerWeek>
+                    <ns1:location>USA</ns1:location>
+                    <ns1:exitReason>promoted</ns1:exitReason>
+                </ns0:position>
+            </ns0:positions>
+        </ns0:employmentRecord>
+    </ns0:record>
+</ns0:records>
