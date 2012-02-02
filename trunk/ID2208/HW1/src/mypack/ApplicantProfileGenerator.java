@@ -67,8 +67,8 @@ public class ApplicantProfileGenerator {
                     "http://www.w3.org/2001/XMLSchema");
             //specifies the XML schema document to be used for validation.
             saxp.setProperty(JAXP_SCHEMA_SOURCE, new File("src/schemas/companyInfoXmlSchema.xsd"));
-            saxp.parse("src/xml/companiesDatabase.xml", new CompanyInfoParser(profileModel));
-            parseEmpRecordJAXB("employment.po", "src/xml/employmentRecordDB.xml", profileModel);
+            saxp.parse(companiesXmlPath, new CompanyInfoParser(profileModel));
+            parseEmpRecordJAXB("employment.po", employmentRecordXmlPath, profileModel);
             profileModel.overriteXmlFile();
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -123,7 +123,7 @@ public class ApplicantProfileGenerator {
     public static void main(String[] args) {
         // TODO. get the input xml files from the command line params
         ApplicantProfileGenerator generator = new ApplicantProfileGenerator();
-        generator.Generate("src/xml/companiesDatabase.xml", "", "", "", "src/xml/applicantProfile.xml");
+        generator.Generate("src/xml/companiesDatabase.xml", "src/xml/employmentRecordDB.xml", "", "", "src/xml/applicantProfile.xml");
 
     }
 }
