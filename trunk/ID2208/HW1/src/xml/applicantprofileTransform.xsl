@@ -2,6 +2,7 @@
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
                 xmlns:ns1='http://xml.netbeans.org/schema/applicantProfileXmlSchema'
+                xmlns:ns2="http://xml.netbeans.org/schema/commonSchema"
                 xmlns:cvNs='http://xml.netbeans.org/schema/resume'>
     <xsl:template match="/">
         <xsl:element name="ns1:applicant_profile">
@@ -19,19 +20,19 @@
             </xsl:element>
             <xsl:element name="ns1:address">
                 <xsl:element name="apt">
-                    <xsl:value-of select="cvNs:resume/cvNs:address/cvNs:apt"/>
+                    <xsl:value-of select="cvNs:resume/cvNs:address/ns2:apt"/>
                 </xsl:element>
                 <xsl:element name="street">
-                    <xsl:value-of select="cvNs:resume/cvNs:address/cvNs:street"/>
+                    <xsl:value-of select="cvNs:resume/cvNs:address/ns2:street"/>
                 </xsl:element>
                 <xsl:element name="city">
-                    <xsl:value-of select="cvNs:resume/cvNs:address/cvNs:city"/>
+                    <xsl:value-of select="cvNs:resume/cvNs:address/ns2:city"/>
                 </xsl:element>
                 <xsl:element name="postalCode">
-                    <xsl:value-of select="cvNs:resume/cvNs:address/cvNs:postalCode"/>
+                    <xsl:value-of select="cvNs:resume/cvNs:address/ns2:postalCode"/>
                 </xsl:element>
                 <xsl:element name="country">
-                    <xsl:value-of select="cvNs:resume/cvNs:address/cvNs:country"/>
+                    <xsl:value-of select="cvNs:resume/cvNs:address/ns2:country"/>
                 </xsl:element>
             </xsl:element>
             <xsl:element name="ns1:summary">
