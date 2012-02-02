@@ -34,4 +34,30 @@
             <ns0:product name="Xbox"></ns0:product>
         </ns0:products>
     </ns0:companyInfo>
+    <ns0:companyInfo name="Carl Branch Insurance">
+        <ns0:description>Calbranch Insurance is a local independent insurance agency located in upstate New York. 
+    We provide insurance protection for both personal and business clients.
+        </ns0:description>
+        <ns0:contactInfo>
+            <ns0:email>contact@carlbranch.com</ns0:email>
+            <ns0:phone>(425) 882-8343</ns0:phone>
+            <ns0:website>www.calbranch.com</ns0:website>
+            <ns0:contactPerson>10</ns0:contactPerson>
+        </ns0:contactInfo>
+        <ns0:location>
+            <ns0:country>USA</ns0:country>
+            <ns0:city>New York</ns0:city>
+            <ns0:address>Caledonia, NY 14423</ns0:address>
+            <ns0:postalCode>1045</ns0:postalCode>
+        </ns0:location>
+        <ns0:businessType>Other</ns0:businessType>
+        <ns0:employees>10</ns0:employees>
+        <ns0:anualRevenue>1000000</ns0:anualRevenue>
+        <ns0:years>5</ns0:years>
+        <ns0:products>
+            <ns0:product name="Auto Insurance"/>
+            <ns0:product name="Business Insurance"/>
+            <ns0:product name="Farm Insurance"/>
+        </ns0:products>
+    </ns0:companyInfo>
 </ns0:companies>
