@@ -24,8 +24,8 @@
             <xsd:extension base="tns:basicInformationType">
                 <xsd:sequence>
                     <xsd:element name="birthDate" type="xsd:date"/>
-                    <xsd:element name="homeCountry" type="xsd:string"/>
-                    <xsd:element name="race" type="xsd:string"/>
+                    <xsd:element name="homeCountry" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="race" minOccurs="0" type="xsd:string"/>
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>
@@ -86,9 +86,14 @@
                     <xsd:complexType>
                         <xsd:sequence>
                             <xsd:element name="employeeInfo" type="tns:extendedInformationType"/>
-                            <xsd:element name="companyName" type="xsd:string"/>
-                            <xsd:element name="companyContactInfo" type="tns:contactInformationType"/>
-                            <xsd:element name="companyLocation" type="tns:locationType"/>                
+                            <xsd:element name="companyInfo">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="contactInfo" type="tns:contactInformationType"/>
+                                    </xsd:sequence>
+                                    <xsd:attribute name="name"/>
+                                </xsd:complexType>
+                            </xsd:element>
                             <xsd:element name="startDate" type="tns:minBoundedDate"/>
                             <xsd:element name="endDate" type="tns:minBoundedDate"/>
                             <xsd:element name="positions">
