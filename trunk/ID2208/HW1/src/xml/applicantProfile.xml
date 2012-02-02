@@ -8,16 +8,18 @@ and open the template in the editor.
 <ns1:applicant_profile
     xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
     xmlns:ns1='http://xml.netbeans.org/schema/applicantProfileXmlSchema'
+    xmlns:ns2="http://xml.netbeans.org/schema/commonSchema"
     xsi:schemaLocation='http://xml.netbeans.org/schema/applicantProfileXmlSchema ../schemas/applicantProfileXmlSchema.xsd'>
+    <ns1:personalNumber>881201-1234</ns1:personalNumber>
     <ns1:name>Anand</ns1:name>
     <ns1:mail_id>m.anand@gmail.com</ns1:mail_id>
     <ns1:phone_number>0987654321</ns1:phone_number>
     <ns1:address>
-        <ns1:doorno>49-1020 hanstavagen</ns1:doorno>
-        <ns1:street></ns1:street>
-        <ns1:county>kista</ns1:county>
-        <ns1:postal_code>16453</ns1:postal_code>
-        <ns1:city>stockholm</ns1:city>
+        <ns2:apt>49-1210</ns2:apt>
+            <ns2:street>hanstavagan</ns2:street>
+            <ns2:city>stockholm</ns2:city>
+            <ns2:postalCode>16453</ns2:postalCode>
+            <ns2:country>sweden</ns2:country>
     </ns1:address>
     <ns1:summary>Description of student's skills and objectives</ns1:summary>
     <ns1:education>
@@ -26,12 +28,14 @@ and open the template in the editor.
             <ns1:year>2007</ns1:year>
             <ns1:degree>Bachelor of engineering</ns1:degree>
             <ns1:major>computer science</ns1:major>
+            <ns1:gpa>4.0</ns1:gpa>
         </ns1:qualification>
         <ns1:qualification>
             <ns1:university>KTH</ns1:university>
             <ns1:year>2013</ns1:year>
             <ns1:degree>Master of science</ns1:degree>
             <ns1:major>software engineering of distributed systems</ns1:major>
+            <ns1:gpa>4.0</ns1:gpa>
         </ns1:qualification>
     </ns1:education>
     <ns1:professional_experience>
@@ -39,6 +43,10 @@ and open the template in the editor.
             <ns1:company_profile>
                 <ns1:name>csc</ns1:name>
                 <ns1:description>A multinational IT services and consulting company with 500+ clients across five continents</ns1:description>
+                <ns1:email>mail@csc.com</ns1:email>
+                <ns1:phone>(803) 425 540</ns1:phone>
+                <ns1:website>www.csc.com</ns1:website>
+                <ns1:businessType>IT</ns1:businessType>
             </ns1:company_profile>
             <ns1:start_date>2007-07-14</ns1:start_date>
             <ns1:end_date>2011-07-14</ns1:end_date>
