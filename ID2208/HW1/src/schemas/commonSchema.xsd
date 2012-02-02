@@ -103,4 +103,65 @@
             <xs:enumeration value="F"/>
         </xs:restriction>    
     </xs:simpleType>
+    <xs:complexType name="basicInformationType">    
+        <xs:sequence>
+            <xs:element name="firstName" type="xs:string"/>
+            <xs:element name="lastName" type="xs:string"/>
+            <xs:element name="id" type="xs:string"/>
+            <xs:element name="gender" type="tns:gender"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="extendedInformationType">
+        <xs:complexContent>
+            <xs:extension base="tns:basicInformationType">
+                <xs:sequence>
+                    <xs:element name="birthDate" type="xs:date"/>
+                    <xs:element name="homeCountry" minOccurs="0" type="xs:string"/>
+                    <xs:element name="race" minOccurs="0" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="contactInformationType">
+        <xs:sequence>
+            <xs:element name="email" type="xs:string" />
+            <xs:element name="phone" type="xs:string" />
+        </xs:sequence>    
+    </xs:complexType>
+    <xs:simpleType name="minBoundedDate">
+        <xs:restriction base="xs:date">
+            <xs:minInclusive value="1901-01-01"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="positionInfoType">
+        <xs:sequence>
+            <xs:element name="positionTitle" type="xs:string"/>
+            <xs:element name="entranceDate" type="tns:minBoundedDate"/>
+            <xs:element name="exitDate" type="tns:minBoundedDate"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="extendedPositionInfoType">
+        <xs:complexContent>
+            <xs:extension base="tns:positionInfoType">
+                <xs:sequence>
+                    <xs:element name="hoursPerWeek" type="xs:integer"/>
+                    <xs:element name="location" type="xs:string"/>
+                    <xs:element name="exitReason">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="discharged"/>    
+                                <xs:enumeration value="laidOff"/>
+                                <xs:enumeration value="quit"/>
+                                <xs:enumeration value="transferred"/>
+                                <xs:enumeration value="sickness"/>
+                                <xs:enumeration value="gaveNotice"/>
+                                <xs:enumeration value="dissatisfied"/>
+                                <xs:enumeration value="promoted"/>
+                            </xs:restriction>    
+                        </xs:simpleType>    
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 </xs:schema>
