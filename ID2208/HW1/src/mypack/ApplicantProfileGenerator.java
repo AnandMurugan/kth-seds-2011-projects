@@ -63,15 +63,12 @@ public class ApplicantProfileGenerator {
             saxpf.setNamespaceAware(true);
             saxpf.setValidating(true);
             javax.xml.parsers.SAXParser saxp = saxpf.newSAXParser();
-            saxp.setProperty("http://xml.org/sax/features/validation", true);
-            // Ensure namespace processing is on (the default)
-            saxp.setProperty("http://xml.org/sax/features/namespaces", true);
             saxp.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
                     "http://www.w3.org/2001/XMLSchema");
             //specifies the XML schema document to be used for validation.
             saxp.setProperty(JAXP_SCHEMA_SOURCE, new File("src/schemas/companyInfoXmlSchema.xsd"));
             saxp.parse("src/xml/companiesDatabase.xml", new CompanyInfoParser(profileModel));
-            parseEmpRecordJAXB("employment.po", "employmentRecordDB.xml", profileModel);
+            parseEmpRecordJAXB("employment.po", "src/xml/employmentRecordDB.xml", profileModel);
             profileModel.overriteXmlFile();
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -88,14 +85,14 @@ public class ApplicantProfileGenerator {
             ObjectFactory objFactory = new ObjectFactory();
 
             Unmarshaller unmarshaller = jcontext.createUnmarshaller();
-            unmarshaller.setValidating(true);
+            //unmarshaller.setValidating(true);
 
             Marshaller marshaller = jcontext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
                     new Boolean(true));
 
-            JAXBElement recordsElem = (JAXBElement) unmarshaller.unmarshal(new File(filePath));
-            Records records = (Records) recordsElem.getValue();
+            //JAXBElement recordsElem = (JAXBElement) unmarshaller.unmarshal(new File(filePath));
+            Records records = (Records) unmarshaller.unmarshal(new File(filePath));
             List<Records.Record> employeeRecords = records.getRecord();
 
             for (int i = 0; i < employeeRecords.size(); i++) {
