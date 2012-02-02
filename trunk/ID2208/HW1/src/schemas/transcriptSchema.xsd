@@ -5,16 +5,19 @@ and open the template in the editor.
 -->
 
 <xsd:schema version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-         targetNamespace="http://xml.netbeans.org/schema/transcriptSchema"
+            targetNamespace="http://xml.netbeans.org/schema/transcriptSchema"
+            xmlns:ns2="http://xml.netbeans.org/schema/commonSchema"
             elementFormDefault="qualified">
+    <xsd:import namespace="http://xml.netbeans.org/schema/commonSchema"
+                             schemaLocation="commonSchema.xsd"/>
     <xsd:element name="transcript">
         <xsd:complexType>
             <xsd:sequence>
                 <xsd:element name="name" type="xsd:string"/>
                 <xsd:element name="university" type="xsd:string"/>
                 <xsd:element name="degree" type="xsd:string"/>
-                <xsd:element name="year" type="xsd:int"/>
-                 <xsd:element name="major" type="xsd:string" />
+                <xsd:element name="year" type="ns2:year"/>
+                <xsd:element name="major" type="xsd:string" />
                 <xsd:element name="courses">
                     <xsd:complexType>
                         <xsd:sequence>
@@ -22,34 +25,9 @@ and open the template in the editor.
                                 <xsd:complexType>
                                     <xsd:sequence>
                                         <xsd:element name="name" type="xsd:string" />
-                                        <xsd:element name="code">
-                                            <xsd:simpleType>
-                                                <xsd:restriction base="xsd:string">
-                                                    <xsd:pattern value="[B-K]{2}[0-9]{4}"/>
-                                                </xsd:restriction>
-                                            </xsd:simpleType>
-                                        </xsd:element>
-                                        <xsd:element name="credits">
-                                            <xsd:simpleType>
-                                                <xsd:restriction base="xsd:decimal">
-                                                    <xsd:minInclusive value="1.0"/>
-                                                    <xsd:maxInclusive value="10.0"/>
-                                                </xsd:restriction>
-                                            </xsd:simpleType>
-                                        </xsd:element>
-                                        <xsd:element name="grade"> 
-                                            <xsd:simpleType>
-                                                <xsd:restriction base="xsd:string">
-                                                    <xsd:length value="1"/>
-                                                    <xsd:enumeration value="A"/>
-                                                    <xsd:enumeration value="B"/>
-                                                    <xsd:enumeration value="C"/>
-                                                    <xsd:enumeration value="D"/>
-                                                    <xsd:enumeration value="E"/>
-                                                    <xsd:enumeration value="F"/>
-                                                </xsd:restriction>
-                                            </xsd:simpleType>
-                                        </xsd:element>
+                                        <xsd:element name="code" type="ns2:courseCode"/>
+                                        <xsd:element name="credits" type="ns2:credits"/>
+                                        <xsd:element name="grade" type="ns2:grade"/> 
                                     </xsd:sequence>
                                 </xsd:complexType>
                             </xsd:element>
