@@ -10,19 +10,20 @@
 
 <ns0:companies  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
    xmlns:ns0='http://xml.netbeans.org/schema/companyInfoXmlSchema'
+   xmlns:ns1="http://xml.netbeans.org/schema/commonSchema"
    xsi:schemaLocation='http://xml.netbeans.org/schema/companyInfoXmlSchema ../schemas/companyInfoXmlSchema.xsd'>
     <ns0:companyInfo name="Microsoft">
         <ns0:description>Is an American multinational corporation headquartered in Redmond, Washington, United States that develops, manufactures, licenses, and supports a wide range of products and services predominantly related to computing through its various product divisions.</ns0:description>
         <ns0:contactInfo>
-            <ns0:email>contact@microsoft.com</ns0:email>
-            <ns0:phone>(425) 882-8080</ns0:phone>
-            <ns0:website>www.microsoft.com</ns0:website>
+            <ns1:email>contact@microsoft.com</ns1:email>
+            <ns1:phone>(425) 882-8080</ns1:phone>
+            <ns1:website>www.microsoft.com</ns1:website>
         </ns0:contactInfo>
         <ns0:location>
-            <ns0:country>USA</ns0:country>
-            <ns0:city>Seattle</ns0:city>
-            <ns0:address>Redmond, WA 98052</ns0:address>
-            <ns0:postalCode>7329</ns0:postalCode>
+            <ns1:country>USA</ns1:country>
+            <ns1:city>Seattle</ns1:city>
+            <ns1:address>Redmond, WA 98052</ns1:address>
+            <ns1:postalCode>7329</ns1:postalCode>
         </ns0:location>
         <ns0:businessType>IT</ns0:businessType>
         <ns0:employees>92000</ns0:employees>
@@ -39,16 +40,16 @@
     We provide insurance protection for both personal and business clients.
         </ns0:description>
         <ns0:contactInfo>
-            <ns0:email>contact@carlbranch.com</ns0:email>
-            <ns0:phone>(425) 882-8343</ns0:phone>
-            <ns0:website>www.calbranch.com</ns0:website>
-            <ns0:contactPerson>10</ns0:contactPerson>
+            <ns1:email>contact@carlbranch.com</ns1:email>
+            <ns1:phone>(425) 882-8343</ns1:phone>
+            <ns1:website>www.calbranch.com</ns1:website>
+            <ns1:contactPerson>10</ns1:contactPerson>
         </ns0:contactInfo>
         <ns0:location>
-            <ns0:country>USA</ns0:country>
-            <ns0:city>New York</ns0:city>
-            <ns0:address>Caledonia, NY 14423</ns0:address>
-            <ns0:postalCode>1045</ns0:postalCode>
+            <ns1:country>USA</ns1:country>
+            <ns1:city>New York</ns1:city>
+            <ns1:address>Caledonia, NY 14423</ns1:address>
+            <ns1:postalCode>1045</ns1:postalCode>
         </ns0:location>
         <ns0:businessType>Other</ns0:businessType>
         <ns0:employees>10</ns0:employees>
