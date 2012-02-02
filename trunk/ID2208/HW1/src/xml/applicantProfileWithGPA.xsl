@@ -63,26 +63,28 @@
                                     <iterate>
                                         <xsl:choose>
                                             <xsl:when test="ns2:grade = 'A'">
-                                                <xsl:value-of select="ns2:credits * 10"/>
+                                                <xsl:value-of select="ns2:credits * 5"/>
                                             </xsl:when>
                                             <xsl:when test="ns2:grade = 'B'">
-                                                <xsl:value-of select="ns2:credits * 9"/>
+                                                <xsl:value-of select="ns2:credits * 4"/>
                                             </xsl:when>
                                             <xsl:when test="ns2:grade = 'C'">
-                                                <xsl:value-of select="ns2:credits * 8"/>
+                                                <xsl:value-of select="ns2:credits * 3"/>
                                             </xsl:when>
                                             <xsl:when test="ns2:grade = 'D'">
-                                                <xsl:value-of select="ns2:credits * 7"/>
+                                                <xsl:value-of select="ns2:credits * 2"/>
                                             </xsl:when>
                                             <xsl:when test="ns2:grade = 'E'">
-                                                <xsl:value-of select="ns2:credits * 6"/>
+                                                <xsl:value-of select="ns2:credits * 1"/>
+                                            </xsl:when>
+                                            <xsl:when test="ns2:grade = 'F'">
+                                                <xsl:value-of select="0"/>
                                             </xsl:when>
                                         </xsl:choose>
                                     </iterate>
                                 </xsl:for-each>
                             </xsl:variable>
-                            <xsl:variable name="myGradePoints" select="xalan:nodeset($gradePoints)"/>
-                            <xsl:value-of select="sum($myGradePoints/iterate) div $totalCredits" />
+                            <xsl:value-of select="sum(xalan:nodeset($gradePoints)/iterate) div $totalCredits" />
                         </xsl:element>
                     </xsl:element>
                 </xsl:for-each>
