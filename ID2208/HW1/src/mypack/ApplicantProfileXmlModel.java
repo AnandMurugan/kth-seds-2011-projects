@@ -125,7 +125,7 @@ public class ApplicantProfileXmlModel {
             String currentCompanyName;
             for (int i = 0; i < nodes.getLength(); i++) {
                 currentCompanyName = nodes.item(i).getFirstChild().getFirstChild().getTextContent();
-                if (currentCompanyName.equals(companyName)) {
+                if (currentCompanyName.equalsIgnoreCase(companyName)) {
 
                     Node companyProfileNode = DOMParser.findNode(nodes.item(i).getChildNodes(), "ns1:company_profile");
                     if (companyProfileNode != null) {
@@ -146,7 +146,7 @@ public class ApplicantProfileXmlModel {
             String currentCompanyName;
             for (int i = 0; i < nodes.getLength(); i++) {
                 currentCompanyName = nodes.item(i).getFirstChild().getFirstChild().getTextContent();
-                if (currentCompanyName.equals(companyName)) {
+                if (currentCompanyName.equalsIgnoreCase(companyName)) {
 
                     Node companyProfileNode = DOMParser.findNode(nodes.item(i).getChildNodes(), "ns1:company_profile");
                     if (companyProfileNode != null) {
@@ -187,51 +187,53 @@ public class ApplicantProfileXmlModel {
             int hoursWeek,
             String location,
             String reasonExit) {
-        NodeList positionNode = profileXmlDoc.getElementsByTagName("ns1:positions");
+        NodeList nodes = profileXmlDoc.getElementsByTagName("ns1:company");
+        String currentCompanyName;
+        for (int x = 0; x < nodes.getLength(); x++) {
+            currentCompanyName = nodes.item(x).getFirstChild().getFirstChild().getTextContent();
+            if (currentCompanyName.equalsIgnoreCase(companyName)) {
+                Node positionsNode =  DOMParser.findNode(nodes.item(x).getChildNodes(),"ns1:positions");
+                if (positionsNode != null) // if there are company info nodes
+                {
+                    // this will list all positions
+                    NodeList positionsList = positionsNode.getChildNodes();
 
-        if (positionNode.getLength() == 1) // if there are company info nodes
-        {
-            // this will list all positions
-            NodeList positionsList = positionNode.item(0).getChildNodes();
-
-            for (int i = 0; i < positionsList.getLength(); i++) {
-                if (positionsList.item(i).getFirstChild().getTextContent().equals(position)) {
-                    // update entrance date
-                    Node entranceDateNode = DOMParser.findNode(positionsList.item(i).getChildNodes(), "ns2:entranceDate");
-                    if (entranceDateNode != null) {
-                        entranceDateNode.setTextContent(startDate);
+                    for (int i = 0; i < positionsList.getLength(); i++) {
+                        if (positionsList.item(i).getFirstChild().getTextContent().equalsIgnoreCase(position)) {
+                            // update entrance date
+                            Node entranceDateNode = DOMParser.findNode(positionsList.item(i).getChildNodes(), "ns1:entranceDate");
+                            if (entranceDateNode != null) {
+                                entranceDateNode.setTextContent(startDate);
+                            }
+                            // update exit date
+                            Node exitDateNode = DOMParser.findNode(positionsList.item(i).getChildNodes(), "ns1:exitDate");
+                            if (exitDateNode != null) {
+                                exitDateNode.setTextContent(endDate);
+                            }
+                            // update hours week
+                            Node hoursWeekNode = DOMParser.findNode(positionsList.item(i).getChildNodes(), "ns1:hoursPerWeek");
+                            if (hoursWeekNode != null) {
+                                hoursWeekNode.setTextContent(String.valueOf(hoursWeek));
+                            }
+                            // update location
+                            Node locationNode = DOMParser.findNode(positionsList.item(i).getChildNodes(), "ns1:location");
+                            if (locationNode != null) {
+                                locationNode.setTextContent(location);
+                            }
+                            // update exit reason
+                            Node exitReasonNode = DOMParser.findNode(positionsList.item(i).getChildNodes(), "ns1:exitReason");
+                            if (exitReasonNode != null) {
+                                exitReasonNode.setTextContent(reasonExit);
+                            }
+                            break;
+                        }
                     }
-                    // update exit date
-                    Node exitDateNode = DOMParser.findNode(positionsList.item(i).getChildNodes(), "ns2:exitDate");
-                    if (exitDateNode != null) {
-                        exitDateNode.setTextContent(endDate);
-                    }
-                    // update hours week
-                    Node hoursWeekNode = DOMParser.findNode(positionsList.item(i).getChildNodes(), "ns2:hoursPerWeek");
-                    if (hoursWeekNode != null) {
-                        hoursWeekNode.setTextContent(String.valueOf(hoursWeek));
-                    }
-                    // update location
-                    Node locationNode = DOMParser.findNode(positionsList.item(i).getChildNodes(), "ns2:location");
-                    if (locationNode != null) {
-                        locationNode.setTextContent(location);
-                    }
-                    // update exit reason
-                    Node exitReasonNode = DOMParser.findNode(positionsList.item(i).getChildNodes(), "ns2:exitReason");
-                    if (exitReasonNode != null) {
-                        exitReasonNode.setTextContent(reasonExit);
-                    }
-                    break;
                 }
+                break;
             }
 
-            String currentCompanyName;
-            for (int i = 0; i < positionNode.getLength(); i++) {
-                currentCompanyName = positionNode.item(i).getFirstChild().getFirstChild().getTextContent();
-                if (currentCompanyName.equals(companyName)) {
-                }
-            }
         }
+
     }
 
     public void setEmploymentRecord(String companyName, Node positions) {
