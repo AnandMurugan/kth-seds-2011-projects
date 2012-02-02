@@ -60,4 +60,41 @@
             <xs:enumeration value="F"/>
         </xs:restriction>
     </xs:simpleType>
+    <xs:simpleType name="years">
+        <xs:restriction base="xs:integer">
+            <xs:maxInclusive value="3000"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="contactInfoType">
+        <xs:sequence>
+            <xs:element name="email" type="tns:email"/>
+            <xs:element name="phone" type="xs:string" />
+        </xs:sequence>    
+    </xs:complexType>
+    <xs:complexType name="locationType">
+        <xs:sequence>
+            <xs:element name="country" minOccurs="0" type="xs:string"/>
+            <xs:element name="city" type="xs:string"/>
+            <xs:element name="address" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="companyInfoType">
+        <xs:complexContent>
+            <xs:extension base="tns:contactInfoType">
+                <xs:sequence>
+                    <xs:element name="website" type="xs:string"/>
+                    <xs:element name="contactPerson" minOccurs="0" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>    
+    </xs:complexType>
+    <xs:complexType name="companyLocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:locationType">
+                <xs:sequence>
+                    <xs:element name="postalCode" type="xs:integer"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>    
+    </xs:complexType>
 </xs:schema>
