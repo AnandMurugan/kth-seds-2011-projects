@@ -4,7 +4,7 @@
     xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
     xmlns:ns1='http://xml.netbeans.org/schema/transcriptSchema'
     xsi:schemaLocation='http://xml.netbeans.org/schema/transcriptSchema ../schemas/transcriptSchema.xsd'>
-    <ns1:transcriptRecord personalNumber="8804041234">
+    <ns1:transcriptRecord personalNumber="881201-1234">
         <ns1:name>Anand</ns1:name>
         <ns1:university>KTH</ns1:university>
         <ns1:degree>Master of science</ns1:degree>
