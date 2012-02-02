@@ -97,4 +97,10 @@
             </xs:extension>
         </xs:complexContent>    
     </xs:complexType>
+    <xs:simpleType name="gender">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="M"/>
+            <xs:enumeration value="F"/>
+        </xs:restriction>    
+    </xs:simpleType>
 </xs:schema>
