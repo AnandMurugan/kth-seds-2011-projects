@@ -56,8 +56,8 @@ public class SAXParser {
         boolean isWebsite;
         boolean isDescription;
         boolean isBusinessType;
-        boolean isEmployees;
-        boolean isAnualRevenue;
+        boolean isEmail;
+        boolean isPhone;
         boolean isYears;
         boolean isProduct;
         String currentCompany;
@@ -69,13 +69,13 @@ public class SAXParser {
 
         @Override
         public void startElement(String arg0, String localName, String qName, Attributes atts) throws SAXException {
-            if (localName.equalsIgnoreCase("CompanyInfo")) {
+            if (localName.equalsIgnoreCase("COMPANYINFO")) {
                 int length = atts.getLength();
                 if (length == 1) {
                     currentCompany = atts.getValue(0);
                 }
             }
-            
+
             if (localName.equalsIgnoreCase("NAME")) {
                 isName = true;
             }
@@ -96,12 +96,12 @@ public class SAXParser {
                 isBusinessType = true;
             }
 
-            if (localName.equalsIgnoreCase("EMPLOYEES")) {
-                isEmployees = true;
+            if (localName.equalsIgnoreCase("EMAIL")) {
+                isEmail = true;
             }
 
-            if (localName.equalsIgnoreCase("ANUALREVENUE")) {
-                isAnualRevenue = true;
+            if (localName.equalsIgnoreCase("PHONE")) {
+                isPhone = true;
             }
 
             if (localName.equalsIgnoreCase("YEARS")) {
@@ -126,8 +126,9 @@ public class SAXParser {
                 isAddress = false;
             }
 
-            if (isAnualRevenue) {
-                isAnualRevenue = false;
+            if (isPhone) {
+                isPhone = false;
+                profileModel.setPhone(currentCompany, new String(arg0, arg1, arg2));
             }
 
             if (isBusinessType) {
@@ -137,30 +138,33 @@ public class SAXParser {
 
             if (isDescription) {
                 isDescription = false;
+                profileModel.setDescription(currentCompany, new String(arg0, arg1, arg2));
             }
 
-            if (isEmployees) {
-                isEmployees = false;
-            }
-
-            if (isProduct) {
-                isName = false;
+            if (isEmail) {
+                isEmail = false;
+                profileModel.setEmail(currentCompany, new String(arg0, arg1, arg2));
             }
 
             if (isWebsite) {
                 isWebsite = false;
+                profileModel.setWebsite(currentCompany, new String(arg0, arg1, arg2));
+            }
+            
+            if (isProduct) {
+                isName = false;
             }
 
             if (isYears) {
                 isYears = false;
             }
 
-            System.out.println("characters: " + new String(arg0, arg1, arg2) + " ");
+            //System.out.println("characters: " + new String(arg0, arg1, arg2) + " ");
         }
 
         @Override
         public void endElement(String arg0, String arg1, String arg2) throws SAXException {
-            System.out.println("endElement:<" + arg2 + ">");
+            //System.out.println("endElement:<" + arg2 + ">");
         }
 
         @Override
