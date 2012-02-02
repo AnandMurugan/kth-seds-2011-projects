@@ -44,7 +44,24 @@
                 <ns1:position>
                     <ns1:positionTitle>intern</ns1:positionTitle>
                 </ns1:position>
-                 <ns1:position>
+                <ns1:position>
+                    <ns1:positionTitle>developer</ns1:positionTitle>
+                </ns1:position>
+            </ns1:positions>
+        </ns1:company>
+        <ns1:company>
+            <ns1:company_profile>
+                <ns1:name>csc</ns1:name>
+                <ns1:description>A multinational IT services and consulting company with 500+ clients across five continents</ns1:description>
+            </ns1:company_profile>
+            <ns1:start_date>2007-07-14</ns1:start_date>
+            <ns1:end_date>2011-07-14</ns1:end_date>
+            <ns1:domain>insurance</ns1:domain>
+            <ns1:positions>
+                <ns1:position>
+                    <ns1:positionTitle>intern</ns1:positionTitle>
+                </ns1:position>
+                <ns1:position>
                     <ns1:positionTitle>developer</ns1:positionTitle>
                 </ns1:position>
             </ns1:positions>
