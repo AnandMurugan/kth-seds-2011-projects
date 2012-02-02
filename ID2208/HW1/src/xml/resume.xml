@@ -3,16 +3,17 @@
 <ns1:resume
     xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
     xmlns:ns1='http://xml.netbeans.org/schema/resume'
+    xmlns:ns2="http://xml.netbeans.org/schema/commonSchema"
     xsi:schemaLocation='http://xml.netbeans.org/schema/resume ../schemas/resume.xsd'>
     <ns1:name>Anand</ns1:name>
     <ns1:mail_id>m.anand@gmail.com</ns1:mail_id>
     <ns1:phone_number>0760665443</ns1:phone_number>
     <ns1:address>
-        <ns1:doorno>49-1210 hanstavagan</ns1:doorno>
-        <ns1:street></ns1:street>
-        <ns1:county>kista</ns1:county>
-        <ns1:postal_code>16453</ns1:postal_code>
-        <ns1:city>stockholm</ns1:city>
+        <ns2:apt>49-1210</ns2:apt>
+        <ns2:street>hanstavagan</ns2:street>
+        <ns2:city>stockholm</ns2:city>
+        <ns2:postalCode>16453</ns2:postalCode>
+        <ns2:country>sweden</ns2:country>
     </ns1:address>
     <ns1:summary>Description of student's skills and objectives</ns1:summary>
     <ns1:education>
@@ -24,7 +25,7 @@
         </ns1:qualification>
         <ns1:qualification>
             <ns1:university>KTH</ns1:university>
-            <ns1:year>2013</ns1:year>
+            <ns1:year>2012</ns1:year>
             <ns1:degree>Master of science</ns1:degree>
             <ns1:major>software engineering of distributed systems</ns1:major>
         </ns1:qualification>
