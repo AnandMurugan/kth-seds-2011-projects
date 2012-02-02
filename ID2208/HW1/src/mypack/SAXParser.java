@@ -111,8 +111,6 @@ public class SAXParser {
             if (localName.equalsIgnoreCase("PRODUCT")) {
                 isProduct = true;
             }
-
-            System.out.println("startElement:<" + qName + ">");
         }
 
         @Override
@@ -169,12 +167,10 @@ public class SAXParser {
 
         @Override
         public void startDocument() throws SAXException {
-            System.out.println("<startDocument>");
         }
 
         @Override
         public void endDocument() throws SAXException {
-            System.out.println("<endDocument>");
         }
     }
 }
