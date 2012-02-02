@@ -13,6 +13,7 @@ and open the template in the editor.
     <xsd:element name="resume">
         <xsd:complexType>
             <xsd:sequence>
+                <xsd:element name="personalNumber" type="xsd:string" />
                 <xsd:element name="name" type="xsd:string" />
                 <xsd:element name="mail_id" type="ns2:email"/>
                 <xsd:element name="phone_number" type="ns2:mobile"/>
