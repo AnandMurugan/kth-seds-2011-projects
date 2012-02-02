@@ -55,6 +55,7 @@
                             <xsl:value-of select="ns1:major"/>
                         </xsl:element>
                     </xsl:element>
+                    <xsl:element name="gpa">0.0</xsl:element
                 </xsl:for-each>
             </xsl:element>
             <xsl:element name="professional_experience"></xsl:element>
