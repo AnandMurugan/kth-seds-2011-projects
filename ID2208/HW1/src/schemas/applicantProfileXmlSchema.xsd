@@ -2,24 +2,18 @@
 
 <xsd:schema version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             targetNamespace="http://xml.netbeans.org/schema/applicantProfileXmlSchema"
+            xmlns:ns2="http://xml.netbeans.org/schema/commonSchema"
             elementFormDefault="qualified">
+    <xsd:import namespace="http://xml.netbeans.org/schema/commonSchema"
+                schemaLocation="commonSchema.xsd"/>
     <xsd:element name="applicant_profile">
         <xsd:complexType>
             <xsd:sequence>
+                <xsd:element name="personalNumber" type="xsd:string"/> 
                 <xsd:element name="name" type="xsd:string" />
-                <xsd:element name="mail_id" type="xsd:string" />
-                <xsd:element name="phone_number" type="xsd:unsignedInt" />
-                <xsd:element name="address">
-                    <xsd:complexType>
-                        <xsd:sequence>
-                            <xsd:element name="doorno" type="xsd:string" />
-                            <xsd:element name="street" type="xsd:string" />
-                            <xsd:element name="county" type="xsd:string" />
-                            <xsd:element name="postal_code" type="xsd:unsignedShort" />
-                            <xsd:element name="city" type="xsd:string" />
-                        </xsd:sequence>
-                    </xsd:complexType>
-                </xsd:element>
+                <xsd:element name="mail_id" type="ns2:email" />
+                <xsd:element name="phone_number" type="ns2:mobile" />
+                <xsd:element name="address" type="ns2:AllLocationType"/>
                 <xsd:element name="summary" type="xsd:string" />
                 <xsd:element name="education">
                     <xsd:complexType>
@@ -49,15 +43,15 @@
                                                 <xsd:sequence>
                                                     <xsd:element name="name" type="xsd:string" />
                                                     <xsd:element name="description" type="xsd:string" />
-                                                    <xsd:element name="email" type="xsd:string" />
+                                                    <xsd:element name="email" type="ns2:email" />
                                                     <xsd:element name="phone" type="xsd:string" />
                                                     <xsd:element name="website" type="xsd:string" />
                                                     <xsd:element name="businessType" type="xsd:string" />
                                                 </xsd:sequence>
                                             </xsd:complexType>
                                         </xsd:element>
-                                        <xsd:element name="start_date" type="xsd:string" />
-                                        <xsd:element name="end_date" type="xsd:string" />
+                                        <xsd:element name="start_date" type="xsd:date" />
+                                        <xsd:element name="end_date" type="xsd:date" />
                                         <xsd:element name="domain" type="xsd:string" />
                                         <xsd:element maxOccurs="unbounded" name="project">
                                             <xsd:complexType>
