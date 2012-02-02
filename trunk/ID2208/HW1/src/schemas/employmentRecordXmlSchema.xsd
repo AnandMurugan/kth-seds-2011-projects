@@ -37,7 +37,7 @@
                                 </xsd:complexType>
                             </xsd:element>
                         </xsd:sequence>
-                        <xsd:attribute name="personNumber" type="xsd:string"/>
+                        <xsd:attribute name="personalNumber" type="xsd:string"/>
                     </xsd:complexType>
                 </xsd:element>
             </xsd:sequence>

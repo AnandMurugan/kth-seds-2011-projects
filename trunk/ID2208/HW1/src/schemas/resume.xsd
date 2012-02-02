@@ -9,55 +9,75 @@ and open the template in the editor.
             xmlns:ns2="http://xml.netbeans.org/schema/commonSchema"
             elementFormDefault="qualified">
     <xsd:import namespace="http://xml.netbeans.org/schema/commonSchema"
-            schemaLocation="commonSchema.xsd"/>
+                schemaLocation="commonSchema.xsd"/>
     <xsd:element name="resume">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="name" type="xsd:string" />
-                <xsd:element name="mail_id" type="ns2:email"/>
-                <xsd:element name="phone_number" type="ns2:mobile"/>
-                <xsd:element name="address" type="ns2:AllLocationType"/>
-                <xsd:element name="summary" type="xsd:string" />
-                <xsd:element name="education">
+                <xsd:element name="resumeRecord">
                     <xsd:complexType>
                         <xsd:sequence>
-                            <xsd:element maxOccurs="unbounded" name="qualification">
+                            <xsd:element name="name" type="xsd:string" />
+                            <xsd:element name="mail_id" type="ns2:email"/>
+                            <xsd:element name="phone_number" type="ns2:mobile"/>
+                            <xsd:element name="address" type="ns2:AllLocationType"/>
+                            <xsd:element name="summary" type="xsd:string" />
+                            <xsd:element name="education">
                                 <xsd:complexType>
                                     <xsd:sequence>
-                                        <xsd:element name="university" type="xsd:string" />
-                                        <xsd:element name="year" type="ns2:year"/>
-                                        <xsd:element name="degree" type="xsd:string" />
-                                        <xsd:element name="major" type="xsd:string" />
-                                    </xsd:sequence>
-                                </xsd:complexType>
-                            </xsd:element>
-                        </xsd:sequence>
-                    </xsd:complexType>
-                </xsd:element>
-                <xsd:element name="professional_experience">
-                    <xsd:complexType>
-                        <xsd:sequence>
-                            <xsd:element name="company">
-                                <xsd:complexType>
-                                    <xsd:sequence>
-                                        <xsd:element name="company_profile">
+                                        <xsd:element maxOccurs="unbounded" name="qualification">
                                             <xsd:complexType>
                                                 <xsd:sequence>
-                                                    <xsd:element name="name" type="xsd:string" />
-                                                    <xsd:element name="description" type="xsd:string" />
+                                                    <xsd:element name="university" type="xsd:string" />
+                                                    <xsd:element name="year" type="ns2:year"/>
+                                                    <xsd:element name="degree" type="xsd:string" />
+                                                    <xsd:element name="major" type="xsd:string" />
                                                 </xsd:sequence>
                                             </xsd:complexType>
                                         </xsd:element>
-                                        <xsd:element name="start_date" type="xsd:string" />
-                                        <xsd:element name="end_date" type="xsd:string" />
-                                        <xsd:element name="domain" type="xsd:string" />
-                                        <xsd:element maxOccurs="unbounded" name="project">
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="professional_experience">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="company">
                                             <xsd:complexType>
                                                 <xsd:sequence>
-                                                    <xsd:element name="description" type="xsd:string" />
-                                                    <xsd:element minOccurs="0" name="responsiblities" type="xsd:string" />
-                                                    <xsd:element name="role" type="xsd:string" />
-                                                    <xsd:element minOccurs="0" name="responsibilities" type="xsd:string" />
+                                                    <xsd:element name="company_profile">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="name" type="xsd:string" />
+                                                                <xsd:element name="description" type="xsd:string" />
+                                                            </xsd:sequence>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="start_date" type="xsd:string" />
+                                                    <xsd:element name="end_date" type="xsd:string" />
+                                                    <xsd:element name="domain" type="xsd:string" />
+                                                    <xsd:element maxOccurs="unbounded" name="project">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="description" type="xsd:string" />
+                                                                <xsd:element minOccurs="0" name="responsiblities" type="xsd:string" />
+                                                                <xsd:element name="role" type="xsd:string" />
+                                                                <xsd:element minOccurs="0" name="responsibilities" type="xsd:string" />
+                                                                <xsd:element name="technology" type="xsd:string" />
+                                                            </xsd:sequence>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="technical_skills">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element maxOccurs="unbounded" name="skill">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="type" type="xsd:string" />
                                                     <xsd:element name="technology" type="xsd:string" />
                                                 </xsd:sequence>
                                             </xsd:complexType>
@@ -65,45 +85,31 @@ and open the template in the editor.
                                     </xsd:sequence>
                                 </xsd:complexType>
                             </xsd:element>
-                        </xsd:sequence>
-                    </xsd:complexType>
-                </xsd:element>
-                <xsd:element name="technical_skills">
-                    <xsd:complexType>
-                        <xsd:sequence>
-                            <xsd:element maxOccurs="unbounded" name="skill">
+                            <xsd:element name="certifications">
                                 <xsd:complexType>
                                     <xsd:sequence>
-                                        <xsd:element name="type" type="xsd:string" />
-                                        <xsd:element name="technology" type="xsd:string" />
+                                        <xsd:element maxOccurs="unbounded" name="certification">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="name" type="xsd:string" />
+                                                    <xsd:element name="organization" type="xsd:string" />
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
                                     </xsd:sequence>
                                 </xsd:complexType>
                             </xsd:element>
-                        </xsd:sequence>
-                    </xsd:complexType>
-                </xsd:element>
-                <xsd:element name="certifications">
-                    <xsd:complexType>
-                        <xsd:sequence>
-                            <xsd:element maxOccurs="unbounded" name="certification">
+                            <xsd:element name="extracurricular_activities">
                                 <xsd:complexType>
                                     <xsd:sequence>
-                                        <xsd:element name="name" type="xsd:string" />
-                                        <xsd:element name="organization" type="xsd:string" />
-                                    </xsd:sequence>
-                                </xsd:complexType>
-                            </xsd:element>
-                        </xsd:sequence>
-                    </xsd:complexType>
-                </xsd:element>
-                <xsd:element name="extracurricular_activities">
-                    <xsd:complexType>
-                        <xsd:sequence>
-                            <xsd:element name="activity">
-                                <xsd:complexType>
-                                    <xsd:sequence>
-                                        <xsd:element name="name" type="xsd:string" />
-                                        <xsd:element name="achievement" type="xsd:string" />
+                                        <xsd:element name="activity">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="name" type="xsd:string" />
+                                                    <xsd:element name="achievement" type="xsd:string" />
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
                                     </xsd:sequence>
                                 </xsd:complexType>
                             </xsd:element>
@@ -111,6 +117,7 @@ and open the template in the editor.
                     </xsd:complexType>
                 </xsd:element>
             </xsd:sequence>
+            <xsd:attribute name="personalNumber" type="xsd:string"/>
         </xsd:complexType>
     </xsd:element>
 </xsd:schema>
