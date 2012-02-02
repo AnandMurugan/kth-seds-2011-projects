@@ -78,7 +78,7 @@
     <xsd:element  name="records">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="record">
+                <xsd:element name="record" maxOccurs="unbounded">
                     <xsd:complexType>
                         <xsd:sequence>
                             <xsd:element name="employmentRecord" maxOccurs="unbounded">
