@@ -54,10 +54,13 @@ public class ApplicantProfileGenerator {
             String transcriptXmlPath,
             String profileXmlPath) {
         try {
+            //XSLT transformation
+            XSLTTransformer obj = new XSLTTransformer();
+            obj.transform();
+            
             // Create Application Profile Model
             ApplicantProfileXmlModel profileModel = new ApplicantProfileXmlModel(this.profileSchemaPath, profileXmlPath);
 
-            
             //SAX Parsing
             // Create Parser
             SAXParserFactory saxpf = SAXParserFactory.newInstance();
@@ -125,7 +128,7 @@ public class ApplicantProfileGenerator {
     public static void main(String[] args) {
         // TODO. get the input xml files from the command line params
         ApplicantProfileGenerator generator = new ApplicantProfileGenerator();
-        generator.Generate("src/xml/companiesDatabase.xml", "src/xml/employmentRecordDB.xml", "", "", "src/xml/applicantProfile.xml");
+        generator.Generate("src/xml/companiesDatabase.xml", "src/xml/employmentRecordDB.xml", "src/xml/resume.xml", "src/xml/transcript.xml", "src/xml/userProfile.xml");
 
     }
 }
