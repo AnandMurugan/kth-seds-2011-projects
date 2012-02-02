@@ -5,6 +5,7 @@
     xmlns:ns1='http://xml.netbeans.org/schema/resume'
     xmlns:ns2="http://xml.netbeans.org/schema/commonSchema"
     xsi:schemaLocation='http://xml.netbeans.org/schema/resume ../schemas/resume.xsd'>
+    <ns1:personalNumber>881201-1234</ns1:personalNumber>
     <ns1:name>Anand</ns1:name>
     <ns1:mail_id>m.anand@gmail.com</ns1:mail_id>
     <ns1:phone_number>0760665443</ns1:phone_number>
