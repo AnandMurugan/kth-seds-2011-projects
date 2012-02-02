@@ -108,38 +108,6 @@
                         </xsd:sequence>
                     </xsd:complexType>
                 </xsd:element>
-                <xsd:element name="motivation_letter" type="xsd:string" />
-                <xsd:element name="preferred_workLocation">
-                    <xsd:complexType>
-                        <xsd:sequence>
-                            <xsd:element maxOccurs="unbounded" name="location">
-                                <xsd:complexType>
-                                    <xsd:sequence>
-                                        <xsd:element name="name" type="xsd:string" />
-                                        <xsd:element name="preference" type="xsd:unsignedByte" />
-                                    </xsd:sequence>
-                                </xsd:complexType>
-                            </xsd:element>
-                        </xsd:sequence>
-                    </xsd:complexType>
-                </xsd:element>
-                <xsd:element name="job_type_applied" type="xsd:string" />
-                <xsd:element maxOccurs="unbounded" name="reference">
-                    <xsd:complexType>
-                        <xsd:sequence>
-                            <xsd:element name="referee_detail">
-                                <xsd:complexType>
-                                    <xsd:sequence>
-                                        <xsd:element name="name" type="xsd:string" />
-                                        <xsd:element name="position" type="xsd:string" />
-                                        <xsd:element name="relation_to_candidate" type="xsd:string" />
-                                    </xsd:sequence>
-                                </xsd:complexType>
-                            </xsd:element>
-                            <xsd:element name="reference_comment" type="xsd:string" />
-                        </xsd:sequence>
-                    </xsd:complexType>
-                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
