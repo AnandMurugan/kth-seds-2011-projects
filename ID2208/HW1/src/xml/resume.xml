@@ -5,92 +5,90 @@
     xmlns:ns1='http://xml.netbeans.org/schema/resume'
     xmlns:ns2="http://xml.netbeans.org/schema/commonSchema"
     xsi:schemaLocation='http://xml.netbeans.org/schema/resume ../schemas/resume.xsd'>
-    <ns1:resumeRecord personalNumber="881201-1234">
-        <ns1:name>Anand</ns1:name>
-        <ns1:mail_id>m.anand@gmail.com</ns1:mail_id>
-        <ns1:phone_number>0760665443</ns1:phone_number>
-        <ns1:address>
-            <ns2:apt>49-1210</ns2:apt>
-            <ns2:street>hanstavagan</ns2:street>
-            <ns2:city>stockholm</ns2:city>
-            <ns2:postalCode>16453</ns2:postalCode>
-            <ns2:country>sweden</ns2:country>
-        </ns1:address>
-        <ns1:summary>Description of student's skills and objectives</ns1:summary>
-        <ns1:education>
-            <ns1:qualification>
-                <ns1:university>Anna university</ns1:university>
-                <ns1:year>2007</ns1:year>
-                <ns1:degree>Bachelor of engineering</ns1:degree>
-                <ns1:major>computer science</ns1:major>
-            </ns1:qualification>
-            <ns1:qualification>
-                <ns1:university>KTH</ns1:university>
-                <ns1:year>2012</ns1:year>
-                <ns1:degree>Master of science</ns1:degree>
-                <ns1:major>software engineering of distributed systems</ns1:major>
-            </ns1:qualification>
-        </ns1:education>
-        <ns1:professional_experience>
-            <ns1:company>
-                <ns1:company_profile>
-                    <ns1:name>csc</ns1:name>
-                    <ns1:description>A multinational IT services and consulting company with 500+ clients across five continents</ns1:description>
-                </ns1:company_profile>
-                <ns1:start_date>2007-07-14</ns1:start_date>
-                <ns1:end_date>2011-07-14</ns1:end_date>
-                <ns1:domain>insurance</ns1:domain>
-                <ns1:project>
-                    <ns1:description>online claim processing system</ns1:description>
-                    <ns1:role>team member in a team of 4</ns1:role>
-                    <ns1:responsibilities>coding</ns1:responsibilities>
-                    <ns1:technology>asp.Net, MS SQL Server 2008</ns1:technology>
-                </ns1:project>
-                <ns1:project>
-                    <ns1:description>online policy processing for personal auto</ns1:description>
-                    <ns1:role>team member in a team of 4</ns1:role>
-                    <ns1:responsibilities>analyzing requirements, estimation and coding</ns1:responsibilities>
-                    <ns1:technology>asp.Net, MS SQL Server 2008</ns1:technology>
-                </ns1:project>
-                <ns1:project>
-                    <ns1:description>
-                        Insurance carrier serving Michigan residents and businesses through independent agents. Provides business, auto, home, mobile home, watercraft, motorcycle insurance policies online.
-                    </ns1:description>
-                    <ns1:role>module lead in a team of 3</ns1:role>
-                    <ns1:responsibilities>analyzing requirements, estimation, coding, code review, functional testing, knowledge transfer training and documentation</ns1:responsibilities>
-                    <ns1:technology>asp.net, xml, xslt, vb.net, ms sql server 2010</ns1:technology>
-                </ns1:project>
-            </ns1:company>
-        </ns1:professional_experience>
-        <ns1:technical_skills>
-            <ns1:skill>
-                <ns1:type>system development</ns1:type>
-                <ns1:technology> asp.net, vb.net, java, c and c++</ns1:technology>
-            </ns1:skill>
-            <ns1:skill>
-                <ns1:type>database</ns1:type>
-                <ns1:technology>MS SQL server and MySQL</ns1:technology>
-            </ns1:skill>
-            <ns1:skill>
-                <ns1:type>operating system</ns1:type>
-                <ns1:technology>windows and linux</ns1:technology>
-            </ns1:skill>
-        </ns1:technical_skills>
-        <ns1:certifications>
-            <ns1:certification>
-                <ns1:name>IBM certified Websphere developer</ns1:name>
-                <ns1:organization>IBM</ns1:organization>
-            </ns1:certification>
-            <ns1:certification>
-                <ns1:name>Insurance Associate INS</ns1:name>
-                <ns1:organization>Insurance institute of America Association</ns1:organization>
-            </ns1:certification>
-        </ns1:certifications>
-        <ns1:extracurricular_activities>
-            <ns1:activity>
-                <ns1:name>Chairman of computer association</ns1:name>
-                <ns1:achievement>successfully led 250 students as chairman and organized technical symposiums</ns1:achievement>
-            </ns1:activity>
-        </ns1:extracurricular_activities>
-    </ns1:resumeRecord>
+    <ns1:name>Anand</ns1:name>
+    <ns1:mail_id>m.anand@gmail.com</ns1:mail_id>
+    <ns1:phone_number>0760665443</ns1:phone_number>
+    <ns1:address>
+        <ns2:apt>49-1210</ns2:apt>
+        <ns2:street>hanstavagan</ns2:street>
+        <ns2:city>stockholm</ns2:city>
+        <ns2:postalCode>16453</ns2:postalCode>
+        <ns2:country>sweden</ns2:country>
+    </ns1:address>
+    <ns1:summary>Description of student's skills and objectives</ns1:summary>
+    <ns1:education>
+        <ns1:qualification>
+            <ns1:university>Anna university</ns1:university>
+            <ns1:year>2007</ns1:year>
+            <ns1:degree>Bachelor of engineering</ns1:degree>
+            <ns1:major>computer science</ns1:major>
+        </ns1:qualification>
+        <ns1:qualification>
+            <ns1:university>KTH</ns1:university>
+            <ns1:year>2012</ns1:year>
+            <ns1:degree>Master of science</ns1:degree>
+            <ns1:major>software engineering of distributed systems</ns1:major>
+        </ns1:qualification>
+    </ns1:education>
+    <ns1:professional_experience>
+        <ns1:company>
+            <ns1:company_profile>
+                <ns1:name>csc</ns1:name>
+                <ns1:description>A multinational IT services and consulting company with 500+ clients across five continents</ns1:description>
+            </ns1:company_profile>
+            <ns1:start_date>2007-07-14</ns1:start_date>
+            <ns1:end_date>2011-07-14</ns1:end_date>
+            <ns1:domain>insurance</ns1:domain>
+            <ns1:project>
+                <ns1:description>online claim processing system</ns1:description>
+                <ns1:role>team member in a team of 4</ns1:role>
+                <ns1:responsibilities>coding</ns1:responsibilities>
+                <ns1:technology>asp.Net, MS SQL Server 2008</ns1:technology>
+            </ns1:project>
+            <ns1:project>
+                <ns1:description>online policy processing for personal auto</ns1:description>
+                <ns1:role>team member in a team of 4</ns1:role>
+                <ns1:responsibilities>analyzing requirements, estimation and coding</ns1:responsibilities>
+                <ns1:technology>asp.Net, MS SQL Server 2008</ns1:technology>
+            </ns1:project>
+            <ns1:project>
+                <ns1:description>
+                    Insurance carrier serving Michigan residents and businesses through independent agents. Provides business, auto, home, mobile home, watercraft, motorcycle insurance policies online.
+                </ns1:description>
+                <ns1:role>module lead in a team of 3</ns1:role>
+                <ns1:responsibilities>analyzing requirements, estimation, coding, code review, functional testing, knowledge transfer training and documentation</ns1:responsibilities>
+                <ns1:technology>asp.net, xml, xslt, vb.net, ms sql server 2010</ns1:technology>
+            </ns1:project>
+        </ns1:company>
+    </ns1:professional_experience>
+    <ns1:technical_skills>
+        <ns1:skill>
+            <ns1:type>system development</ns1:type>
+            <ns1:technology> asp.net, vb.net, java, c and c++</ns1:technology>
+        </ns1:skill>
+        <ns1:skill>
+            <ns1:type>database</ns1:type>
+            <ns1:technology>MS SQL server and MySQL</ns1:technology>
+        </ns1:skill>
+        <ns1:skill>
+            <ns1:type>operating system</ns1:type>
+            <ns1:technology>windows and linux</ns1:technology>
+        </ns1:skill>
+    </ns1:technical_skills>
+    <ns1:certifications>
+        <ns1:certification>
+            <ns1:name>IBM certified Websphere developer</ns1:name>
+            <ns1:organization>IBM</ns1:organization>
+        </ns1:certification>
+        <ns1:certification>
+            <ns1:name>Insurance Associate INS</ns1:name>
+            <ns1:organization>Insurance institute of America Association</ns1:organization>
+        </ns1:certification>
+    </ns1:certifications>
+    <ns1:extracurricular_activities>
+        <ns1:activity>
+            <ns1:name>Chairman of computer association</ns1:name>
+            <ns1:achievement>successfully led 250 students as chairman and organized technical symposiums</ns1:achievement>
+        </ns1:activity>
+    </ns1:extracurricular_activities>
 </ns1:resume>
