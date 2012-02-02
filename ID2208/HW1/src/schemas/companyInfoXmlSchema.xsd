@@ -28,7 +28,7 @@
             <xsd:extension base="tns:contactInfoType">
                 <xsd:sequence>
                     <xsd:element name="website" type="xsd:string"/>
-                    <xsd:element name="contactPerson" type="xsd:string"/>
+                    <xsd:element name="contactPerson" minOccurs="0" type="xsd:string"/>
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>    
@@ -76,7 +76,11 @@
                             <xsd:element name="products">
                                 <xsd:complexType>
                                     <xsd:sequence>
-                                        <xsd:element name="product" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+                                        <xsd:element name="product" minOccurs="0" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:attribute name="name" type="xsd:string"/>
+                                            </xsd:complexType>    
+                                        </xsd:element>
                                     </xsd:sequence>
                                 </xsd:complexType>
                             </xsd:element>
