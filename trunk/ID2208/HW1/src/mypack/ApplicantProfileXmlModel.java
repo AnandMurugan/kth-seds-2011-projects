@@ -25,13 +25,18 @@ public class ApplicantProfileXmlModel {
     String schemaPath = "";
     String schemaLanguage = "http://www.w3.org/2001/XMLSchema";
     String xmlFilePath = "";
-
+    String personNumber;
     public ApplicantProfileXmlModel(String schemaPath, String xmlFilePath) {
         this.schemaPath = schemaPath;
         this.xmlFilePath = xmlFilePath;
         profileXmlDoc = DOMParser.getDOMDocument(this.schemaLanguage, this.schemaPath, this.xmlFilePath);
+        profileXmlDoc.getFirstChild().getTextContent();
     }
 
+    public String getPersonNumber(){
+        return this.personNumber;
+    }
+    
     public void setCompanyInfo(String companyName, String description, String email, String website, String phone, String businessType) {
         NodeList nodes = profileXmlDoc.getElementsByTagName("ns1:company");
 
@@ -170,7 +175,51 @@ public class ApplicantProfileXmlModel {
         }
     }
     
-    
+    public void addPositionDetails(String companyName, 
+            String position, 
+            String startDate, 
+            String endDate, 
+            int hoursWeek, 
+            String location, 
+            String reasonExit) {
+        NodeList positionNode = profileXmlDoc.getElementsByTagName("ns1:positions");
+
+        if (positionNode.getLength() == 1) // if there are company info nodes
+        {
+            // this will list all positions
+            NodeList positionsList = positionNode.item(0).getChildNodes();
+            
+            for (int i = 0; i < positionsList.getLength(); i++) {
+                if (positionsList.item(i).getFirstChild().getTextContent().equals(positionsList))
+                {
+                    // update entrance date
+                    Node entraceDateNode = DOMParser.findNode(positionsList.item(i).getChildNodes(),"ns1:entranceDate");
+                    entraceDateNode.setTextContent(startDate);
+                    // update exit date
+                    Node exitDateNode = DOMParser.findNode(positionsList.item(i).getChildNodes(),"ns1:exitDate");
+                    exitDateNode.setTextContent(endDate);
+                    // update hours week
+                    Node hoursWeekNode = DOMParser.findNode(positionsList.item(i).getChildNodes(),"ns1:hoursPerWeek");
+                    hoursWeekNode.setTextContent(String.valueOf(hoursWeek));
+                    // update location
+                    Node locationNode = DOMParser.findNode(positionsList.item(i).getChildNodes(),"ns1:location");
+                    locationNode.setTextContent(location);
+                    // update exit reason
+                    Node exitReasonNode = DOMParser.findNode(positionsList.item(i).getChildNodes(),"ns1:exitReason");
+                    exitReasonNode.setTextContent(reasonExit);
+                    break;
+                }
+            }
+            
+            String currentCompanyName;
+            for (int i = 0; i < positionNode.getLength(); i++) {
+                currentCompanyName = positionNode.item(i).getFirstChild().getFirstChild().getTextContent();
+                if (currentCompanyName.equals(companyName)) {
+
+                }
+            }
+        }
+    }
     
     public void setEmploymentRecord(String companyName, Node positions) {
     }

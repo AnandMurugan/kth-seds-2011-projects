@@ -4,12 +4,19 @@
  */
 package mypack;
 
+import employment.po.ExtendedPositionInfoType;
+import employment.po.ObjectFactory;
+import employment.po.Records;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import mypack.SAXParser.CompanyInfoParser;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
@@ -24,7 +31,7 @@ public class ApplicantProfileGenerator {
     String transcriptSchemaPath = "src/schemas/transcriptSchema.xsd";
     static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
     static final String SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
-    
+
     public ApplicantProfileGenerator() {
     }
 
@@ -41,33 +48,31 @@ public class ApplicantProfileGenerator {
     }
 
     // TODO. define the return type of the generated application profile
-    public void Generate(String companiesXmlPath, 
-            String employmentRecordXmlPath, 
-            String resumeXmlPath, 
-            String transcriptXmlPath, 
+    public void Generate(String companiesXmlPath,
+            String employmentRecordXmlPath,
+            String resumeXmlPath,
+            String transcriptXmlPath,
             String profileXmlPath) {
         try {
             // Create Application Profile Model
             ApplicantProfileXmlModel profileModel = new ApplicantProfileXmlModel(this.profileSchemaPath, profileXmlPath);
-                        
+
             //SAX Parsing
             // Create Parser
             SAXParserFactory saxpf = SAXParserFactory.newInstance();
             saxpf.setNamespaceAware(true);
             saxpf.setValidating(true);
             javax.xml.parsers.SAXParser saxp = saxpf.newSAXParser();
-            //saxp.setProperty("http://xml.org/sax/features/validation", true);
+            saxp.setProperty("http://xml.org/sax/features/validation", true);
             // Ensure namespace processing is on (the default)
-            //saxp.setProperty("http://xml.org/sax/features/namespaces", true);
+            saxp.setProperty("http://xml.org/sax/features/namespaces", true);
             saxp.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
                     "http://www.w3.org/2001/XMLSchema");
             //specifies the XML schema document to be used for validation.
             saxp.setProperty(JAXP_SCHEMA_SOURCE, new File("src/schemas/companyInfoXmlSchema.xsd"));
             saxp.parse("src/xml/companiesDatabase.xml", new CompanyInfoParser(profileModel));
+            parseEmpRecordJAXB("employment.po", "employmentRecordDB.xml", profileModel);
             profileModel.overriteXmlFile();
-            
-            
-            
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (ParserConfigurationException ex) {
@@ -75,9 +80,47 @@ public class ApplicantProfileGenerator {
         } catch (SAXException ex) {
             ex.printStackTrace();
         }
+    }
 
+    public void parseEmpRecordJAXB(String context, String filePath, ApplicantProfileXmlModel profileModel) {
+        try {
+            JAXBContext jcontext = JAXBContext.newInstance(context);
+            ObjectFactory objFactory = new ObjectFactory();
 
+            Unmarshaller unmarshaller = jcontext.createUnmarshaller();
+            unmarshaller.setValidating(true);
 
+            Marshaller marshaller = jcontext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+                    new Boolean(true));
+
+            JAXBElement recordsElem = (JAXBElement) unmarshaller.unmarshal(new File(filePath));
+            Records records = (Records) recordsElem.getValue();
+            List<Records.Record> employeeRecords = records.getRecord();
+
+            for (int i = 0; i < employeeRecords.size(); i++) {
+                if (employeeRecords.get(i).getPersonNumber().equals(profileModel.getPersonNumber())) {
+                    List<Records.Record.EmploymentRecord> empRecords = employeeRecords.get(i).getEmploymentRecord();
+                    for (int j = 0; j < empRecords.size(); j++) {
+                        String companyName = empRecords.get(i).getCompanyInfo().getName();
+                        List<ExtendedPositionInfoType> positionList = empRecords.get(i).getPositions().getPosition();
+
+                        for (int k = 0; k < positionList.size(); k++) {
+                            String position = positionList.get(k).getPositionTitle();
+                            String startDate = positionList.get(k).getEntranceDate().toString();
+                            String endDate = positionList.get(k).getExitDate().toString();
+                            int hoursWeek = (int) positionList.get(k).getHoursPerWeek().intValue();
+                            String location = positionList.get(k).getLocation();
+                            String reasonExit = positionList.get(k).getExitReason();
+                            profileModel.addPositionDetails(companyName, position, startDate, endDate, hoursWeek, location, reasonExit);
+                        }
+                    }
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
