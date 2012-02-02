@@ -12,7 +12,7 @@
               xmlns:ns0='http://xml.netbeans.org/schema/employmentRecordXmlSchema'
               xmlns:ns1="http://xml.netbeans.org/schema/commonSchema"
               xsi:schemaLocation='http://xml.netbeans.org/schema/employmentRecordXmlSchema ../schemas/employmentRecordXmlSchema.xsd'>
-    <ns0:record personNumber="">
+    <ns0:record personalNumber="8804041234">
         <ns0:employmentRecord>
             <ns0:companyInfo name="Microsoft">
                 <ns0:contactInfo>
