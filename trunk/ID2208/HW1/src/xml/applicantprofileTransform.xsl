@@ -62,15 +62,9 @@
                             <xsl:element name="email">
                                 <xsl:value-of select="ns1:company_profile/ns1:email"/>
                             </xsl:element>
-                            <xsl:element name="phone">
-                                <xsl:value-of select="ns1:company_profile/ns1:phone"/>
-                            </xsl:element>
-                            <xsl:element name="website">
-                                <xsl:value-of select="ns1:company_profile/ns1:website"/>
-                            </xsl:element>
-                            <xsl:element name="businessType">
-                                <xsl:value-of select="ns1:company_profile/ns1:businessType"/>
-                            </xsl:element>
+                            <xsl:element name="phone"/>
+                            <xsl:element name="website"/>
+                            <xsl:element name="businessType"/>
                         </xsl:element>
                         <xsl:element name="start_date">
                             <xsl:value-of select="ns1:start_date"/>
