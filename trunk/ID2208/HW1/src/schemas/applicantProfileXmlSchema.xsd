@@ -53,14 +53,10 @@
                                         <xsd:element name="start_date" type="xsd:date" />
                                         <xsd:element name="end_date" type="xsd:date" />
                                         <xsd:element name="domain" type="xsd:string" />
-                                        <xsd:element maxOccurs="unbounded" name="project">
+                                         <xsd:element name="positions">
                                             <xsd:complexType>
                                                 <xsd:sequence>
-                                                    <xsd:element name="description" type="xsd:string" />
-                                                    <xsd:element minOccurs="0" name="responsiblities" type="xsd:string" />
-                                                    <xsd:element name="role" type="xsd:string" />
-                                                    <xsd:element minOccurs="0" name="responsibilities" type="xsd:string" />
-                                                    <xsd:element name="technology" type="xsd:string" />
+                                                    <xsd:element name="position" minOccurs="0" maxOccurs="unbounded" type="ns2:extendedPositionInfoType"/>
                                                 </xsd:sequence>
                                             </xsd:complexType>
                                         </xsd:element>

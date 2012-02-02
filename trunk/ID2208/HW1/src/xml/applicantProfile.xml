@@ -51,26 +51,24 @@ and open the template in the editor.
             <ns1:start_date>2007-07-14</ns1:start_date>
             <ns1:end_date>2011-07-14</ns1:end_date>
             <ns1:domain>insurance</ns1:domain>
-            <ns1:project>
-                <ns1:description>online claim processing system</ns1:description>
-                <ns1:role>team member in a team of 4</ns1:role>
-                <ns1:responsibilities>coding</ns1:responsibilities>
-                <ns1:technology>asp.Net, MS SQL Server 2008</ns1:technology>
-            </ns1:project>
-            <ns1:project>
-                <ns1:description>online policy processing for personal auto</ns1:description>
-                <ns1:role>team member in a team of 4</ns1:role>
-                <ns1:responsibilities>analyzing requirements, estimation and coding</ns1:responsibilities>
-                <ns1:technology>asp.Net, MS SQL Server 2008</ns1:technology>
-            </ns1:project>
-            <ns1:project>
-                <ns1:description>
-                    Insurance carrier serving Michigan residents and businesses through independent agents. Provides business, auto, home, mobile home, watercraft, motorcycle insurance policies online.
-                </ns1:description>
-                <ns1:role>module lead in a team of 3</ns1:role>
-                <ns1:responsibilities>analyzing requirements, estimation, coding, code review, functional testing, knowledge transfer training and documentation</ns1:responsibilities>
-                <ns1:technology>asp.net, xml, xslt, vb.net, ms sql server 2010</ns1:technology>
-            </ns1:project>
+             <ns1:positions>
+                <ns1:position>
+                    <ns2:positionTitle>Intern</ns2:positionTitle>
+                    <ns2:entranceDate>2010-01-01</ns2:entranceDate>
+                    <ns2:exitDate>2010-05-30</ns2:exitDate>
+                    <ns2:hoursPerWeek>30</ns2:hoursPerWeek>
+                    <ns2:location>USA</ns2:location>
+                    <ns2:exitReason>promoted</ns2:exitReason>
+                </ns1:position>
+                <ns1:position>
+                    <ns2:positionTitle>developer</ns2:positionTitle>
+                    <ns2:entranceDate>2010-06-01</ns2:entranceDate>
+                    <ns2:exitDate>2011-06-01</ns2:exitDate>
+                    <ns2:hoursPerWeek>40</ns2:hoursPerWeek>
+                    <ns2:location>USA</ns2:location>
+                    <ns2:exitReason>promoted</ns2:exitReason>
+                </ns1:position>
+            </ns1:positions>
         </ns1:company>
     </ns1:professional_experience>
     <ns1:technical_skills>
@@ -135,9 +133,4 @@ and open the template in the editor.
         </ns1:referee_detail>
         <ns1:reference_comment>good</ns1:reference_comment>
     </ns1:reference>
-    <ns1:work_permit>
-        <ns1:type>residence permit</ns1:type>
-        <ns1:expiry_date>2012-10-10</ns1:expiry_date>
-    </ns1:work_permit>
-
 </ns1:applicant_profile>
