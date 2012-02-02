@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+
+<xs:schema version="1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://xml.netbeans.org/schema/commonSchema"
+           xmlns:tns="http://xml.netbeans.org/schema/commonSchema"
+           elementFormDefault="qualified">
+    <xs:complexType name="location">
+        <xs:sequence>
+            <xs:element name="apt" type="xs:string"/>
+            <xs:element name="street" type="xs:string"/>
+            <xs:element name="city" type="xs:string"/>
+            <xs:element name="postalCode" type="xs:integer"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AllLocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:location">
+                <xs:sequence>
+                    <xs:element name="country" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>    
+    </xs:complexType>
+    <xs:simpleType name="email">
+        <xs:restriction base="xs:string"> 
+            <xs:pattern value="[^@]+@[^\.]+\..+"/> 
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="mobile">
+        <xs:restriction base="xs:string"> 
+            <xs:pattern value="[0][0-9]{9}"/> 
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="year">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1900"/>
+            <xs:maxInclusive value="2012"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="courseCode">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[B-K]{2}[0-9]{4}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="credits">
+        <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="1.0"/>
+            <xs:maxInclusive value="10.0"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="grade">
+        <xs:restriction base="xs:string">
+            <xs:length value="1"/>
+            <xs:enumeration value="A"/>
+            <xs:enumeration value="B"/>
+            <xs:enumeration value="C"/>
+            <xs:enumeration value="D"/>
+            <xs:enumeration value="E"/>
+            <xs:enumeration value="F"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
