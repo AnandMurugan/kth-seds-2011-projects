@@ -99,7 +99,7 @@ public class ApplicantProfileGenerator {
             List<Records.Record> employeeRecords = records.getRecord();
 
             for (int i = 0; i < employeeRecords.size(); i++) {
-                if (employeeRecords.get(i).getPersonNumber().equals(profileModel.getPersonNumber())) {
+                if (employeeRecords.get(i).getPersonalNumber().equals(profileModel.getPersonNumber())) {
                     List<Records.Record.EmploymentRecord> empRecords = employeeRecords.get(i).getEmploymentRecord();
                     for (int j = 0; j < empRecords.size(); j++) {
                         String companyName = empRecords.get(i).getCompanyInfo().getName();
