@@ -43,8 +43,7 @@
                 <xsl:value-of select="ns1:resume/ns1:summary"/>
             </xsl:element>
             <xsl:element name="education">
-                <xsl:value-of select="$personalNumber"/>
-                <xsl:for-each select="ns2:transcript/ns2:transcriptRecord[personalNumber=$personalNumber]">
+                <xsl:for-each select="ns2:transcript/ns2:transcriptRecord">
                     <xsl:element name="qualification">
                         <xsl:element name="university">
                             <xsl:value-of select="ns2:university"/>
