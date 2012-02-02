@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<applicant_profile>
+    <name>Anand</name>
+    <mail_id>m.anand@gmail.com</mail_id>
+    <phone_number>0760665443</phone_number>
+    <address>
+        <doorno/>
+        <street/>
+        <county/>
+        <city/>
+    </address>
+    <summary>Description of student's skills and objectives</summary>
+    <education>
+        <qualification>
+            <university>Anna university</university>
+            <degree>Bachelor of engineering</degree>
+            <year>2007</year>
+            <major>computer science</major>
+        </qualification>
+        <gpa>4.0</gpa>
+        <qualification>
+            <university>KTH</university>
+            <degree>Master of science</degree>
+            <year>2012</year>
+            <major>software engineering of distributed systems</major>
+        </qualification>
+        <gpa>4.0</gpa>
+    </education>
+    <professional_experience>
+        <company>
+            <company_profile>
+                <name>csc</name>
+                <description>A multinational IT services and consulting company with 500+ clients across five continents</description>
+                <email/>
+                <phone/>
+                <website/>
+                <businessType/>
+            </company_profile>
+            <start_date>2007-07-14</start_date>
+            <end_date>2011-07-14</end_date>
+            <domain>insurance</domain>
+            <positions>
+                <position>
+                    <positionTitle>intern</positionTitle>
+                    <entranceDate/>
+                    <exitDate/>
+                    <hoursPerWeek/>
+                    <location/>
+                    <exitReason/>
+                </position>
+                <position>
+                    <positionTitle>developer</positionTitle>
+                    <entranceDate/>
+                    <exitDate/>
+                    <hoursPerWeek/>
+                    <location/>
+                    <exitReason/>
+                </position>
+            </positions>
+        </company>
+    </professional_experience>
+    <technical_skills>
+        <skill>
+            <type>system development</type>
+            <technology> asp.net, vb.net, java, c and c++</technology>
+        </skill>
+        <skill>
+            <type>database</type>
+            <technology>MS SQL server and MySQL</technology>
+        </skill>
+        <skill>
+            <type>operating system</type>
+            <technology>windows and linux</technology>
+        </skill>
+    </technical_skills>
+    <certifications>
+        <certification>
+            <name>IBM certified Websphere developer</name>
+            <organization>IBM</organization>
+        </certification>
+        <certification>
+            <name>Insurance Associate INS</name>
+            <organization>Insurance institute of America Association</organization>
+        </certification>
+    </certifications>
+    <extracurricular_activities>
+        <name>Chairman of computer association</name>
+        <achievement>successfully led 250 students as chairman and organized technical symposiums</achievement>
+    </extracurricular_activities>
+</applicant_profile>

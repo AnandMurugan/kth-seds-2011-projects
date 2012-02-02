@@ -93,14 +93,6 @@
             <xsl:element name="technical_skills"></xsl:element>
             <xsl:element name="certifications"></xsl:element>
             <xsl:element name="extracurricular_activities"></xsl:element>
-            <xsl:element name="motivation_letter"></xsl:element>
-            <xsl:element name="preferred_workLocation"></xsl:element>
-            <xsl:element name="job_type_applied"></xsl:element>
-            <xsl:element name="reference"></xsl:element>
-            <xsl:element name="work_permit">
-                <xsl:element name="type"/>
-                <xsl:element name="expiry_date"/>
-            </xsl:element>
         </xsl:element>
     </xsl:template>
 </xsl:stylesheet>

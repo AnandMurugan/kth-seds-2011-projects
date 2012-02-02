@@ -101,36 +101,4 @@ and open the template in the editor.
             <ns1:achievement>successfully led 250 students as chairman and organized technical symposiums</ns1:achievement>
         </ns1:activity>
     </ns1:extracurricular_activities>
-    <ns1:motivation_letter> I am interested in the Coordinator position advertised on XYZ. My resume is enclosed for your review. Given my related experience and excellent capabilities I would appreciate your consideration for this job opening. My skills are an ideal match for this position.</ns1:motivation_letter>
-    <ns1:preferred_workLocation>
-        <ns1:location>
-            <ns1:name>stockholm</ns1:name>
-            <ns1:preference>1</ns1:preference>
-        </ns1:location>
-        <ns1:location>
-            <ns1:name>gothenberg</ns1:name>
-            <ns1:preference>2</ns1:preference>
-        </ns1:location>
-        <ns1:location>
-            <ns1:name>linkoping</ns1:name>
-            <ns1:preference>3</ns1:preference>
-        </ns1:location>
-    </ns1:preferred_workLocation>
-    <ns1:job_type_applied>permanent</ns1:job_type_applied>
-    <ns1:reference>
-        <ns1:referee_detail>
-            <ns1:name>bjorn dahlgren</ns1:name>
-            <ns1:position>associate professor</ns1:position>
-            <ns1:relation_to_candidate>Teacher for 4 courses</ns1:relation_to_candidate>
-        </ns1:referee_detail>
-        <ns1:reference_comment>good</ns1:reference_comment>
-    </ns1:reference>
-    <ns1:reference>
-        <ns1:referee_detail>
-            <ns1:name>edmund</ns1:name>
-            <ns1:position>professor</ns1:position>
-            <ns1:relation_to_candidate>supervisor of degree project</ns1:relation_to_candidate>
-        </ns1:referee_detail>
-        <ns1:reference_comment>good</ns1:reference_comment>
-    </ns1:reference>
 </ns1:applicant_profile>
