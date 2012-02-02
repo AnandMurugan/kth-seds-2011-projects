@@ -105,8 +105,9 @@
                             </xsd:element>
                         </xsd:sequence>
                     </xsd:complexType>
-                </xsd:element>    
+                </xsd:element> 
             </xsd:sequence>
+            <xsd:attribute name="personNumber" type="xsd:string"/>
         </xsd:complexType>    
     </xsd:element>   
 </xsd:schema>
