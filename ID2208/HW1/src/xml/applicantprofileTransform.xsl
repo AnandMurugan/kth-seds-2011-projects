@@ -5,6 +5,9 @@
                 xmlns:cvNs='http://xml.netbeans.org/schema/resume'>
     <xsl:template match="/">
         <xsl:element name="ns1:applicant_profile">
+             <xsl:element name="ns1:personalNumber">
+                <xsl:value-of select="cvNs:resume/cvNs:personalNumber"/>
+            </xsl:element>
             <xsl:element name="ns1:name">
                 <xsl:value-of select="cvNs:resume/cvNs:name"/>
             </xsl:element>
