@@ -9,29 +9,36 @@ and open the template in the editor.
             xmlns:ns2="http://xml.netbeans.org/schema/commonSchema"
             elementFormDefault="qualified">
     <xsd:import namespace="http://xml.netbeans.org/schema/commonSchema"
-                             schemaLocation="commonSchema.xsd"/>
+                schemaLocation="commonSchema.xsd"/>
     <xsd:element name="transcript">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="name" type="xsd:string"/>
-                <xsd:element name="university" type="xsd:string"/>
-                <xsd:element name="degree" type="xsd:string"/>
-                <xsd:element name="year" type="ns2:year"/>
-                <xsd:element name="major" type="xsd:string" />
-                <xsd:element name="courses">
+                <xsd:element name="transcriptRecord">
                     <xsd:complexType>
                         <xsd:sequence>
-                            <xsd:element maxOccurs="unbounded" name="course">
+                            <xsd:element name="name" type="xsd:string"/>
+                            <xsd:element name="university" type="xsd:string"/>
+                            <xsd:element name="degree" type="xsd:string"/>
+                            <xsd:element name="year" type="ns2:year"/>
+                            <xsd:element name="major" type="xsd:string" />
+                            <xsd:element name="courses">
                                 <xsd:complexType>
                                     <xsd:sequence>
-                                        <xsd:element name="name" type="xsd:string" />
-                                        <xsd:element name="code" type="ns2:courseCode"/>
-                                        <xsd:element name="credits" type="ns2:credits"/>
-                                        <xsd:element name="grade" type="ns2:grade"/> 
+                                        <xsd:element maxOccurs="unbounded" name="course">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="name" type="xsd:string" />
+                                                    <xsd:element name="code" type="ns2:courseCode"/>
+                                                    <xsd:element name="credits" type="ns2:credits"/>
+                                                    <xsd:element name="grade" type="ns2:grade"/> 
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
                                     </xsd:sequence>
                                 </xsd:complexType>
                             </xsd:element>
                         </xsd:sequence>
+                        <xsd:attribute name="personalNumber" type="xsd:string"/>
                     </xsd:complexType>
                 </xsd:element>
             </xsd:sequence>

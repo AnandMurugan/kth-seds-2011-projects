@@ -114,10 +114,10 @@ and open the template in the editor.
                                 </xsd:complexType>
                             </xsd:element>
                         </xsd:sequence>
+                        <xsd:attribute name="personalNumber" type="xsd:string"/>
                     </xsd:complexType>
                 </xsd:element>
             </xsd:sequence>
-            <xsd:attribute name="personalNumber" type="xsd:string"/>
         </xsd:complexType>
     </xsd:element>
 </xsd:schema>
