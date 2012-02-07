@@ -92,10 +92,10 @@ public class MyEventuallyPerfectFailureDetector extends ComponentDefinition {
             for (Address p : neighborSet) {
                 if ((!alive.contains(p)) && (!suspected.contains(p))) {
                     suspected.add(p);
-                    trigger(new Suspect(p), epfd);
+                    trigger(new Suspect(p, period), epfd);
                 } else if ((alive.contains(p)) && (suspected.contains(p))) {
                     suspected.remove(p);
-                    trigger(new Restore(p), epfd);
+                    trigger(new Restore(p, period), epfd);
                 }
             }
 
