@@ -13,20 +13,18 @@ import se.sics.kompics.address.Address;
  */
 public final class HeartbeatMessage extends Pp2pDeliver {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1077397194946341231L;
     private final int id;
 
     /**
      * Instantiates a new Heartbeat message.
-     * 
-     * @param source
-     *            the source
-     * @param id
-     *            the id of the heartbeat
+     *
+     * @param source the source
+     * @param id the id of the heartbeat
      */
-    protected HeartbeatMessage(Address source, int id) {
+    public HeartbeatMessage(Address source, int id) {
         super(source);
         this.id = id;
     }
