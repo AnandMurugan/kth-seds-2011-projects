@@ -12,14 +12,13 @@ import se.sics.kompics.address.Address;
  * @author Igor
  */
 public class Restore extends Event {
+    private Address node;
 
-    private Address source;
-
-    public Restore(Address source) {
-        this.source = source;
+    public Restore(Address node) {
+        this.node = node;
     }
 
-    public Address getSource() {
-        return source;
+    public Address getNode() {
+        return node;
     }
 }

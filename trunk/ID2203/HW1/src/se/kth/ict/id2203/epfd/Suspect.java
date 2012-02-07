@@ -12,14 +12,13 @@ import se.sics.kompics.address.Address;
  * @author Igor
  */
 public class Suspect extends Event {
+    private Address node;
 
-    private Address source;
-
-    public Suspect(Address source) {
-        this.source = source;
+    public Suspect(Address node) {
+        this.node = node;
     }
 
-    public Address getSource() {
-        return source;
+    public Address getNode() {
+        return node;
     }
 }
