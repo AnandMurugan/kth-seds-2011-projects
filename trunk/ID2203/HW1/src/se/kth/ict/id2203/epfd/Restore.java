@@ -13,12 +13,18 @@ import se.sics.kompics.address.Address;
  */
 public class Restore extends Event {
     private Address node;
+    private int period;
 
-    public Restore(Address node) {
+    public Restore(Address node, int period) {
         this.node = node;
+        this.period = period;
     }
 
     public Address getNode() {
         return node;
+    }
+
+    public int getPeriod() {
+        return period;
     }
 }

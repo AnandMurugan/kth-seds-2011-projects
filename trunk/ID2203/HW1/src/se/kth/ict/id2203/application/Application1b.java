@@ -59,13 +59,13 @@ public class Application1b extends ComponentDefinition {
     Handler<Suspect> suspectHandler = new Handler<Suspect>() {
         @Override
         public void handle(Suspect event) {
-            logger.info("Node {} suspected of crash", event.getNode());
+            logger.info("Node {} suspected of crash (period={})", event.getNode(), event.getPeriod());
         }
     };
     Handler<Restore> restoreHandler = new Handler<Restore>() {
         @Override
         public void handle(Restore event) {
-            logger.info("Node {} is alive", event.getNode());
+            logger.info("Node {} is alive (period={})", event.getNode(), event.getPeriod());
         }
     };
 

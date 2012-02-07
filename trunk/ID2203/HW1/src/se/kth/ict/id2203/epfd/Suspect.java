@@ -13,12 +13,18 @@ import se.sics.kompics.address.Address;
  */
 public class Suspect extends Event {
     private Address node;
+    private int period;
 
-    public Suspect(Address node) {
+    public Suspect(Address node, int period) {
         this.node = node;
+        this.period = period;
     }
 
     public Address getNode() {
         return node;
+    }
+
+    public int getPeriod() {
+        return period;
     }
 }
