@@ -20,7 +20,7 @@ public final class Assignment1bExecutor {
                 node(3, "127.0.0.1", 10003);
                 node(4, "127.0.0.1", 10004);
 
-                link(1, 2, 3000, 0.5).bidirectional();
+                link(1, 2, 500, 0.5).bidirectional();
                 // link(1, 2, 3000, 0.5);
                 // link(2, 1, 3000, 0.5);
                 // link(3, 2, 3000, 0.5);
@@ -40,14 +40,32 @@ public final class Assignment1bExecutor {
 
         Scenario scenario2 = new Scenario(Assignment1bMain.class) {
             {
-                command(1, "S2500:X").recover(1000);
+                command(1, "S2500:X").recover("S500", 300);
                 command(2, "S500");
                 command(3, "S500");
                 command(4, "S500");
             }
         };
 
-        scenario1.executeOn(topology);
+        Scenario scenario1_lossy = new Scenario(Assignment1bMain_Lossy.class) {
+            {
+                command(1, "S500");
+                command(2, "S500");
+                command(3, "S500");
+                command(4, "S500");
+            }
+        };
+
+        Scenario scenario2_lossy = new Scenario(Assignment1bMain_Lossy.class) {
+            {
+                command(1, "S2500:X").recover("S500", 300);
+                command(2, "S500");
+                command(3, "S500");
+                command(4, "S500");
+            }
+        };
+
+        scenario1_lossy.executeOn(topology);
 
         System.exit(0);
     }
