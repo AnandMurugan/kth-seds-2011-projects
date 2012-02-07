@@ -6,7 +6,6 @@ package se.kth.ict.id2203.epfd.my;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import se.kth.ict.id2203.epfd.EventuallyPerfectFailureDetector;
 import se.kth.ict.id2203.epfd.Restore;
 import se.kth.ict.id2203.epfd.Suspect;
