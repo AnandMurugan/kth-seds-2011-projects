@@ -73,7 +73,7 @@ public class MyEventuallyPerfectFailureDetector extends ComponentDefinition {
         @Override
         public void handle(HeartbeatTimeout event) {
             for (Address p : neighborSet) {
-                trigger(new Pp2pSend(p, new HeartbeatMessage(self, 0)), pp2p);
+                trigger(new Pp2pSend(p, new HeartbeatMessage(self)), pp2p);
             }
 
             ScheduleTimeout heartbeat = new ScheduleTimeout(timeDelay);
