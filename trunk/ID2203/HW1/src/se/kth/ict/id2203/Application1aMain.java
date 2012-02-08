@@ -63,8 +63,8 @@ public class Application1aMain extends ComponentDefinition {
         // initialize the components
         Address self = topology.getSelfAddress();
         Set<Address> neighborSet = topology.getNeighbors(self);
-        int heartbeatInterval = 4000;
-        int checkInterval = 1000;
+        int heartbeatInterval = 1000;
+        int checkInterval = 4000;
 
         trigger(new MinaNetworkInit(self, 5), network.control());
         trigger(new DelayLinkInit(topology), pp2p.control());
