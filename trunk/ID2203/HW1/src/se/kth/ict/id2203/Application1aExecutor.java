@@ -20,12 +20,20 @@ public class Application1aExecutor {
      *            the arguments
      */
     public static final void main(String[] args) {
+
         Topology topology1 = new Topology() {
             {
                 node(1, "127.0.0.1", 22031);
                 node(2, "127.0.0.1", 22032);
-                link(1, 2, 0, 0.5).bidirectional();
-                // link(1, 2, 0, 0.99).bidirectional();
+                node(3, "127.0.0.1", 22033);
+                node(4, "127.0.0.1", 22034);
+
+                //link(1, 2, 500, 0.5).bidirectional();
+                // link(1, 2, 3000, 0.5);
+                // link(2, 1, 3000, 0.5);
+                // link(3, 2, 3000, 0.5);
+                // link(4, 2, 3000, 0.5);
+                defaultLinks(500, 0);
             }
         };
 
@@ -36,7 +44,7 @@ public class Application1aExecutor {
                 node(3, "127.0.0.1", 22033);
                 node(4, "127.0.0.1", 22034);
 
-                link(1, 2, 3000, 0.5).bidirectional();
+                link(1, 2, 500, 0.5).bidirectional();
                 // link(1, 2, 3000, 0.5);
                 // link(2, 1, 3000, 0.5);
                 // link(3, 2, 3000, 0.5);
@@ -44,7 +52,7 @@ public class Application1aExecutor {
                 defaultLinks(500, 0);
             }
         };
-
+        
         Scenario scenario1 = new Scenario(Application1aMain.class) {
             {
                 command(1, "S500");
@@ -56,20 +64,17 @@ public class Application1aExecutor {
 
         Scenario scenario2 = new Scenario(Application1aMain.class) {
             {
-                command(1, "S2500:La1:S300:PA1:X").recover("S400:Pff", 1000);
-                command(2, "S2500:Pb2:S300:LB2");
-                command(3, "S2500:Lc3:S300:PC3");
-                command(4, "S2500:Pd4:S300:LD4");
-            }
-        };
-        
-        Scenario scenario3 = new Scenario(Application1aMain.class) {
-            {
-                command(1,"S1000");
+                command(1, "S3000:X");
+                command(2, "S500");
+                command(3, "S500");
+                command(4, "S3000:X");
+
             }
         };
 
-        scenario1.executeOn(topology2);
+
+        //scenario1.executeOn(topology1);
+        scenario2.executeOn(topology1);
         //scenario3.executeOn(topology2);
         // scenario2.executeOn(topology1);
         // scenario2.executeOn(topology2);
