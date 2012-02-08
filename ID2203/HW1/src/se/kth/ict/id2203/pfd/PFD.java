@@ -92,7 +92,9 @@ public final class PFD extends ComponentDefinition {
     Handler<HeartbeatMessage> handleHeartbeatDeliver = new Handler<HeartbeatMessage>() {
         @Override
         public void handle(HeartbeatMessage e) {
-            aliveNodes.add(e.getSource());
+            if (!aliveNodes.contains(e.getSource())) {
+                aliveNodes.add(e.getSource());
+            }
         }
     };
 }
