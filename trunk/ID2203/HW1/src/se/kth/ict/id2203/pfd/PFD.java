@@ -36,8 +36,9 @@ public final class PFD extends ComponentDefinition {
         subscribe(handleInit, control);
         subscribe(handleHeartbeatTimeout, timer);
         subscribe(handleCheckTimeout, timer);
-        subscribe(handleHeartbeatDeliver, pfd);
+        subscribe(handleHeartbeatDeliver, pp2p);
         detectedNodes = new ArrayList<Address>();
+        aliveNodes = new ArrayList<Address>();
     }
     Handler<PfdInit> handleInit = new Handler<PfdInit>() {
         @Override
@@ -56,7 +57,7 @@ public final class PFD extends ComponentDefinition {
             trigger(hbt, timer);
 
             ScheduleTimeout ct = new ScheduleTimeout(heartbeatInterval + checkInterval);
-            ct.setTimeoutEvent(new HeartbeatTimeout(ct));
+            ct.setTimeoutEvent(new CheckTimeout(ct));
             trigger(ct, timer);
         }
     };
@@ -84,7 +85,7 @@ public final class PFD extends ComponentDefinition {
 
             aliveNodes.clear();
             ScheduleTimeout ct = new ScheduleTimeout(heartbeatInterval + checkInterval);
-            ct.setTimeoutEvent(new HeartbeatTimeout(ct));
+            ct.setTimeoutEvent(new CheckTimeout(ct));
             trigger(ct, timer);
         }
     };
