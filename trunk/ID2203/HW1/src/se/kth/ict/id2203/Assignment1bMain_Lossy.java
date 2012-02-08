@@ -36,14 +36,14 @@ public class Assignment1bMain_Lossy extends ComponentDefinition {
     private static int selfId;
     private static String commandScript;
     Topology topology = Topology.load(System.getProperty("topology"), selfId);
-
+    
     public static void main(String[] args) {
         selfId = Integer.parseInt(args[0]);
         commandScript = args[1];
-
+        
         Kompics.createAndStart(Assignment1bMain_Lossy.class);
     }
-
+    
     public Assignment1bMain_Lossy() {
         // create components
         Component time = create(JavaTimer.class);
@@ -62,7 +62,7 @@ public class Assignment1bMain_Lossy extends ComponentDefinition {
         // initialize the components
         Address self = topology.getSelfAddress();
         Set<Address> neighborSet = topology.getNeighbors(self);
-
+        
         trigger(new MinaNetworkInit(self, 5), network.control());
         trigger(new DelayDropLinkInit(topology, System.nanoTime()), flp2p.control());
         trigger(new MyEventuallyPerfectFailureDetectorInit(TIME_DELAY, DELTA, neighborSet, self), epfd.control());
@@ -71,10 +71,10 @@ public class Assignment1bMain_Lossy extends ComponentDefinition {
         // connect the components
         connect(app.required(EventuallyPerfectFailureDetector.class), epfd.provided(EventuallyPerfectFailureDetector.class));
         connect(app.required(Timer.class), time.provided(Timer.class));
-
+        
         connect(epfd.required(FairLossPointToPointLink.class), flp2p.provided(FairLossPointToPointLink.class));
         connect(epfd.required(Timer.class), time.provided(Timer.class));
-
+        
         connect(flp2p.required(Network.class), network.provided(Network.class));
         connect(flp2p.required(Timer.class), time.provided(Timer.class));
     }

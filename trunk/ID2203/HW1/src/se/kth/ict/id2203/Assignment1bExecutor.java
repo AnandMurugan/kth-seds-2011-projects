@@ -40,7 +40,7 @@ public final class Assignment1bExecutor {
 
         Scenario scenario2 = new Scenario(Assignment1bMain.class) {
             {
-                command(1, "S2500:X").recover("S500", 300);
+                command(1, "S2500:X").recover("S500", 3000);
                 command(2, "S500");
                 command(3, "S500");
                 command(4, "S500");
