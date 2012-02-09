@@ -12,6 +12,6 @@ import se.sics.kompics.PortType;
  */
 public class PerfectFailureDetector extends PortType {
     {
-        indication(PfdCrash.class);
+        indication(Crash.class);
     }
 }

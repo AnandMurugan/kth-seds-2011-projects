@@ -8,9 +8,9 @@ import java.util.Set;
 import org.apache.log4j.PropertyConfigurator;
 import se.kth.ict.id2203.application.Application1a;
 import se.kth.ict.id2203.application.Application1aInit;
-import se.kth.ict.id2203.pfd.PFD;
+import se.kth.ict.id2203.pfd.my.MyPerfectFailureDetector;
 import se.kth.ict.id2203.pfd.PerfectFailureDetector;
-import se.kth.ict.id2203.pfd.PfdInit;
+import se.kth.ict.id2203.pfd.my.MyPerfectFailureDetectorInit;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
 import se.kth.ict.id2203.pp2p.delay.DelayLink;
 import se.kth.ict.id2203.pp2p.delay.DelayLinkInit;
@@ -50,7 +50,7 @@ public class Application1aMain extends ComponentDefinition {
         Component time = create(JavaTimer.class);
         Component network = create(MinaNetwork.class);
         Component pp2p = create(DelayLink.class);
-        Component pfd = create(PFD.class);
+        Component pfd = create(MyPerfectFailureDetector.class);
         Component app = create(Application1a.class);
 
         // handle possible faults in the components
@@ -68,7 +68,7 @@ public class Application1aMain extends ComponentDefinition {
 
         trigger(new MinaNetworkInit(self, 5), network.control());
         trigger(new DelayLinkInit(topology), pp2p.control());
-        trigger(new PfdInit(neighborSet, self, heartbeatInterval, checkInterval), pfd.control());
+        trigger(new MyPerfectFailureDetectorInit(neighborSet, self, heartbeatInterval, checkInterval), pfd.control());
         trigger(new Application1aInit(commandScript, neighborSet, self), app.control());
 
         // connect the components

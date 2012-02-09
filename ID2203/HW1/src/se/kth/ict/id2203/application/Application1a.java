@@ -10,7 +10,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.ict.id2203.pfd.PerfectFailureDetector;
-import se.kth.ict.id2203.pfd.PfdCrash;
+import se.kth.ict.id2203.pfd.Crash;
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
 import se.sics.kompics.Kompics;
@@ -60,9 +60,9 @@ public final class Application1a extends ComponentDefinition {
             doNextCommand();
         }
     };
-    Handler<PfdCrash> handlerCrash = new Handler<PfdCrash>() {
+    Handler<Crash> handlerCrash = new Handler<Crash>() {
         @Override
-        public void handle(PfdCrash e) {
+        public void handle(Crash e) {
             logger.info("A node crash. Address:{}", e.getNodeCrashed().toString());
         }
     };

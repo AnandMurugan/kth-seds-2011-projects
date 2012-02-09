@@ -11,13 +11,13 @@ import se.sics.kompics.address.Address;
  *
  * @author julio
  */
-public final class HeartbeatMessage_Lossy extends Flp2pDeliver {
+public final class HeartbeatMessage_FairLoss extends Flp2pDeliver {
     /**
      * Instantiates a new Heartbeat message.
      *
      * @param source the source
      */
-    public HeartbeatMessage_Lossy(Address source) {
+    public HeartbeatMessage_FairLoss(Address source) {
         super(source);
     }
 }
