@@ -8,9 +8,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.kth.ict.id2203.fd.epfd.EventuallyPerfectFailureDetector;
-import se.kth.ict.id2203.fd.epfd.Restore;
-import se.kth.ict.id2203.fd.epfd.Suspect;
+import se.kth.ict.id2203.broadcast.un.UnBroadcast;
+import se.kth.ict.id2203.broadcast.un.UnDeliver;
+import se.kth.ict.id2203.broadcast.un.UnreliableBroadcast;
 import se.sics.kompics.*;
 import se.sics.kompics.timer.ScheduleTimeout;
 import se.sics.kompics.timer.Timer;
@@ -19,22 +19,21 @@ import se.sics.kompics.timer.Timer;
  *
  * @author Igor
  */
-public class Application1b extends ComponentDefinition {
+public class Application2 extends ComponentDefinition {
     //ports
-    Positive<EventuallyPerfectFailureDetector> epfd = requires(EventuallyPerfectFailureDetector.class);
+    Positive<UnreliableBroadcast> un = requires(UnreliableBroadcast.class);
     Positive<Timer> timer = requires(Timer.class);
     //logger
-    private static final Logger logger = LoggerFactory.getLogger(Application1b.class);
+    private static final Logger logger = LoggerFactory.getLogger(Application2.class);
     //local variables
     private String[] commands;
     private int lastCommand;
 
-    public Application1b() {
+    public Application2() {
         subscribe(initHandler, control);
         subscribe(startHandler, control);
         subscribe(continueHandler, timer);
-        subscribe(suspectHandler, epfd);
-        subscribe(restoreHandler, epfd);
+        subscribe(unDeliverHandler, un);
     }
     //handlers
     Handler<ApplicationInit> initHandler = new Handler<ApplicationInit>() {
@@ -56,16 +55,10 @@ public class Application1b extends ComponentDefinition {
             doNextCommand();
         }
     };
-    Handler<Suspect> suspectHandler = new Handler<Suspect>() {
+    Handler<UnDeliver> unDeliverHandler = new Handler<UnDeliver>() {
         @Override
-        public void handle(Suspect event) {
-            logger.info("Node {} suspected of crash (period={})", event.getNode(), event.getPeriod());
-        }
-    };
-    Handler<Restore> restoreHandler = new Handler<Restore>() {
-        @Override
-        public void handle(Restore event) {
-            logger.info("Node {} is alive (period={})", event.getNode(), event.getPeriod());
+        public void handle(UnDeliver event) {
+            logger.info("Received broadcast message '{}' from {}", event.getMessage(), event.getSource());
         }
     };
 
@@ -108,6 +101,9 @@ public class Application1b extends ComponentDefinition {
         } else if (cmd.equals("help")) {
             doHelp();
             doNextCommand();
+        } else if (cmd.startsWith("B")) {
+            doBroadcast(cmd.substring(1));
+            doNextCommand();
         } else {
             logger.info("Bad command: '{}'. Try 'help'", cmd);
             doNextCommand();
@@ -115,8 +111,9 @@ public class Application1b extends ComponentDefinition {
     }
 
     private void doHelp() {
-        logger.info("Available commands: S<n>, help, X");
+        logger.info("Available commands: S<n>, B<m> help, X");
         logger.info("Sn: sleeps 'n' milliseconds before the next command");
+        logger.info("Bm: broadcasts message 'm'");
         logger.info("help: shows this help message");
         logger.info("X: terminates this process");
     }
@@ -134,5 +131,10 @@ public class Application1b extends ComponentDefinition {
         System.out.close();
         System.err.close();
         Kompics.shutdown();
+    }
+
+    private void doBroadcast(String message) {
+        logger.info("Broadcasting message '{}'...", message);
+        trigger(new UnBroadcast(message), un);
     }
 }

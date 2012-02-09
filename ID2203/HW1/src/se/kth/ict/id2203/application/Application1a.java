@@ -6,7 +6,6 @@ package se.kth.ict.id2203.application;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.ict.id2203.fd.pfd.PerfectFailureDetector;
@@ -16,7 +15,6 @@ import se.sics.kompics.Handler;
 import se.sics.kompics.Kompics;
 import se.sics.kompics.Positive;
 import se.sics.kompics.Start;
-import se.sics.kompics.address.Address;
 import se.sics.kompics.timer.ScheduleTimeout;
 import se.sics.kompics.timer.Timer;
 
@@ -30,8 +28,6 @@ public final class Application1a extends ComponentDefinition {
     private static final Logger logger = LoggerFactory.getLogger(Application1a.class);
     private String[] commands;
     private int lastCommand;
-    private Set<Address> neighborSet;
-    private Address self;
 
     public Application1a() {
         subscribe(handlerInit, control);
@@ -40,16 +36,15 @@ public final class Application1a extends ComponentDefinition {
         subscribe(handlerCrash, pfd);
 
     }
-    Handler<Application1aInit> handlerInit = new Handler<Application1aInit>() {
+    Handler<ApplicationInit> handlerInit = new Handler<ApplicationInit>() {
         @Override
-        public void handle(Application1aInit e) {
+        public void handle(ApplicationInit e) {
             commands = e.getCommandScript().split(":");
             lastCommand = -1;
-            neighborSet = e.getNeighborSet();
-            self = e.getSelf();
         }
     };
     Handler<ApplicationContinue> handlerContinue = new Handler<ApplicationContinue>() {
+        @Override
         public void handle(ApplicationContinue event) {
             doNextCommand();
         }
