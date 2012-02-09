@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://xml.netbeans.org/schema/employmentRecordXmlSchema"
+            xmlns:ns2="http://xml.netbeans.org/schema/commonSchema"
+            elementFormDefault="qualified">
+    <xsd:import namespace="http://xml.netbeans.org/schema/commonSchema"
+                schemaLocation="commonSchema.xsd"/>
+    <xsd:element  name="records">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="record" maxOccurs="unbounded">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="employmentRecord" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="companyInfo">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="contactInfo" type="ns2:contactInformationType"/>
+                                                </xsd:sequence>
+                                                <xsd:attribute name="name"/>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="startDate" type="ns2:minBoundedDate"/>
+                                        <xsd:element name="endDate" type="ns2:minBoundedDate"/>
+                                        <xsd:element name="positions">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="position" minOccurs="0" maxOccurs="unbounded" type="ns2:extendedPositionInfoType"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                        <xsd:attribute name="personalNumber" type="xsd:string"/>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>    
+    </xsd:element>   
+</xsd:schema>
