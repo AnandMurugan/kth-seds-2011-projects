@@ -39,6 +39,8 @@ public class RecruitmentMessageHandler implements SOAPHandler<SOAPMessageContext
                 dfactory.setNamespaceAware(true);
                 dfactory.setValidating(true);
                 DocumentBuilder builder = dfactory.newDocumentBuilder();
+                XSLTTransformer xslTransform = new XSLTTransformer();
+                xslTransform.transform(keywords);
                 Document document = builder.parse("C:/Users/julio/Documents/Maestria KTH/Courses/Spring2012/ID2208 Programming Web Services/Homeworks/WSP_HW2_FINAL/src/java/xml/jobsOut.xml");
                 SOAPBodyElement docElement = body.addDocument(document);
             } catch (SOAPException | SAXException | IOException | ParserConfigurationException ex) {
