@@ -6,11 +6,11 @@ package se.kth.ict.id2203;
 
 import java.util.Set;
 import org.apache.log4j.PropertyConfigurator;
-import se.kth.ict.id2203.application.Application1b;
+import se.kth.ict.id2203.application.Application2;
 import se.kth.ict.id2203.application.ApplicationInit;
-import se.kth.ict.id2203.fd.epfd.EventuallyPerfectFailureDetector;
-import se.kth.ict.id2203.fd.epfd.my.MyEventuallyPerfectFailureDetectorInit;
-import se.kth.ict.id2203.fd.epfd.my.MyEventuallyPerfectFailureDetector_FairLoss;
+import se.kth.ict.id2203.broadcast.un.UnreliableBroadcast;
+import se.kth.ict.id2203.broadcast.un.simple.SimpleUnreliableBroadcast;
+import se.kth.ict.id2203.broadcast.un.simple.SimpleUnreliableBroadcastInit;
 import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
 import se.kth.ict.id2203.flp2p.delay.DelayDropLink;
 import se.kth.ict.id2203.flp2p.delay.DelayDropLinkInit;
@@ -27,54 +27,51 @@ import se.sics.kompics.timer.java.JavaTimer;
  *
  * @author Igor
  */
-public class Assignment1bMain_FairLoss extends ComponentDefinition {
+public class Assignment2Main extends ComponentDefinition {
     static {
         PropertyConfigurator.configureAndWatch("log4j.properties");
     }
-    private static final int TIME_DELAY = 1000;
-    private static final int DELTA = 500;
     private static int selfId;
     private static String commandScript;
     Topology topology = Topology.load(System.getProperty("topology"), selfId);
-    
+
     public static void main(String[] args) {
         selfId = Integer.parseInt(args[0]);
         commandScript = args[1];
-        
-        Kompics.createAndStart(Assignment1bMain_FairLoss.class);
+
+        Kompics.createAndStart(Assignment2Main.class);
     }
-    
-    public Assignment1bMain_FairLoss() {
+
+    public Assignment2Main() {
         // create components
         Component time = create(JavaTimer.class);
         Component network = create(MinaNetwork.class);
         Component flp2p = create(DelayDropLink.class);
-        Component epfd = create(MyEventuallyPerfectFailureDetector_FairLoss.class);
-        Component app = create(Application1b.class);
+        Component un = create(SimpleUnreliableBroadcast.class);
+        Component app = create(Application2.class);
 
         // handle possible faults in the components
         subscribe(faultHandler, time.control());
         subscribe(faultHandler, network.control());
         subscribe(faultHandler, flp2p.control());
-        subscribe(faultHandler, epfd.control());
+        subscribe(faultHandler, un.control());
         subscribe(faultHandler, app.control());
 
         // initialize the components
         Address self = topology.getSelfAddress();
         Set<Address> neighborSet = topology.getNeighbors(self);
-        
+
         trigger(new MinaNetworkInit(self, 5), network.control());
         trigger(new DelayDropLinkInit(topology, System.nanoTime()), flp2p.control());
-        trigger(new MyEventuallyPerfectFailureDetectorInit(TIME_DELAY, DELTA, neighborSet, self), epfd.control());
+        trigger(new SimpleUnreliableBroadcastInit(neighborSet, self), un.control());
         trigger(new ApplicationInit(commandScript), app.control());
 
         // connect the components
-        connect(app.required(EventuallyPerfectFailureDetector.class), epfd.provided(EventuallyPerfectFailureDetector.class));
+        connect(app.required(UnreliableBroadcast.class), un.provided(UnreliableBroadcast.class));
         connect(app.required(Timer.class), time.provided(Timer.class));
-        
-        connect(epfd.required(FairLossPointToPointLink.class), flp2p.provided(FairLossPointToPointLink.class));
-        connect(epfd.required(Timer.class), time.provided(Timer.class));
-        
+
+        connect(un.required(FairLossPointToPointLink.class), flp2p.provided(FairLossPointToPointLink.class));
+
         connect(flp2p.required(Network.class), network.provided(Network.class));
         connect(flp2p.required(Timer.class), time.provided(Timer.class));
     }

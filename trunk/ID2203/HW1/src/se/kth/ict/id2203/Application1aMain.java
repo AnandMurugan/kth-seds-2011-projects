@@ -7,7 +7,7 @@ package se.kth.ict.id2203;
 import java.util.Set;
 import org.apache.log4j.PropertyConfigurator;
 import se.kth.ict.id2203.application.Application1a;
-import se.kth.ict.id2203.application.Application1aInit;
+import se.kth.ict.id2203.application.ApplicationInit;
 import se.kth.ict.id2203.fd.pfd.my.MyPerfectFailureDetector;
 import se.kth.ict.id2203.fd.pfd.PerfectFailureDetector;
 import se.kth.ict.id2203.fd.pfd.my.MyPerfectFailureDetectorInit;
@@ -59,7 +59,7 @@ public class Application1aMain extends ComponentDefinition {
         subscribe(handleFault, pp2p.control());
         subscribe(handleFault, app.control());
         subscribe(handleFault, pfd.control());
-        
+
         // initialize the components
         Address self = topology.getSelfAddress();
         Set<Address> neighborSet = topology.getNeighbors(self);
@@ -69,7 +69,7 @@ public class Application1aMain extends ComponentDefinition {
         trigger(new MinaNetworkInit(self, 5), network.control());
         trigger(new DelayLinkInit(topology), pp2p.control());
         trigger(new MyPerfectFailureDetectorInit(neighborSet, self, heartbeatInterval, checkInterval), pfd.control());
-        trigger(new Application1aInit(commandScript, neighborSet, self), app.control());
+        trigger(new ApplicationInit(commandScript), app.control());
 
         // connect the components
         connect(app.required(PerfectFailureDetector.class), pfd.provided(PerfectFailureDetector.class));
@@ -82,6 +82,7 @@ public class Application1aMain extends ComponentDefinition {
         connect(pp2p.required(Network.class), network.provided(Network.class));
     }
     Handler<Fault> handleFault = new Handler<Fault>() {
+        @Override
         public void handle(Fault fault) {
             fault.getFault().printStackTrace(System.err);
         }

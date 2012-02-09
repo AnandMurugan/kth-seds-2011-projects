@@ -4,11 +4,11 @@
  */
 package se.kth.ict.id2203.broadcast.pb;
 
-import se.sics.kompics.PortType;
+import se.sics.kompics.Event;
 
 /**
  *
  * @author Igor
  */
-public class ProbabilisticBroadcast extends PortType {
+public class PbBroadcast extends Event {
 }

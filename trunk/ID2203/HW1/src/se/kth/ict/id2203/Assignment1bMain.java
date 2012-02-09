@@ -7,7 +7,7 @@ package se.kth.ict.id2203;
 import java.util.Set;
 import org.apache.log4j.PropertyConfigurator;
 import se.kth.ict.id2203.application.Application1b;
-import se.kth.ict.id2203.application.Application1bInit;
+import se.kth.ict.id2203.application.ApplicationInit;
 import se.kth.ict.id2203.fd.epfd.EventuallyPerfectFailureDetector;
 import se.kth.ict.id2203.fd.epfd.my.MyEventuallyPerfectFailureDetector;
 import se.kth.ict.id2203.fd.epfd.my.MyEventuallyPerfectFailureDetectorInit;
@@ -66,7 +66,7 @@ public class Assignment1bMain extends ComponentDefinition {
         trigger(new MinaNetworkInit(self, 5), network.control());
         trigger(new DelayLinkInit(topology), pp2p.control());
         trigger(new MyEventuallyPerfectFailureDetectorInit(TIME_DELAY, DELTA, neighborSet, self), epfd.control());
-        trigger(new Application1bInit(commandScript), app.control());
+        trigger(new ApplicationInit(commandScript), app.control());
 
         // connect the components
         connect(app.required(EventuallyPerfectFailureDetector.class), epfd.provided(EventuallyPerfectFailureDetector.class));

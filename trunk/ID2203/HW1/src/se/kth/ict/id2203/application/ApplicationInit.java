@@ -10,10 +10,10 @@ import se.sics.kompics.Init;
  *
  * @author Igor
  */
-public class Application1bInit extends Init {
+public class ApplicationInit extends Init {
     private final String commandScript;
 
-    public Application1bInit(String commandScript) {
+    public ApplicationInit(String commandScript) {
         this.commandScript = commandScript;
     }
 
