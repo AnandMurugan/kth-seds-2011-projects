@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jobs>
+    <job>
+        <id>T001</id>
+        <type>full time</type>
+        <description>software engineer</description>
+        <id>T001</id>
+        <category>IT</category>
+        <location>Sweden</location>
+        <deadline_for_application>2012-03-02</deadline_for_application>
+    </job>
+    <job>
+        <id>T003</id>
+        <type>part time</type>
+        <description>researcher</description>
+        <id>T003</id>
+        <category>IT</category>
+        <location>Sweden</location>
+        <deadline_for_application>2012-03-03</deadline_for_application>
+    </job>
+</jobs>
