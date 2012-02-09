@@ -2,11 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.kth.ict.id2203.pfd;
+package se.kth.ict.id2203.pfd.my;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
+import se.kth.ict.id2203.pfd.CheckTimeout;
+import se.kth.ict.id2203.pfd.Crash;
+import se.kth.ict.id2203.pfd.HeartbeatMessage;
+import se.kth.ict.id2203.pfd.HeartbeatTimeout;
+import se.kth.ict.id2203.pfd.PerfectFailureDetector;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
 import se.kth.ict.id2203.pp2p.Pp2pSend;
 import se.sics.kompics.ComponentDefinition;
@@ -21,36 +25,34 @@ import se.sics.kompics.timer.Timer;
  *
  * @author julio
  */
-public final class PFD extends ComponentDefinition {
+public final class MyPerfectFailureDetector extends ComponentDefinition {
     Negative<PerfectFailureDetector> pfd = provides(PerfectFailureDetector.class);
     Positive<PerfectPointToPointLink> pp2p = requires(PerfectPointToPointLink.class);
     Positive<Timer> timer = requires(Timer.class);
     private Set<Address> neighborNodes;
-    private List<Address> aliveNodes;
-    private List<Address> detectedNodes;
+    private Set<Address> aliveNodes;
+    private Set<Address> detectedNodes;
     private int heartbeatInterval;
     private int checkInterval;
     private Address self;
 
-    public PFD() {
+    public MyPerfectFailureDetector() {
         subscribe(handleInit, control);
         subscribe(handleHeartbeatTimeout, timer);
         subscribe(handleCheckTimeout, timer);
         subscribe(handleHeartbeatDeliver, pp2p);
-        detectedNodes = new ArrayList<Address>();
-        aliveNodes = new ArrayList<Address>();
+        detectedNodes = new HashSet<Address>();
+        aliveNodes = new HashSet<Address>();
     }
-    Handler<PfdInit> handleInit = new Handler<PfdInit>() {
+    Handler<MyPerfectFailureDetectorInit> handleInit = new Handler<MyPerfectFailureDetectorInit>() {
         @Override
-        public void handle(PfdInit e) {
+        public void handle(MyPerfectFailureDetectorInit e) {
             neighborNodes = e.getNeighborSet();
             self = e.getSelf();
             heartbeatInterval = e.getHeartbeatInterval();
             checkInterval = e.getCheckInterval();
 
-            for (Address addr : neighborNodes) {
-                aliveNodes.add(addr);
-            }
+            aliveNodes.addAll(neighborNodes);
 
             ScheduleTimeout hbt = new ScheduleTimeout(heartbeatInterval);
             hbt.setTimeoutEvent(new HeartbeatTimeout(hbt));
@@ -79,7 +81,7 @@ public final class PFD extends ComponentDefinition {
             for (Address addr : neighborNodes) {
                 if (!aliveNodes.contains(addr) && (!detectedNodes.contains(addr))) {
                     detectedNodes.add(addr);
-                    trigger(new PfdCrash(addr), pfd);
+                    trigger(new Crash(addr), pfd);
                 }
             }
 
@@ -92,9 +94,7 @@ public final class PFD extends ComponentDefinition {
     Handler<HeartbeatMessage> handleHeartbeatDeliver = new Handler<HeartbeatMessage>() {
         @Override
         public void handle(HeartbeatMessage e) {
-            if (!aliveNodes.contains(e.getSource())) {
-                aliveNodes.add(e.getSource());
-            }
+            aliveNodes.add(e.getSource());
         }
     };
 }

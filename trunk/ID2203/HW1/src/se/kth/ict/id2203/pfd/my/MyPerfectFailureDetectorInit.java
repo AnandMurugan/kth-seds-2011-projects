@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.kth.ict.id2203.pfd;
+package se.kth.ict.id2203.pfd.my;
 
 import java.util.Set;
 import se.sics.kompics.Init;
@@ -12,13 +12,13 @@ import se.sics.kompics.address.Address;
  *
  * @author julio
  */
-public final class PfdInit extends Init {
+public final class MyPerfectFailureDetectorInit extends Init {
     private final Set<Address> neighborSet;
     private final Address self;
     private final int heartbeatInterval;
     private final int checkInterval;
 
-    public PfdInit(Set<Address> neighborSet, Address self, int heartbeatInterval, int checkInterval) {
+    public MyPerfectFailureDetectorInit(Set<Address> neighborSet, Address self, int heartbeatInterval, int checkInterval) {
         this.neighborSet = neighborSet;
         this.self = self;
         this.heartbeatInterval = heartbeatInterval;

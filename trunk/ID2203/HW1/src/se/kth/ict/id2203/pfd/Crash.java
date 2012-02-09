@@ -11,10 +11,10 @@ import se.sics.kompics.address.Address;
  *
  * @author julio
  */
-public final class PfdCrash extends Event {
+public final class Crash extends Event {
     private final Address nodeCrashed;
 
-    public PfdCrash(Address nodeCrashed) {
+    public Crash(Address nodeCrashed) {
         this.nodeCrashed = nodeCrashed;
     }
 

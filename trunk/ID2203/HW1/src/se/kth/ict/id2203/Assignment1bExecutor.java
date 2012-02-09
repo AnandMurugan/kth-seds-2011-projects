@@ -47,7 +47,7 @@ public final class Assignment1bExecutor {
             }
         };
 
-        Scenario scenario1_lossy = new Scenario(Assignment1bMain_Lossy.class) {
+        Scenario scenario1_lossy = new Scenario(Assignment1bMain_FairLoss.class) {
             {
                 command(1, "S500");
                 command(2, "S500");
@@ -56,9 +56,9 @@ public final class Assignment1bExecutor {
             }
         };
 
-        Scenario scenario2_lossy = new Scenario(Assignment1bMain_Lossy.class) {
+        Scenario scenario2_lossy = new Scenario(Assignment1bMain_FairLoss.class) {
             {
-                command(1, "S2500:X").recover("S500", 300);
+                command(1, "S2500:X").recover("S500", 3000);
                 command(2, "S500");
                 command(3, "S500");
                 command(4, "S500");

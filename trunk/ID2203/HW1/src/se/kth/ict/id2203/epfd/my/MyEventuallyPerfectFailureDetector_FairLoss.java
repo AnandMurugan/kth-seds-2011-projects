@@ -12,7 +12,7 @@ import se.kth.ict.id2203.epfd.Suspect;
 import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
 import se.kth.ict.id2203.flp2p.Flp2pSend;
 import se.kth.ict.id2203.pfd.CheckTimeout;
-import se.kth.ict.id2203.pfd.HeartbeatMessage_Lossy;
+import se.kth.ict.id2203.pfd.HeartbeatMessage_FairLoss;
 import se.kth.ict.id2203.pfd.HeartbeatTimeout;
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
@@ -26,7 +26,7 @@ import se.sics.kompics.timer.Timer;
  *
  * @author Igor
  */
-public class MyEventuallyPerfectFailureDetector_Lossy extends ComponentDefinition {
+public class MyEventuallyPerfectFailureDetector_FairLoss extends ComponentDefinition {
     //ports
     Negative<EventuallyPerfectFailureDetector> epfd = provides(EventuallyPerfectFailureDetector.class);
     Positive<FairLossPointToPointLink> flp2p = requires(FairLossPointToPointLink.class);
@@ -40,7 +40,7 @@ public class MyEventuallyPerfectFailureDetector_Lossy extends ComponentDefinitio
     private int timeDelay;
     private int delta;
 
-    public MyEventuallyPerfectFailureDetector_Lossy() {
+    public MyEventuallyPerfectFailureDetector_FairLoss() {
         subscribe(initHandler, control);
         subscribe(heartbeatMessageHandler, flp2p);
         subscribe(checkTimeoutHandler, timer);
@@ -72,7 +72,7 @@ public class MyEventuallyPerfectFailureDetector_Lossy extends ComponentDefinitio
         @Override
         public void handle(HeartbeatTimeout event) {
             for (Address p : neighborSet) {
-                trigger(new Flp2pSend(p, new HeartbeatMessage_Lossy(self)), flp2p);
+                trigger(new Flp2pSend(p, new HeartbeatMessage_FairLoss(self)), flp2p);
             }
 
             ScheduleTimeout heartbeat = new ScheduleTimeout(timeDelay);
@@ -106,9 +106,9 @@ public class MyEventuallyPerfectFailureDetector_Lossy extends ComponentDefinitio
             trigger(check, timer);
         }
     };
-    Handler<HeartbeatMessage_Lossy> heartbeatMessageHandler = new Handler<HeartbeatMessage_Lossy>() {
+    Handler<HeartbeatMessage_FairLoss> heartbeatMessageHandler = new Handler<HeartbeatMessage_FairLoss>() {
         @Override
-        public void handle(HeartbeatMessage_Lossy event) {
+        public void handle(HeartbeatMessage_FairLoss event) {
             alive.add(event.getSource());
         }
     };

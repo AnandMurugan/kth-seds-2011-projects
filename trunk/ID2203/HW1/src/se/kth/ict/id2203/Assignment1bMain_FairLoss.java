@@ -10,7 +10,7 @@ import se.kth.ict.id2203.application.Application1b;
 import se.kth.ict.id2203.application.Application1bInit;
 import se.kth.ict.id2203.epfd.EventuallyPerfectFailureDetector;
 import se.kth.ict.id2203.epfd.my.MyEventuallyPerfectFailureDetectorInit;
-import se.kth.ict.id2203.epfd.my.MyEventuallyPerfectFailureDetector_Lossy;
+import se.kth.ict.id2203.epfd.my.MyEventuallyPerfectFailureDetector_FairLoss;
 import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
 import se.kth.ict.id2203.flp2p.delay.DelayDropLink;
 import se.kth.ict.id2203.flp2p.delay.DelayDropLinkInit;
@@ -27,7 +27,7 @@ import se.sics.kompics.timer.java.JavaTimer;
  *
  * @author Igor
  */
-public class Assignment1bMain_Lossy extends ComponentDefinition {
+public class Assignment1bMain_FairLoss extends ComponentDefinition {
     static {
         PropertyConfigurator.configureAndWatch("log4j.properties");
     }
@@ -41,15 +41,15 @@ public class Assignment1bMain_Lossy extends ComponentDefinition {
         selfId = Integer.parseInt(args[0]);
         commandScript = args[1];
         
-        Kompics.createAndStart(Assignment1bMain_Lossy.class);
+        Kompics.createAndStart(Assignment1bMain_FairLoss.class);
     }
     
-    public Assignment1bMain_Lossy() {
+    public Assignment1bMain_FairLoss() {
         // create components
         Component time = create(JavaTimer.class);
         Component network = create(MinaNetwork.class);
         Component flp2p = create(DelayDropLink.class);
-        Component epfd = create(MyEventuallyPerfectFailureDetector_Lossy.class);
+        Component epfd = create(MyEventuallyPerfectFailureDetector_FairLoss.class);
         Component app = create(Application1b.class);
 
         // handle possible faults in the components
