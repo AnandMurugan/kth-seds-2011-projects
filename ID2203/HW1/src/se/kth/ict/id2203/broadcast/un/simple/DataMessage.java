@@ -14,7 +14,7 @@ import se.sics.kompics.address.Address;
 public class DataMessage extends Flp2pDeliver {
     private final String message;
 
-    protected DataMessage(Address source, String message) {
+    public DataMessage(Address source, String message) {
         super(source);
         this.message = message;
     }

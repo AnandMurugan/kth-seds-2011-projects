@@ -8,9 +8,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.kth.ict.id2203.broadcast.un.UnBroadcast;
-import se.kth.ict.id2203.broadcast.un.UnDeliver;
-import se.kth.ict.id2203.broadcast.un.UnreliableBroadcast;
+import se.kth.ict.id2203.broadcast.pb.PbBroadcast;
+import se.kth.ict.id2203.broadcast.pb.PbDeliver;
+import se.kth.ict.id2203.broadcast.pb.ProbabilisticBroadcast;
 import se.sics.kompics.*;
 import se.sics.kompics.timer.ScheduleTimeout;
 import se.sics.kompics.timer.Timer;
@@ -21,7 +21,7 @@ import se.sics.kompics.timer.Timer;
  */
 public class Application2 extends ComponentDefinition {
     //ports
-    Positive<UnreliableBroadcast> un = requires(UnreliableBroadcast.class);
+    Positive<ProbabilisticBroadcast> pb = requires(ProbabilisticBroadcast.class);
     Positive<Timer> timer = requires(Timer.class);
     //logger
     private static final Logger logger = LoggerFactory.getLogger(Application2.class);
@@ -33,7 +33,7 @@ public class Application2 extends ComponentDefinition {
         subscribe(initHandler, control);
         subscribe(startHandler, control);
         subscribe(continueHandler, timer);
-        subscribe(unDeliverHandler, un);
+        subscribe(pbDeliverHandler, pb);
     }
     //handlers
     Handler<ApplicationInit> initHandler = new Handler<ApplicationInit>() {
@@ -55,9 +55,9 @@ public class Application2 extends ComponentDefinition {
             doNextCommand();
         }
     };
-    Handler<UnDeliver> unDeliverHandler = new Handler<UnDeliver>() {
+    Handler<PbDeliver> pbDeliverHandler = new Handler<PbDeliver>() {
         @Override
-        public void handle(UnDeliver event) {
+        public void handle(PbDeliver event) {
             logger.info("Received broadcast message '{}' from {}", event.getMessage(), event.getSource());
         }
     };
@@ -135,6 +135,6 @@ public class Application2 extends ComponentDefinition {
 
     private void doBroadcast(String message) {
         logger.info("Broadcasting message '{}'...", message);
-        trigger(new UnBroadcast(message), un);
+        trigger(new PbBroadcast(message), pb);
     }
 }

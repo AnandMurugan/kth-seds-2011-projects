@@ -8,6 +8,9 @@ import java.util.Set;
 import org.apache.log4j.PropertyConfigurator;
 import se.kth.ict.id2203.application.Application2;
 import se.kth.ict.id2203.application.ApplicationInit;
+import se.kth.ict.id2203.broadcast.pb.ProbabilisticBroadcast;
+import se.kth.ict.id2203.broadcast.pb.lazy.LazyProbabilisticBroadcast;
+import se.kth.ict.id2203.broadcast.pb.lazy.LazyProbabilisticBroadcastInit;
 import se.kth.ict.id2203.broadcast.un.UnreliableBroadcast;
 import se.kth.ict.id2203.broadcast.un.simple.SimpleUnreliableBroadcast;
 import se.kth.ict.id2203.broadcast.un.simple.SimpleUnreliableBroadcastInit;
@@ -31,6 +34,10 @@ public class Assignment2Main extends ComponentDefinition {
     static {
         PropertyConfigurator.configureAndWatch("log4j.properties");
     }
+    private final static int FANOUT = 3;
+    private final static float ALPHA = 0.5f;
+    private final static int DELTA = 5000;
+    private final static int MAX_ROUNDS = 3;
     private static int selfId;
     private static String commandScript;
     Topology topology = Topology.load(System.getProperty("topology"), selfId);
@@ -48,6 +55,7 @@ public class Assignment2Main extends ComponentDefinition {
         Component network = create(MinaNetwork.class);
         Component flp2p = create(DelayDropLink.class);
         Component un = create(SimpleUnreliableBroadcast.class);
+        Component pb = create(LazyProbabilisticBroadcast.class);
         Component app = create(Application2.class);
 
         // handle possible faults in the components
@@ -55,6 +63,7 @@ public class Assignment2Main extends ComponentDefinition {
         subscribe(faultHandler, network.control());
         subscribe(faultHandler, flp2p.control());
         subscribe(faultHandler, un.control());
+        subscribe(faultHandler, pb.control());
         subscribe(faultHandler, app.control());
 
         // initialize the components
@@ -64,11 +73,16 @@ public class Assignment2Main extends ComponentDefinition {
         trigger(new MinaNetworkInit(self, 5), network.control());
         trigger(new DelayDropLinkInit(topology, System.nanoTime()), flp2p.control());
         trigger(new SimpleUnreliableBroadcastInit(neighborSet, self), un.control());
+        trigger(new LazyProbabilisticBroadcastInit(neighborSet, self, System.nanoTime(), FANOUT, ALPHA, DELTA, MAX_ROUNDS), pb.control());
         trigger(new ApplicationInit(commandScript), app.control());
 
         // connect the components
-        connect(app.required(UnreliableBroadcast.class), un.provided(UnreliableBroadcast.class));
+        connect(app.required(ProbabilisticBroadcast.class), pb.provided(ProbabilisticBroadcast.class));
         connect(app.required(Timer.class), time.provided(Timer.class));
+
+        connect(pb.required(UnreliableBroadcast.class), un.provided(UnreliableBroadcast.class));
+        connect(pb.required(FairLossPointToPointLink.class), flp2p.provided(FairLossPointToPointLink.class));
+        connect(pb.required(Timer.class), time.provided(Timer.class));
 
         connect(un.required(FairLossPointToPointLink.class), flp2p.provided(FairLossPointToPointLink.class));
 
