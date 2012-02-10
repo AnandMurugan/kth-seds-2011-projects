@@ -11,4 +11,13 @@ import se.sics.kompics.Event;
  * @author Igor
  */
 public class PbBroadcast extends Event {
+    private final String message;
+
+    public PbBroadcast(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }
