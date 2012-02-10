@@ -111,7 +111,7 @@ public class Application2 extends ComponentDefinition {
     }
 
     private void doHelp() {
-        logger.info("Available commands: S<n>, B<m> help, X");
+        logger.info("Available commands: S<n>, B<m>, help, X");
         logger.info("Sn: sleeps 'n' milliseconds before the next command");
         logger.info("Bm: broadcasts message 'm'");
         logger.info("help: shows this help message");

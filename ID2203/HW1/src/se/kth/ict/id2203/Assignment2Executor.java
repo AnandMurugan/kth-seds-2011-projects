@@ -25,7 +25,7 @@ public final class Assignment2Executor {
                 // link(2, 1, 3000, 0.5);
                 // link(3, 2, 3000, 0.5);
                 // link(4, 2, 3000, 0.5);
-                defaultLinks(500, 0.0);
+                defaultLinks(500, 0.5);
             }
         };
 
@@ -44,6 +44,15 @@ public final class Assignment2Executor {
                 command(2, "S10500:BHello from 2");
                 command(3, "S20500:BHello from 3");
                 command(4, "S30500:BHello from 4");
+            }
+        };
+
+        Scenario scenario3 = new Scenario(Assignment2Main.class) {
+            {
+                command(1, "S500:Bdebug1");
+                command(2, "S2000:X");
+                command(3, "S2000:X");
+                command(4, "S2000:X");
             }
         };
 
