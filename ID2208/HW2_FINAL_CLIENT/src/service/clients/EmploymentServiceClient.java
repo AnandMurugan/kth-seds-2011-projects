@@ -26,7 +26,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import mypack.ApplicantProfileGenerator;
+import utils.ApplicantProfileGenerator;
 import org.w3c.dom.Element;
 
 /**
