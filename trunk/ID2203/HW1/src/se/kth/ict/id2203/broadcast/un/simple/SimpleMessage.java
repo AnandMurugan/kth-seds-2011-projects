@@ -11,15 +11,20 @@ import se.sics.kompics.address.Address;
  *
  * @author Igor
  */
-public class DataMessage extends Flp2pDeliver {
+public class SimpleMessage extends Flp2pDeliver {
     private final String message;
 
-    public DataMessage(Address source, String message) {
+    public SimpleMessage(Address source, String message) {
         super(source);
         this.message = message;
     }
 
     public final String getMessage() {
         return message;
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleMessage{" + "message=" + message + ", source=" + super.getSource() + '}';
     }
 }

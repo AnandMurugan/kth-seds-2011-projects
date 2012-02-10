@@ -11,7 +11,6 @@ import se.kth.ict.id2203.broadcast.pb.ProbabilisticBroadcast;
 import se.kth.ict.id2203.broadcast.un.UnBroadcast;
 import se.kth.ict.id2203.broadcast.un.UnDeliver;
 import se.kth.ict.id2203.broadcast.un.UnreliableBroadcast;
-import se.kth.ict.id2203.broadcast.un.simple.DataMessage;
 import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
 import se.kth.ict.id2203.flp2p.Flp2pSend;
 import se.sics.kompics.ComponentDefinition;
@@ -108,7 +107,7 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
                 for (int missing = next.get(s); missing < sn - 1; missing++) {
                     boolean hasMissing = false;
                     for (DataMessage dm : pending) {
-                        if ((s == dm.getSource())
+                        if ((s.equals(dm.getSource()))
                                 && (missing == extractSequenceNumber(dm.getMessage()))) {
                             hasMissing = true;
                             break;
@@ -134,7 +133,7 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
 
             DataMessage missingMessage = null;
             for (DataMessage dm : stored) {
-                if ((s == dm.getSource())
+                if ((s.equals(dm.getSource()))
                         && (sn == extractSequenceNumber(dm.getMessage()))) {
                     missingMessage = dm;
                     break;
@@ -154,8 +153,9 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
             pending.add(event);
 
             //upon exists...
-            boolean hasNext = false;
+            boolean hasNext;
             do {
+                hasNext = false;
                 Iterator<DataMessage> i = pending.iterator();
                 while (i.hasNext()) {
                     DataMessage dm = i.next();

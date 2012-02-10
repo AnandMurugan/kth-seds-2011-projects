@@ -5,6 +5,9 @@
 package se.kth.ict.id2203.broadcast.un.simple;
 
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import se.kth.ict.id2203.broadcast.pb.lazy.DataMessage;
 import se.kth.ict.id2203.broadcast.un.UnBroadcast;
 import se.kth.ict.id2203.broadcast.un.UnDeliver;
 import se.kth.ict.id2203.broadcast.un.UnreliableBroadcast;
@@ -31,7 +34,7 @@ public class SimpleUnreliableBroadcast extends ComponentDefinition {
     public SimpleUnreliableBroadcast() {
         subscribe(initHandler, control);
         subscribe(unBroadcastHandler, un);
-        subscribe(dataMessageHandler, flp2p);
+        subscribe(simpleMessageHandler, flp2p);
     }
     //handlers
     Handler<SimpleUnreliableBroadcastInit> initHandler = new Handler<SimpleUnreliableBroadcastInit>() {
@@ -44,15 +47,15 @@ public class SimpleUnreliableBroadcast extends ComponentDefinition {
     Handler<UnBroadcast> unBroadcastHandler = new Handler<UnBroadcast>() {
         @Override
         public void handle(UnBroadcast event) {
-            String message = event.getMessage();
+            SimpleMessage dm = new SimpleMessage(self, event.getMessage());
             for (Address p : neighborSet) {
-                trigger(new Flp2pSend(p, new DataMessage(self, message)), flp2p);
+                trigger(new Flp2pSend(p, dm), flp2p);
             }
         }
     };
-    Handler<DataMessage> dataMessageHandler = new Handler<DataMessage>() {
+    Handler<SimpleMessage> simpleMessageHandler = new Handler<SimpleMessage>() {
         @Override
-        public void handle(DataMessage event) {
+        public void handle(SimpleMessage event) {
             trigger(new UnDeliver(event.getSource(), event.getMessage()), un);
         }
     };
