@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<ns1:jobs
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xmlns:ns1='http://xml.netbeans.org/schema/jobSchema'
+    xmlns:ns2="http://xml.netbeans.org/schema/commonSchema"
+    xsi:schemaLocation='http://xml.netbeans.org/schema/jobSchema ../schemas/jobSchema.xsd'>
+    <ns1:job>
+        <ns1:id>T001</ns1:id>
+        <ns1:type>full time</ns1:type>
+        <ns1:description>software engineer</ns1:description>
+        <ns1:category>IT</ns1:category>
+        <ns1:location>Sweden</ns1:location>
+        <ns1:contact>
+            <ns2:email>mail@spotify.com</ns2:email>
+            <ns2:phone>09876543</ns2:phone>
+            <ns2:website>www.spotify.com</ns2:website>
+            <ns2:contactPerson>ABC</ns2:contactPerson>
+        </ns1:contact>
+        <ns1:deadline_for_application>2012-03-02</ns1:deadline_for_application>
+    </ns1:job>
+    <ns1:job>
+        <ns1:id>T002</ns1:id>
+        <ns1:type>full time</ns1:type>
+        <ns1:description>engineer</ns1:description>
+        <ns1:category>Automobile</ns1:category>
+        <ns1:location>Germany</ns1:location>
+        <ns1:contact>
+            <ns2:email>mail@bmw.com</ns2:email>
+            <ns2:phone>123214123</ns2:phone>
+            <ns2:website>www.bmw.com</ns2:website>
+            <ns2:contactPerson>ABBA</ns2:contactPerson>
+        </ns1:contact>
+        <ns1:deadline_for_application>2012-04-04</ns1:deadline_for_application>
+    </ns1:job>
+    <ns1:job>
+        <ns1:id>T003</ns1:id>
+        <ns1:type>part time</ns1:type>
+        <ns1:description>researcher</ns1:description>
+        <ns1:category>IT</ns1:category>
+        <ns1:location>Sweden</ns1:location>
+        <ns1:contact>
+            <ns2:email>mail@kth.com</ns2:email>
+            <ns2:phone>12334234</ns2:phone>
+            <ns2:website>www.kth.se</ns2:website>
+            <ns2:contactPerson>ARB</ns2:contactPerson>
+        </ns1:contact>
+        <ns1:deadline_for_application>2012-03-03</ns1:deadline_for_application>
+    </ns1:job>
+</ns1:jobs>
