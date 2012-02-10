@@ -31,6 +31,15 @@ public final class Assignment2Executor {
 
         Scenario scenario1 = new Scenario(Assignment2Main.class) {
             {
+                command(1, "S500");
+                command(2, "S500");
+                command(3, "S500");
+                command(4, "S500");
+            }
+        };
+
+        Scenario scenario2 = new Scenario(Assignment2Main.class) {
+            {
                 command(1, "S500:BHello from 1");
                 command(2, "S10500:BHello from 2");
                 command(3, "S20500:BHello from 3");

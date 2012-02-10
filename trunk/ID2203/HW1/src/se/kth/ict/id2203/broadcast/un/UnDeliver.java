@@ -4,7 +4,6 @@
  */
 package se.kth.ict.id2203.broadcast.un;
 
-import java.io.Serializable;
 import se.sics.kompics.Event;
 import se.sics.kompics.address.Address;
 
@@ -12,7 +11,7 @@ import se.sics.kompics.address.Address;
  *
  * @author Igor
  */
-public class UnDeliver extends Event implements Serializable {
+public class UnDeliver extends Event {
     private final String message;
     private final Address source;
 
