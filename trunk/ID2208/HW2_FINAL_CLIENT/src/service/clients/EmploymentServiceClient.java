@@ -84,16 +84,13 @@ public class EmploymentServiceClient {
             SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
             QName name = new QName("personalNumber");
             SOAPElement symbol = bodyElement.addChildElement(name);
-            symbol.addTextNode("1247");
+            symbol.addTextNode("881201-1234");
 
             SOAPConnectionFactory soapConnectionFactory =
                     SOAPConnectionFactory.newInstance();
             SOAPConnection connection =
                     soapConnectionFactory.createConnection();
             message.writeTo(System.out);
-            System.out.println("Request message1: " + message.getSOAPHeader().getTextContent());
-            System.out.println("Request message2: " + message.getSOAPBody().getTextContent());
-            System.out.println("Request message3: " + message.getSOAPPart().getEnvelope().getTextContent());
             java.net.URL endpoint = new URL("http://localhost:8080/WSP_HW2_FINAL/UniversityService");
             SOAPMessage response = connection.call(message, endpoint);
             System.out.println("Response message: ");
@@ -133,16 +130,13 @@ public class EmploymentServiceClient {
             SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
             QName name = new QName("personalNumber");
             SOAPElement symbol = bodyElement.addChildElement(name);
-            symbol.addTextNode("1247");
+            symbol.addTextNode("881201-1234");
 
             SOAPConnectionFactory soapConnectionFactory =
                     SOAPConnectionFactory.newInstance();
             SOAPConnection connection =
                     soapConnectionFactory.createConnection();
             message.writeTo(System.out);
-            System.out.println("Request message1: " + message.getSOAPHeader().getTextContent());
-            System.out.println("Request message2: " + message.getSOAPBody().getTextContent());
-            System.out.println("Request message3: " + message.getSOAPPart().getEnvelope().getTextContent());
             java.net.URL endpoint = new URL("http://localhost:8080/WSP_HW2_FINAL/EmploymentService");
             SOAPMessage response = connection.call(message, endpoint);
             System.out.println("Response message: ");
@@ -186,9 +180,6 @@ public class EmploymentServiceClient {
             SOAPConnection connection =
                     soapConnectionFactory.createConnection();
             message.writeTo(System.out);
-            System.out.println("Request message1: " + message.getSOAPHeader().getTextContent());
-            System.out.println("Request message2: " + message.getSOAPBody().getTextContent());
-            System.out.println("Request message3: " + message.getSOAPPart().getEnvelope().getTextContent());
             java.net.URL endpoint = new URL("http://localhost:8080/WSP_HW2_FINAL/CompaniesDBService");
             SOAPMessage response = connection.call(message, endpoint);
             System.out.println("Response message: ");
