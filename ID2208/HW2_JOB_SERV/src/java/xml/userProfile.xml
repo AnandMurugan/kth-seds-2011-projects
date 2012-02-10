@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ns1:applicant_profile xmlns:ns1="http://xml.netbeans.org/schema/applicantProfileXmlSchema">
+    <ns1:personalNumber>881201-1234</ns1:personalNumber>
+    <ns1:name>Anand</ns1:name>
+    <ns1:mail_id>m.anand@gmail.com</ns1:mail_id>
+    <ns1:phone_number>0760665443</ns1:phone_number>
+    <ns1:address>
+        <apt>49-1210</apt>
+        <street>hanstavagan</street>
+        <city>stockholm</city>
+        <postalCode>16453</postalCode>
+        <country>sweden</country>
+    </ns1:address>
+    <ns1:summary>Description of student's skills and objectives</ns1:summary>
+    <ns1:education>
+        <ns1:qualification>
+            <ns1:university>Anna university</ns1:university>
+            <ns1:degree>Bachelor of engineering</ns1:degree>
+            <ns1:year>2007</ns1:year>
+            <ns1:major>computer science</ns1:major>
+        </ns1:qualification>
+        <ns1:gpa>4.0</ns1:gpa>
+        <ns1:qualification>
+            <ns1:university>KTH</ns1:university>
+            <ns1:degree>Master of science</ns1:degree>
+            <ns1:year>2012</ns1:year>
+            <ns1:major>software engineering of distributed systems</ns1:major>
+        </ns1:qualification>
+        <ns1:gpa>4.0</ns1:gpa>
+    </ns1:education>
+    <ns1:professional_experience>
+        <ns1:company>
+            <ns1:company_profile>
+                <ns1:name>Microsoft</ns1:name>
+                <ns1:description>A multinational IT services and consulting company with 500+ clients across five continents</ns1:description>
+                <ns1:email>contact@microsoft.com</ns1:email>
+                <ns1:phone>(425) 882-8080</ns1:phone>
+                <ns1:website>www.microsoft.com</ns1:website>
+                <ns1:businessType>IT</ns1:businessType>
+            </ns1:company_profile>
+            <ns1:start_date>2007-07-14</ns1:start_date>
+            <ns1:end_date>2011-07-14</ns1:end_date>
+            <ns1:domain>insurance</ns1:domain>
+            <ns1:positions>
+                <ns1:position>
+                    <ns1:positionTitle>intern</ns1:positionTitle>
+                    <ns1:entranceDate>2010-01-01</ns1:entranceDate>
+                    <ns1:exitDate>2010-05-30</ns1:exitDate>
+                    <ns1:hoursPerWeek>30</ns1:hoursPerWeek>
+                    <ns1:location>USA</ns1:location>
+                    <ns1:exitReason>promoted</ns1:exitReason>
+                </ns1:position>
+                <ns1:position>
+                    <ns1:positionTitle>developer</ns1:positionTitle>
+                    <ns1:entranceDate>2010-06-01</ns1:entranceDate>
+                    <ns1:exitDate>2011-06-01</ns1:exitDate>
+                    <ns1:hoursPerWeek>40</ns1:hoursPerWeek>
+                    <ns1:location>USA</ns1:location>
+                    <ns1:exitReason>promoted</ns1:exitReason>
+                </ns1:position>
+            </ns1:positions>
+        </ns1:company>
+        <ns1:company>
+            <ns1:company_profile>
+                <ns1:name>csc</ns1:name>
+                <ns1:description>A multinational IT services and consulting company with 500+ clients across five continents</ns1:description>
+                <ns1:email/>
+                <ns1:phone/>
+                <ns1:website/>
+                <ns1:businessType/>
+            </ns1:company_profile>
+            <ns1:start_date>2007-07-14</ns1:start_date>
+            <ns1:end_date>2011-07-14</ns1:end_date>
+            <ns1:domain>insurance</ns1:domain>
+            <ns1:positions>
+                <ns1:position>
+                    <ns1:positionTitle>intern</ns1:positionTitle>
+                    <ns1:entranceDate/>
+                    <ns1:exitDate/>
+                    <ns1:hoursPerWeek/>
+                    <ns1:location/>
+                    <ns1:exitReason/>
+                </ns1:position>
+                <ns1:position>
+                    <ns1:positionTitle>developer</ns1:positionTitle>
+                    <ns1:entranceDate/>
+                    <ns1:exitDate/>
+                    <ns1:hoursPerWeek/>
+                    <ns1:location/>
+                    <ns1:exitReason/>
+                </ns1:position>
+            </ns1:positions>
+        </ns1:company>
+    </ns1:professional_experience>
+    <ns1:technical_skills>
+        <ns1:skill>
+            <ns1:type>system development</ns1:type>
+            <ns1:technology> asp.net, vb.net, java, c and c++</ns1:technology>
+        </ns1:skill>
+        <ns1:skill>
+            <ns1:type>database</ns1:type>
+            <ns1:technology>MS SQL server and MySQL</ns1:technology>
+        </ns1:skill>
+        <ns1:skill>
+            <ns1:type>operating system</ns1:type>
+            <ns1:technology>windows and linux</ns1:technology>
+        </ns1:skill>
+    </ns1:technical_skills>
+    <ns1:certifications>
+        <ns1:certification>
+            <ns1:name>IBM certified Websphere developer</ns1:name>
+            <ns1:organization>IBM</ns1:organization>
+        </ns1:certification>
+        <ns1:certification>
+            <ns1:name>Insurance Associate INS</ns1:name>
+            <ns1:organization>Insurance institute of America Association</ns1:organization>
+        </ns1:certification>
+    </ns1:certifications>
+    <ns1:extracurricular_activities>
+        <ns1:name>Chairman of computer association</ns1:name>
+        <ns1:achievement>successfully led 250 students as chairman and organized technical symposiums</ns1:achievement>
+    </ns1:extracurricular_activities>
+</ns1:applicant_profile>
