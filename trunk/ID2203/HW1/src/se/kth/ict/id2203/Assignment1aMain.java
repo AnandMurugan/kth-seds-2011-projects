@@ -31,7 +31,7 @@ import se.sics.kompics.timer.java.JavaTimer;
  *
  * @author julio
  */
-public class Application1aMain extends ComponentDefinition {
+public class Assignment1aMain extends ComponentDefinition {
     static {
         PropertyConfigurator.configureAndWatch("log4j.properties");
     }
@@ -42,10 +42,10 @@ public class Application1aMain extends ComponentDefinition {
     public static void main(String[] args) {
         selfId = Integer.parseInt(args[0]);
         commandScript = args[1];
-        Kompics.createAndStart(Application1aMain.class);
+        Kompics.createAndStart(Assignment1aMain.class);
     }
 
-    public Application1aMain() {
+    public Assignment1aMain() {
         // create components
         Component time = create(JavaTimer.class);
         Component network = create(MinaNetwork.class);

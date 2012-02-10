@@ -12,14 +12,13 @@ import se.sics.kompics.launch.Topology;
  * @author julio
  */
 @SuppressWarnings("serial")
-public class Application1aExecutor {
+public class Assignment1aExecutor {
     /**
      * The main method.
-     * 
-     * @param args
-     *            the arguments
+     *
+     * @param args the arguments
      */
-    public static final void main(String[] args) {
+    public static void main(String[] args) {
 
         Topology topology1 = new Topology() {
             {
@@ -52,8 +51,8 @@ public class Application1aExecutor {
                 defaultLinks(500, 0);
             }
         };
-        
-        Scenario scenario1 = new Scenario(Application1aMain.class) {
+
+        Scenario scenario1 = new Scenario(Assignment1aMain.class) {
             {
                 command(1, "S500");
                 command(2, "S500");
@@ -62,7 +61,7 @@ public class Application1aExecutor {
             }
         };
 
-        Scenario scenario2 = new Scenario(Application1aMain.class) {
+        Scenario scenario2 = new Scenario(Assignment1aMain.class) {
             {
                 command(1, "S3000:X");
                 command(2, "S500");
