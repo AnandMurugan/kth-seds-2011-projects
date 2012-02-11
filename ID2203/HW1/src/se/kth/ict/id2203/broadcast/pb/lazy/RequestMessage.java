@@ -30,4 +30,9 @@ public class RequestMessage extends Flp2pDeliver {
     public final int getSequenceNumber() {
         return sequenceNumber;
     }
+
+    @Override
+    public String toString() {
+        return "RequestMessage{" + "source=" + super.getSource() + ",broadcastSource=" + broadcastSource + ", sequenceNumber=" + sequenceNumber + ", ttl=" + ttl + '}';
+    }
 }
