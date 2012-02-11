@@ -12,6 +12,8 @@ import se.sics.kompics.launch.Topology;
  * @author Igor
  */
 public final class Assignment2Executor {
+    private static final int NODES = 6;
+
     public static void main(String[] args) {
         Topology topology1 = new Topology() {
             {
@@ -28,7 +30,15 @@ public final class Assignment2Executor {
                 defaultLinks(500, 0.5);
             }
         };
-
+        Topology topology2 = new Topology() {
+            {
+                for (int i = 1; i <= NODES; i++) {
+                    node(i, "127.0.0.1", 10000 + i);
+                }
+                link(1, 2, 100, 0.4).bidirectional();
+                defaultLinks(100, 0.0);
+            }
+        };
         Scenario scenario1 = new Scenario(Assignment2Main.class) {
             {
                 command(1, "S500");
@@ -37,7 +47,6 @@ public final class Assignment2Executor {
                 command(4, "S500");
             }
         };
-
         Scenario scenario2 = new Scenario(Assignment2Main.class) {
             {
                 command(1, "S500:BHello from 1");
@@ -46,7 +55,6 @@ public final class Assignment2Executor {
                 command(4, "S30500:BHello from 4");
             }
         };
-
         Scenario scenario3 = new Scenario(Assignment2Main.class) {
             {
                 command(1, "S500:Bdebug1");
@@ -55,8 +63,15 @@ public final class Assignment2Executor {
                 command(4, "S2000:X");
             }
         };
+        Scenario scenario4 = new Scenario(Assignment2Main.class) {
+            {
+                for (int i = 1; i <= NODES; i++) {
+                    command(i, "S100");
+                }
+            }
+        };
 
-        scenario1.executeOn(topology1);
+        scenario4.executeOn(topology2);
 
         System.exit(0);
     }
