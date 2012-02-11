@@ -42,8 +42,8 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
     private Set<Address> neighborSet;
     private Map<Address, Integer> next;
     private int lsn;
-    private Set<DataMessage> pending;
-    private Set<DataMessage> stored;
+    private final Set<DataMessage> pending = Collections.synchronizedSortedSet(new TreeSet<DataMessage>());
+    private final Set<DataMessage> stored = Collections.synchronizedSortedSet(new TreeSet<DataMessage>());
     private Random rand;
     private long seed;
     private int fanout;
@@ -79,8 +79,6 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
 
             lsn = 0;
 
-            pending = new HashSet<DataMessage>();
-            stored = new HashSet<DataMessage>();
         }
     };
     Handler<PbBroadcast> pbBroadcastHandler = new Handler<PbBroadcast>() {
@@ -94,33 +92,33 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
         @Override
         public void handle(UnDeliver event) {
             Address s = event.getSource();
-            String m = event.getMessage();
+            int sn = extractSequenceNumber(event.getMessage());
+            String message = extractMessage(event.getMessage());
 
-            DataMessage current = new DataMessage(s, m);
+            DataMessage current = new DataMessage(s, message, sn);
             if (rand.nextFloat() < alpha) {
                 stored.add(current);
             }
 
-            int sn = extractSequenceNumber(m);
-            String message = extractMessage(m);
             if (sn == next.get(s)) {
                 next.put(s, next.remove(s) + 1);
                 trigger(new PbDeliver(s, message), pb);
             } else if (sn > next.get(s)) {
-                logger.debug("Missing some messages");
+                logger.debug("Missing some messages: from {} to {}", next.get(s), sn - 1);
                 pending.add(current);
                 for (int missing = next.get(s); missing < sn; missing++) {
                     logger.debug("Looking for message #{} from {}", missing, s);
                     boolean hasMissing = false;
                     for (DataMessage dm : pending) {
                         if ((s.equals(dm.getSource()))
-                                && (missing == extractSequenceNumber(dm.getMessage()))) {
+                                && (missing == dm.getSequenceNumber())) {
                             hasMissing = true;
                             logger.debug("Found message #{} from {} in pending", missing, s);
                             break;
                         }
                     }
                     if (!hasMissing) {
+                        logger.debug("Gossiping to retrieve message #{} from {}", missing, s);
                         gossip(new RequestMessage(self, s, missing, maxRounds - 1));
                     }
                 }
@@ -141,7 +139,7 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
             DataMessage missingMessage = null;
             for (DataMessage dm : stored) {
                 if ((s.equals(dm.getSource()))
-                        && (sn == extractSequenceNumber(dm.getMessage()))) {
+                        && (sn == dm.getSequenceNumber())) {
                     missingMessage = dm;
                     break;
                 }
@@ -157,23 +155,28 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
     Handler<DataMessage> dataMessageHandler = new Handler<DataMessage>() {
         @Override
         public void handle(DataMessage event) {
+            if (event.getSequenceNumber() < next.get(event.getSource())) {
+                return;
+            }
             pending.add(event);
 
             //upon exists...
             boolean hasNext;
             do {
                 hasNext = false;
-                Iterator<DataMessage> i = pending.iterator();
-                while (i.hasNext()) {
-                    DataMessage dm = i.next();
-                    int sn = extractSequenceNumber(dm.getMessage());
-                    String message = extractMessage(dm.getMessage());
-                    Address s = dm.getSource();
-                    if (sn == next.get(s)) {
-                        next.put(s, next.remove(s) + 1);
-                        i.remove();
-                        trigger(new PbDeliver(s, message), pb);
-                        hasNext = true;
+                synchronized (pending) {
+                    Iterator<DataMessage> i = pending.iterator();
+                    while (i.hasNext()) {
+                        DataMessage dm = i.next();
+                        int sn = dm.getSequenceNumber();
+                        String message = dm.getMessage();
+                        Address s = dm.getSource();
+                        if (sn == next.get(s)) {
+                            next.put(s, next.remove(s) + 1);
+                            i.remove();
+                            trigger(new PbDeliver(s, message), pb);
+                            hasNext = true;
+                        }
                     }
                 }
             } while (hasNext);
@@ -186,16 +189,34 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
             int sn = event.getSequenceNumber();
 
             if (sn > next.get(s)) {
-                //TODO deliver pending
+                logger.debug("Skipping missing messages #{}-#{} from {} due to timeout...", new Object[]{next.get(s), sn - 1, s});
                 next.remove(s);
                 next.put(s, sn + 1);
+
+                logger.debug("Delivering pending messages...");
+                logger.debug("Pending before={}", pending);
+                synchronized (pending) {
+                    Iterator<DataMessage> i = pending.iterator();
+                    while (i.hasNext()) {
+                        DataMessage dm = i.next();
+                        String message = dm.getMessage();
+                        int sequenceNumber = dm.getSequenceNumber();
+                        Address source = dm.getSource();
+
+                        if (source.equals(s) && (sequenceNumber <= sn)) {
+                            i.remove();
+                            trigger(new PbDeliver(source, message), pb);
+                        }
+                    }
+                }
+                logger.debug("Pending after={}", pending);
             }
         }
     };
 
     //procedures and functions
     private Set<Address> pickTargets(int k) {
-        logger.debug("Picking targets...");
+        //logger.debug("Picking targets...");
         if (k > neighborSet.size()) {
             return new HashSet<Address>(neighborSet);
         }
@@ -209,12 +230,11 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
             targets.add(candidate);
         }
 
-        logger.debug("Targets: {}", targets);
+        //logger.debug("Targets: {}", targets);
         return targets;
     }
 
     private void gossip(RequestMessage request) {
-        logger.debug("Gossiping...");
         for (Address t : pickTargets(fanout)) {
             trigger(new Flp2pSend(t, request), flp2p);
         }
