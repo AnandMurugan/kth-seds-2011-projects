@@ -35,8 +35,8 @@ public class Assignment2Main extends ComponentDefinition {
         PropertyConfigurator.configureAndWatch("log4j.properties");
     }
     private final static int FANOUT = 3;
-    private final static float ALPHA = 0.1f;
-    private final static int DELTA = 2000;
+    private final static float ALPHA = 0.3f;
+    private final static int DELTA = 5000;
     private final static int MAX_ROUNDS = 2;
     private static int selfId;
     private static String commandScript;

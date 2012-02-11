@@ -65,7 +65,17 @@ public final class Assignment2Executor {
         };
         Scenario scenario4 = new Scenario(Assignment2Main.class) {
             {
-                for (int i = 1; i <= NODES; i++) {
+                command(1, "S100:B1:"
+                        + "S200:B2:"
+                        + "S200:B3:"
+                        + "S200:B4:"
+                        + "S200:B5:"
+                        + "S200:B6:"
+                        + "S200:B7:"
+                        + "S200:B8:"
+                        + "S200:B9:"
+                        + "S200:B10");
+                for (int i = 2; i <= NODES; i++) {
                     command(i, "S100");
                 }
             }
