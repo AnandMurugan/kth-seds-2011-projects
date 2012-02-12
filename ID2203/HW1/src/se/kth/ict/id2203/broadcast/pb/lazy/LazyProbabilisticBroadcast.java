@@ -42,8 +42,8 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
     private Set<Address> neighborSet;
     private Map<Address, Integer> next;
     private int lsn;
-    private final Set<DataMessage> pending = Collections.synchronizedSortedSet(new TreeSet<DataMessage>());
-    private final Set<DataMessage> stored = Collections.synchronizedSortedSet(new TreeSet<DataMessage>());
+    private final Set<DataMessage> pending = new TreeSet<DataMessage>();
+    private final Set<DataMessage> stored = new HashSet<DataMessage>();
     private Random rand;
     private long seed;
     private int fanout;
@@ -76,6 +76,7 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
             for (Address p : neighborSet) {
                 next.put(p, 1);
             }
+            next.put(self, 1);
 
             lsn = 0;
 
@@ -97,6 +98,7 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
 
             DataMessage current = new DataMessage(s, message, sn);
             if (rand.nextFloat() < alpha) {
+                logger.debug("Storing messages #{} from {}", sn, s);
                 stored.add(current);
             }
 
@@ -164,21 +166,21 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
             boolean hasNext;
             do {
                 hasNext = false;
-                synchronized (pending) {
-                    Iterator<DataMessage> i = pending.iterator();
-                    while (i.hasNext()) {
-                        DataMessage dm = i.next();
-                        int sn = dm.getSequenceNumber();
-                        String message = dm.getMessage();
-                        Address s = dm.getSource();
-                        if (sn == next.get(s)) {
-                            next.put(s, next.remove(s) + 1);
-                            i.remove();
-                            trigger(new PbDeliver(s, message), pb);
-                            hasNext = true;
-                        }
+                //synchronized (pending) {
+                Iterator<DataMessage> i = pending.iterator();
+                while (i.hasNext()) {
+                    DataMessage dm = i.next();
+                    int sn = dm.getSequenceNumber();
+                    String message = dm.getMessage();
+                    Address s = dm.getSource();
+                    if (sn == next.get(s)) {
+                        next.put(s, next.remove(s) + 1);
+                        i.remove();
+                        trigger(new PbDeliver(s, message), pb);
+                        hasNext = true;
                     }
                 }
+                //}
             } while (hasNext);
         }
     };
@@ -195,20 +197,20 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
 
                 logger.debug("Delivering pending messages...");
                 logger.debug("Pending before={}", pending);
-                synchronized (pending) {
-                    Iterator<DataMessage> i = pending.iterator();
-                    while (i.hasNext()) {
-                        DataMessage dm = i.next();
-                        String message = dm.getMessage();
-                        int sequenceNumber = dm.getSequenceNumber();
-                        Address source = dm.getSource();
+                //synchronized (pending) {
+                Iterator<DataMessage> i = pending.iterator();
+                while (i.hasNext()) {
+                    DataMessage dm = i.next();
+                    String message = dm.getMessage();
+                    int sequenceNumber = dm.getSequenceNumber();
+                    Address source = dm.getSource();
 
-                        if (source.equals(s) && (sequenceNumber <= sn)) {
-                            i.remove();
-                            trigger(new PbDeliver(source, message), pb);
-                        }
+                    if (source.equals(s) && (sequenceNumber <= sn)) {
+                        i.remove();
+                        trigger(new PbDeliver(source, message), pb);
                     }
                 }
+                //}
                 logger.debug("Pending after={}", pending);
             }
         }
