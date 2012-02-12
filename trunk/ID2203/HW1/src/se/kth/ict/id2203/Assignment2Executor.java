@@ -35,7 +35,8 @@ public final class Assignment2Executor {
                 for (int i = 1; i <= NODES; i++) {
                     node(i, "127.0.0.1", 10000 + i);
                 }
-                link(1, 2, 100, 0.4).bidirectional();
+                link(1, 2, 100, 0.5).bidirectional();
+                link(2, 3, 100, 0.5).bidirectional();
                 defaultLinks(100, 0.0);
             }
         };
@@ -65,17 +66,28 @@ public final class Assignment2Executor {
         };
         Scenario scenario4 = new Scenario(Assignment2Main.class) {
             {
-                command(1, "S100:B1:"
-                        + "S200:B2:"
-                        + "S200:B3:"
-                        + "S200:B4:"
-                        + "S200:B5:"
-                        + "S200:B6:"
-                        + "S200:B7:"
-                        + "S200:B8:"
-                        + "S200:B9:"
-                        + "S200:B10");
-                for (int i = 2; i <= NODES; i++) {
+                command(1, "S100:Ba1:"
+                        + "S200:Ba2:"
+                        + "S200:Ba3:"
+                        + "S200:Ba4:"
+                        + "S200:Ba5:"
+                        + "S200:Ba6:"
+                        + "S200:Ba7:"
+                        + "S200:Ba8:"
+                        + "S200:Ba9:"
+                        + "S200:Ba10");
+                command(2, "S100");
+                command(3, "S150:Bb1:"
+                        + "S250:Bb2:"
+                        + "S250:Bb3:"
+                        + "S250:Bb4:"
+                        + "S250:Bb5:"
+                        + "S250:Bb6:"
+                        + "S250:Bb7:"
+                        + "S250:Bb8:"
+                        + "S250:Bb9:"
+                        + "S250:Bb10");
+                for (int i = 4; i <= NODES; i++) {
                     command(i, "S100");
                 }
             }

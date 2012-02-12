@@ -51,6 +51,7 @@ public class SimpleUnreliableBroadcast extends ComponentDefinition {
             for (Address p : neighborSet) {
                 trigger(new Flp2pSend(p, dm), flp2p);
             }
+            trigger(new Flp2pSend(self, dm), flp2p);
         }
     };
     Handler<SimpleMessage> simpleMessageHandler = new Handler<SimpleMessage>() {
