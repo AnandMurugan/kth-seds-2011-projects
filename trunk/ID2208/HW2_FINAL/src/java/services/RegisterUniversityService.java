@@ -80,6 +80,16 @@ public class RegisterUniversityService {
             Service service = blm.createService(blm.createInternationalString("University Service"));
             service.setDescription(blm.createInternationalString("Services of KTH University"));
 
+            Collection<ServiceBinding> serviceBindings = new ArrayList<ServiceBinding>();
+            ServiceBinding binding = blm.createServiceBinding();
+            InternationalString istr = blm.createInternationalString("Transcript Service Binding " + "Description");
+            binding.setDescription(istr);
+            binding.setValidateURI(false);
+            binding.setAccessURI("http://localhost:8080/WSP_HW2_FINAL/UniversityService");
+            serviceBindings.add(binding);
+            // Add service bindings to service
+            service.addServiceBindings(serviceBindings);
+            // Add service to services, then add
             User user = blm.createUser();
             PersonName personName = blm.createPersonName("President, KTH");
 
@@ -106,27 +116,19 @@ public class RegisterUniversityService {
             user.setTelephoneNumbers(numbers);
 
             //Concepts for NAICS and computer
-            ClassificationScheme cScheme = blm.createClassificationScheme(
-                    blm.createInternationalString("ntis-gov:naics"),
-                    blm.createInternationalString(""));
+            ClassificationScheme cScheme = blm.createClassificationScheme(blm.createInternationalString("ntis-gov:naics"), blm.createInternationalString(""));
             javax.xml.registry.infomodel.Key cKey = (javax.xml.registry.infomodel.Key) blm.createKey("uuid:C0B9FE13-179F-413D-8A5B-5004DB8E5BB2");
             cScheme.setKey(cKey);
 
-            Classification classification = (Classification) blm.createClassification(cScheme,
-                    "Computer Systems Design and Related Services", "5415");
+            Classification classification = (Classification) blm.createClassification(cScheme, "University Services", "5415");
 
             org.addClassification(classification);
 
-            ClassificationScheme cScheme1 = blm.createClassificationScheme(
-                    blm.createInternationalString("D-U-N-S"),
-                    blm.createInternationalString(""));
-            javax.xml.registry.infomodel.Key cKey1 =
-                    (javax.xml.registry.infomodel.Key) blm.createKey("uuid:8609C81E-EE1F-4D5A-B202-3EB13AD01823");
+            ClassificationScheme cScheme1 = blm.createClassificationScheme(blm.createInternationalString("D-U-N-S"), blm.createInternationalString(""));
+            javax.xml.registry.infomodel.Key cKey1 = (javax.xml.registry.infomodel.Key) blm.createKey("uuid:8609C81E-EE1F-4D5A-B202-3EB13AD01823");
             cScheme1.setKey(cKey1);
 
-            ExternalIdentifier ei =
-                    blm.createExternalIdentifier(cScheme1, "D-U-N-S number",
-                    "08-146-6849");
+            ExternalIdentifier ei = blm.createExternalIdentifier(cScheme1, "D-U-N-S number", "08-146-6849");
 
             org.addExternalIdentifier(ei);
             org.addService(service);
@@ -188,12 +190,9 @@ public class RegisterUniversityService {
     }
 
     private void setConnectionProperties() {
-        connProps.setProperty("javax.xml.registry.queryManagerURL",
-                regUrli);
-        connProps.setProperty("javax.xml.registry.lifeCycleManagerURL",
-                regUrlp);
-        connProps.setProperty("javax.xml.registry.factoryClass",
-                "com.sun.xml.registry.uddi.ConnectionFactoryImpl");
+        connProps.setProperty("javax.xml.registry.queryManagerURL", regUrli);
+        connProps.setProperty("javax.xml.registry.lifeCycleManagerURL", regUrlp);
+        connProps.setProperty("javax.xml.registry.factoryClass", "com.sun.xml.registry.uddi.ConnectionFactoryImpl");
         connProps.setProperty("com.sun.xml.registry.http.proxyHost", httpProxyHost);
         connProps.setProperty("com.sun.xml.registry.http.proxyPort", httpProxyPort);
         connProps.setProperty("com.sun.xml.registry.https.proxyHost", httpsProxyHost);
