@@ -169,7 +169,7 @@ public class PublishORG {
       Collection orgs = new ArrayList();
       orgs.add(org);
       BulkResponse response = blcm.saveOrganizations(orgs);
-      Collection exceptions = response.getException();
+      Collection exceptions = response.getExceptions();
       if (exceptions == null) {
         System.out.println("Organization saved");
         Collection keys = response.getCollection();
