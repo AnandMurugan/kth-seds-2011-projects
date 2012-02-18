@@ -93,12 +93,20 @@ public class BusinessQuery {
                     Iterator siter = services.iterator();
                     while (siter.hasNext()) {
                         Service service = (Service) siter.next();
-                        System.out.println("\tService Name: "
-                                + getName(service));
-                        System.out.println("\tService Key: "
-                                + service.getKey().getId());
-                        System.out.println("\tService Description: "
-                                + getDescription(service));
+                        System.out.println("\tService Name: " + getName(service));
+                        System.out.println("\tService Key: " + service.getKey().getId());
+                        System.out.println("\tService Description: " + getDescription(service));
+                        Collection serviceBinding = service.getServiceBindings();
+                        Iterator siterBinding = serviceBinding.iterator();
+                        while (siterBinding.hasNext()) {
+                            ServiceBinding srvBinding = (ServiceBinding) siterBinding.next();
+                            //                          System.out.println("\tService binding spec links: " + srvBinding.getSpecificationLinks().size());
+                            Iterator specLinkIt = srvBinding.getSpecificationLinks().iterator();
+                            while (specLinkIt.hasNext()) {
+                                SpecificationLink specLink = (SpecificationLink) specLinkIt.next();
+                                //System.out.println("specification link:" + specLink.getObjectType().getValue());
+                            }
+                        }
                     }
                 }
             } else {
