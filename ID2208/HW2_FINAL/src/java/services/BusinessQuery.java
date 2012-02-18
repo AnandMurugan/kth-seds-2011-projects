@@ -32,7 +32,7 @@ public class BusinessQuery {
         try {
 
             BusinessQuery bqt = new BusinessQuery();
-            bqt.loadProperties(propertiesFilePath);
+//            bqt.loadProperties(propertiesFilePath);
             bqt.executeQuery(company);
         } catch (JAXRException e) {
             System.err.println("Error during the test: " + e);
@@ -50,9 +50,10 @@ public class BusinessQuery {
         }
     }
 
-    public void executeQuery(String cname)
-            throws JAXRException {
+    public Collection executeQuery(String cname) throws JAXRException {
+        Collection orgs = null;
         try {
+            loadProperties(propertiesFilePath);
             assignUserProperties(properties);
             setConnectionProperties();
 
@@ -76,7 +77,7 @@ public class BusinessQuery {
                 System.out.println("Successfully queried the "
                         + "registry for organization matching the "
                         + "name pattern: \"" + cname + "\"");
-                Collection orgs = br.getCollection();
+                orgs = br.getCollection();
                 System.out.println("Results found: " + orgs.size() + "\n");
                 Iterator iter = orgs.iterator();
                 while (iter.hasNext()) {
@@ -113,6 +114,7 @@ public class BusinessQuery {
         } catch (JAXRException e) {
             e.printStackTrace();
         }
+        return orgs;
     }
 
     private void assignUserProperties(Properties props) {
