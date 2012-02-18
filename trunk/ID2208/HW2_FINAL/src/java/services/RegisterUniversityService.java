@@ -73,23 +73,9 @@ public class RegisterUniversityService {
             conn.setCredentials(creds);
 
             Collection orgs = new ArrayList();
-
+            //create business entity
             Organization org = blm.createOrganization(blm.createInternationalString("University"));
             org.setDescription(blm.createInternationalString("University Web Service for transcripts"));
-
-            Service service = blm.createService(blm.createInternationalString("University Service"));
-            service.setDescription(blm.createInternationalString("Services of KTH University"));
-
-            Collection<ServiceBinding> serviceBindings = new ArrayList<ServiceBinding>();
-            ServiceBinding binding = blm.createServiceBinding();
-            InternationalString istr = blm.createInternationalString("Transcript Service Binding " + "Description");
-            binding.setDescription(istr);
-            binding.setValidateURI(false);
-            binding.setAccessURI("http://localhost:8080/WSP_HW2_FINAL/UniversityService");
-            serviceBindings.add(binding);
-            // Add service bindings to service
-            service.addServiceBindings(serviceBindings);
-            // Add service to services, then add
             User user = blm.createUser();
             PersonName personName = blm.createPersonName("President, KTH");
 
@@ -120,21 +106,67 @@ public class RegisterUniversityService {
             javax.xml.registry.infomodel.Key cKey = (javax.xml.registry.infomodel.Key) blm.createKey("uuid:C0B9FE13-179F-413D-8A5B-5004DB8E5BB2");
             cScheme.setKey(cKey);
 
-            Classification classification = (Classification) blm.createClassification(cScheme, "University Services", "5415");
+            Classification classification = (Classification) blm.createClassification(cScheme, "University Services", "514211");
 
             org.addClassification(classification);
 
-            ClassificationScheme cScheme1 = blm.createClassificationScheme(blm.createInternationalString("D-U-N-S"), blm.createInternationalString(""));
-            javax.xml.registry.infomodel.Key cKey1 = (javax.xml.registry.infomodel.Key) blm.createKey("uuid:8609C81E-EE1F-4D5A-B202-3EB13AD01823");
-            cScheme1.setKey(cKey1);
+//            ClassificationScheme cScheme1 = blm.createClassificationScheme(blm.createInternationalString("D-U-N-S"), blm.createInternationalString(""));
+//            javax.xml.registry.infomodel.Key cKey1 = (javax.xml.registry.infomodel.Key) blm.createKey("uuid:8609C81E-EE1F-4D5A-B202-3EB13AD01823");
+//            cScheme1.setKey(cKey1);
+//            ExternalIdentifier ei = blm.createExternalIdentifier(cScheme1, "D-U-N-S number", "08-146-6849");
+//            org.addExternalIdentifier(ei);
+            Service service = blm.createService(blm.createInternationalString("University Service"));
+            service.setDescription(blm.createInternationalString("Services of KTH University"));
 
-            ExternalIdentifier ei = blm.createExternalIdentifier(cScheme1, "D-U-N-S number", "08-146-6849");
-
-            org.addExternalIdentifier(ei);
+            Collection<ServiceBinding> serviceBindings = new ArrayList<ServiceBinding>();
+            ServiceBinding binding = blm.createServiceBinding();
+            InternationalString istr = blm.createInternationalString("Transcript Service Binding " + "Description");
+            binding.setDescription(istr);
+            binding.setValidateURI(false);
+            binding.setAccessURI("http://localhost:8080/WSP_HW2_FINAL/UniversityService");
+            serviceBindings.add(binding);
+            // Add service bindings to service
+            service.addServiceBindings(serviceBindings);
+            // Add service to services, then add
             org.addService(service);
-
             orgs.add(org);
+            //Concept for classification
+            Concept specConcept = blm.createConcept(null, "TranscriptConcept", "");
+            istr = blm.createInternationalString("Concept description for Transcript Service {}");
+            specConcept.setDescription(istr);
+            ExternalLink wsdlLink = blm.createExternalLink("http://localhost:8080/WSP_HW2_FINAL/UniversityService?WSDL", "Transcript service WSDL document");
+            specConcept.addExternalLink(wsdlLink);
+            String uuid_types = "uuid:C0B9FE13-179F-413D-8A5B-5004DB8E5BB2";
+            ClassificationScheme uddiOrgTypes = (ClassificationScheme) bqm.getRegistryObject(uuid_types, LifeCycleManager.CLASSIFICATION_SCHEME);
+            Classification wsdlSpecClassification = blm.createClassification(uddiOrgTypes, "wsdlSpec", "wsdlSpec");
+            // Define classifications
+            Collection<Concept> concepts = new ArrayList<Concept>();
+            concepts.add(specConcept);
+            // Save Concept
+            BulkResponse concResponse = blm.saveConcepts(concepts);
+            String conceptKeyId = null;
+            Collection concExceptions = concResponse.getExceptions();
 
+            Key concKey = null;
+            if (concExceptions == null) {
+                System.out.println("WSDL Specification Concept saved");
+                Collection<Key> keys = concResponse.getCollection();
+                Iterator<Key> keyIter = keys.iterator();
+                if (keyIter.hasNext()) {
+                    concKey = keyIter.next();
+                    conceptKeyId = concKey.getId();
+                    System.out.println("Concept key is " + conceptKeyId);
+                }
+            }// Retrieve the concept from Registry
+            Concept retSpecConcept = (Concept) bqm.getRegistryObject(
+                    conceptKeyId, LifeCycleManager.CONCEPT);
+
+            // Associate concept to Binding object
+            SpecificationLink retSpeclLink = blm.createSpecificationLink();
+            retSpeclLink.setSpecificationObject(retSpecConcept);
+            binding.addSpecificationLink(retSpeclLink);
+
+            //save organization
             BulkResponse br = blm.saveOrganizations(orgs);
             if (br.getStatus() == JAXRResponse.STATUS_SUCCESS) {
                 System.out.println("Organization Saved");
