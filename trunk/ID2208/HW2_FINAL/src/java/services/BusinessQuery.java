@@ -100,7 +100,7 @@ public class BusinessQuery {
                         Iterator siterBinding = serviceBinding.iterator();
                         while (siterBinding.hasNext()) {
                             ServiceBinding srvBinding = (ServiceBinding) siterBinding.next();
-                            //                          System.out.println("\tService binding spec links: " + srvBinding.getSpecificationLinks().size());
+                            System.out.println("\tService binding spec links: " + srvBinding.getDescription().getValue());
                             Iterator specLinkIt = srvBinding.getSpecificationLinks().iterator();
                             while (specLinkIt.hasNext()) {
                                 SpecificationLink specLink = (SpecificationLink) specLinkIt.next();
