@@ -12,11 +12,11 @@ import se.sics.kompics.address.Address;
  *
  * @author julio
  */
-public class BasicBestEffortBroadcastInit extends Init {
+public class BasicBroadcastInit extends Init {
     private final Set<Address> neighborSet;
     private final Address self;
 
-    public BasicBestEffortBroadcastInit(Set<Address> neighborSet, Address self) {
+    public BasicBroadcastInit(Set<Address> neighborSet, Address self) {
         this.neighborSet = neighborSet;
         this.self = self;
     }

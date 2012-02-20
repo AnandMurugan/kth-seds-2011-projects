@@ -20,41 +20,41 @@ import se.sics.kompics.address.Address;
  *
  * @author julio
  */
-public class BasicBestEffortBroadcast extends ComponentDefinition {
+public class BasicBroadcast extends ComponentDefinition {
     //ports
-    Negative<BestEffortBroadcast> un = provides(BestEffortBroadcast.class);
+    Negative<BestEffortBroadcast> beb = provides(BestEffortBroadcast.class);
     Positive<PerfectPointToPointLink> pp2p = requires(PerfectPointToPointLink.class);
     //local variables
     private Address self;
     private Set<Address> neighborSet;
 
-    public BasicBestEffortBroadcast() {
+    public BasicBroadcast() {
         subscribe(initHandler, control);
-        subscribe(unBroadcastHandler, un);
+        subscribe(bebBroadcastHandler, beb);
         subscribe(simpleMessageHandler, pp2p);
     }
     //handlers
-    Handler<BasicBestEffortBroadcastInit> initHandler = new Handler<BasicBestEffortBroadcastInit>() {
+    Handler<BasicBroadcastInit> initHandler = new Handler<BasicBroadcastInit>() {
         @Override
-        public void handle(BasicBestEffortBroadcastInit event) {
+        public void handle(BasicBroadcastInit event) {
             self = event.getSelf();
             neighborSet = event.getNeighborSet();
         }
     };
-    Handler<BebBroadcast> unBroadcastHandler = new Handler<BebBroadcast>() {
+    Handler<BebBroadcast> bebBroadcastHandler = new Handler<BebBroadcast>() {
         @Override
         public void handle(BebBroadcast event) {
-            BasicMessage dm = new BasicMessage(self, event.getMessage());
+            BasicMessage bm = new BasicMessage(self, event.getMessage());
             for (Address p : neighborSet) {
-                trigger(new Pp2pSend(p, dm), pp2p);
+                trigger(new Pp2pSend(p, bm), pp2p);
             }
-            trigger(new Pp2pSend(self, dm), pp2p);
+            trigger(new Pp2pSend(self, bm), pp2p);
         }
     };
     Handler<BasicMessage> simpleMessageHandler = new Handler<BasicMessage>() {
         @Override
         public void handle(BasicMessage event) {
-            trigger(new BebDeliver(event.getSource(), event.getMessage()), un);
+            trigger(new BebDeliver(event.getSource(), event.getMessage()), beb);
         }
     };
 }
