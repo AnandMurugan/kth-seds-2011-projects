@@ -27,12 +27,11 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
     Positive<BestEffortBroadcast> beb = requires(BestEffortBroadcast.class);
     Positive<PerfectPointToPointLink> pp2p = requires(PerfectPointToPointLink.class);
     //consts
-    public final static String DELIM = "\t";
+    public final static String DELIM = " ";
     public final static int READ = 1;
     public final static int WRITE = 2;
     //local variables
     private Address self;
-    private Set<Address> neighbors;
     private Set<Address> all;
     private int i;
     private int registerNumber;
@@ -59,7 +58,6 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
         @Override
         public void handle(ReadImposeWriteConsultMajorityAtomicRegisterInit event) {
             all = event.getAll();
-            neighbors = event.getNeighbors();
             self = event.getSelf();
             registerNumber = event.getRegisterNumber();
 
@@ -123,9 +121,8 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
                     int j = Integer.parseInt(data[4]);
                     int val = Integer.parseInt(data[5]);
 
-                    if (true/*
-                             * (t,j)>(ts[r],mrank[r])
-                             */) {
+                    if ((t > ts[r])
+                            || (t == ts[r] && j > mrank[r])) {
                         v[r] = val;
                         ts[r] = t;
                         mrank[r] = j;
@@ -174,10 +171,8 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
                 int t = 0;
                 int rk = 0;
                 for (ReadSetEntry entry : readSet.get(r)) {
-                    if (true/*
-                             * (entry.getTimestamp,entry.getRank)>(highestTimestamp,
-                             * highestRank)
-                             */) {
+                    if ((entry.getTimestamp() > t)
+                            || (entry.getTimestamp() == t && entry.getRank() > rk)) {
                         t = entry.getTimestamp();
                         rk = entry.getRank();
                         val = entry.getValue();
