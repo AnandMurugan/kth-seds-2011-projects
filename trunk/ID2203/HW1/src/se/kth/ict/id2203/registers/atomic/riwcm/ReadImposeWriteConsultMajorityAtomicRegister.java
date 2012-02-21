@@ -48,6 +48,8 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
     private int[] mrank;
     private int[] writeval;
     private int[] readval;
+    private boolean readMajority;
+    private boolean writeMajority;
 
     public ReadImposeWriteConsultMajorityAtomicRegister() {
         subscribe(initHandler, control);
@@ -92,6 +94,8 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
             reading[r] = true;
             readSet.get(r).clear();
             writeSet.get(r).clear();
+            readMajority = false;
+            writeMajority = false;
             trigger(new BebBroadcast(READ + DELIM + r + DELIM + reqid[r]), beb);
         }
     };
@@ -106,6 +110,8 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
             writeval[r] = val;
             readSet.get(r).clear();
             writeSet.get(r).clear();
+            readMajority = false;
+            writeMajority = false;
             trigger(new BebBroadcast(READ + DELIM + r + DELIM + reqid[r]), beb);
         }
     };
@@ -152,7 +158,7 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
             int rk = event.getRank();
             int val = event.getValue();
 
-            if (id == reqid[r]) {
+            if (id == reqid[r] && !readMajority) {
                 readSet.get(r).add(new ReadSetEntry(t, rk, val));
                 checkReadSetEvent();
             }
@@ -167,7 +173,7 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
             int r = event.getRegister();
             int id = event.getRequestId();
 
-            if (id == reqid[r]) {
+            if (id == reqid[r] && !writeMajority) {
                 writeSet.get(r).add(source);
                 checkWriteSetEvent();
             }
@@ -179,9 +185,10 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
         logger.debug("N/2 = {}; ReadSets = {}", (all.size() / 2), readSet);
         for (int r = 0; r < registerNumber; r++) {
             if (readSet.get(r).size() > all.size() / 2) {
+                readMajority = true;
                 int val = 0;
-                int t = 0;
-                int rk = 0;
+                int t = -1;
+                int rk = -1;
                 for (ReadSetEntry entry : readSet.get(r)) {
                     if ((entry.getTimestamp() > t)
                             || (entry.getTimestamp() == t && entry.getRank() > rk)) {
@@ -194,7 +201,7 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
                 if (reading[r]) {
                     trigger(new BebBroadcast(WRITE + DELIM + r + DELIM + reqid[r] + DELIM + t + DELIM + rk + DELIM + readval[r]), beb);
                 } else {
-                    trigger(new BebBroadcast(WRITE + DELIM + r + DELIM + reqid[r] + DELIM + (t + 1) + DELIM + i + DELIM + readval[r]), beb);
+                    trigger(new BebBroadcast(WRITE + DELIM + r + DELIM + reqid[r] + DELIM + (t + 1) + DELIM + i + DELIM + writeval[r]), beb);
                 }
             }
         }
@@ -204,6 +211,7 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
         logger.debug("N/2 = {}; WriteSets = {}", (all.size() / 2), writeSet);
         for (int r = 0; r < registerNumber; r++) {
             if (writeSet.get(r).size() > all.size() / 2) {
+                writeMajority = true;
                 if (reading[r]) {
                     reading[r] = false;
                     trigger(new ReadResponse(r, readval[r]), nnar);
@@ -260,36 +268,35 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
             return value;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final ReadSetEntry other = (ReadSetEntry) obj;
-            if (this.timestamp != other.timestamp) {
-                return false;
-            }
-            if (this.rank != other.rank) {
-                return false;
-            }
-            if (this.value != other.value) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 3;
-            hash = 11 * hash + this.timestamp;
-            hash = 11 * hash + this.rank;
-            hash = 11 * hash + this.value;
-            return hash;
-        }
-
+//        @Override
+//        public boolean equals(Object obj) {
+//            if (obj == null) {
+//                return false;
+//            }
+//            if (getClass() != obj.getClass()) {
+//                return false;
+//            }
+//            final ReadSetEntry other = (ReadSetEntry) obj;
+//            if (this.timestamp != other.timestamp) {
+//                return false;
+//            }
+//            if (this.rank != other.rank) {
+//                return false;
+//            }
+//            if (this.value != other.value) {
+//                return false;
+//            }
+//            return true;
+//        }
+//
+//        @Override
+//        public int hashCode() {
+//            int hash = 3;
+//            hash = 11 * hash + this.timestamp;
+//            hash = 11 * hash + this.rank;
+//            hash = 11 * hash + this.value;
+//            return hash;
+//        }
         @Override
         public String toString() {
             return "{" + timestamp + ":" + rank + ":" + value + '}';
