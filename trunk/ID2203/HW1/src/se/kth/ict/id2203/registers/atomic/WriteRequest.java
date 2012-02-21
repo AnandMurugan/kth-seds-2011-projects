@@ -10,6 +10,20 @@ import se.sics.kompics.Event;
  *
  * @author Igor
  */
-public class WriteRequest extends Event{
-    
+public class WriteRequest extends Event {
+    private int r;
+    private int val;
+
+    public WriteRequest(int r, int val) {
+        this.r = r;
+        this.val = val;
+    }
+
+    public int getR() {
+        return r;
+    }
+
+    public int getVal() {
+        return val;
+    }
 }
