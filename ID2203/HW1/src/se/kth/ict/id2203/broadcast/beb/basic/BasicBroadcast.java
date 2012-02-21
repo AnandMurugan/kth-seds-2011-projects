@@ -31,7 +31,7 @@ public class BasicBroadcast extends ComponentDefinition {
     public BasicBroadcast() {
         subscribe(initHandler, control);
         subscribe(bebBroadcastHandler, beb);
-        subscribe(simpleMessageHandler, pp2p);
+        subscribe(basicMessageHandler, pp2p);
     }
     //handlers
     Handler<BasicBroadcastInit> initHandler = new Handler<BasicBroadcastInit>() {
@@ -51,7 +51,7 @@ public class BasicBroadcast extends ComponentDefinition {
             trigger(new Pp2pSend(self, bm), pp2p);
         }
     };
-    Handler<BasicMessage> simpleMessageHandler = new Handler<BasicMessage>() {
+    Handler<BasicMessage> basicMessageHandler = new Handler<BasicMessage>() {
         @Override
         public void handle(BasicMessage event) {
             trigger(new BebDeliver(event.getSource(), event.getMessage()), beb);

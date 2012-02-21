@@ -10,6 +10,14 @@ import se.sics.kompics.Event;
  *
  * @author Igor
  */
-public class ReadRequest extends Event{
-    
+public class ReadRequest extends Event {
+    private int r;
+
+    public ReadRequest(int r) {
+        this.r = r;
+    }
+
+    public int getR() {
+        return r;
+    }
 }
