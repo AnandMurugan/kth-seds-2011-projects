@@ -4,10 +4,12 @@
  */
 package se.kth.ict.id2203.registers.atomic;
 
+import se.sics.kompics.Event;
+
 /**
  *
  * @author Igor
  */
-public class ReadResponse {
+public class ReadResponse extends Event{
     
 }
