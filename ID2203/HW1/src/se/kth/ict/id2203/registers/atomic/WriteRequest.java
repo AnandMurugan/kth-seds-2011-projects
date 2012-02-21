@@ -19,11 +19,11 @@ public class WriteRequest extends Event {
         this.val = val;
     }
 
-    public int getR() {
+    public int getRegister() {
         return r;
     }
 
-    public int getVal() {
+    public int getValue() {
         return val;
     }
 }
