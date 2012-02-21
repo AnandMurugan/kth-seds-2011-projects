@@ -18,13 +18,17 @@ public class ReadValMessage extends Pp2pDeliver {
     private int rank;
     private int value;
 
-    public ReadValMessage(Address source, int r, int requestId, int timestamp, int rank, int value) {
+    public ReadValMessage(Address source, int register, int requestId, int timestamp, int rank, int value) {
         super(source);
-        this.register = r;
+        this.register = register;
         this.requestId = requestId;
         this.timestamp = timestamp;
         this.rank = rank;
         this.value = value;
+    }
+
+    public int getRegister() {
+        return register;
     }
 
     public int getRequestId() {
@@ -33,10 +37,6 @@ public class ReadValMessage extends Pp2pDeliver {
 
     public int getRank() {
         return rank;
-    }
-
-    public int getRegister() {
-        return register;
     }
 
     public int getTimestamp() {

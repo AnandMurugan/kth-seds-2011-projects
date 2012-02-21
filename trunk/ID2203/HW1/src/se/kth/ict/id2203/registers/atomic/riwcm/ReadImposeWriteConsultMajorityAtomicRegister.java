@@ -10,11 +10,7 @@ import se.kth.ict.id2203.broadcast.beb.BebDeliver;
 import se.kth.ict.id2203.broadcast.beb.BestEffortBroadcast;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
 import se.kth.ict.id2203.pp2p.Pp2pSend;
-import se.kth.ict.id2203.registers.atomic.AckMessage;
-import se.kth.ict.id2203.registers.atomic.AtomicRegister;
-import se.kth.ict.id2203.registers.atomic.ReadRequest;
-import se.kth.ict.id2203.registers.atomic.ReadValMessage;
-import se.kth.ict.id2203.registers.atomic.WriteRequest;
+import se.kth.ict.id2203.registers.atomic.*;
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
 import se.sics.kompics.Negative;
@@ -48,6 +44,7 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
     private int[] ts;
     private int[] mrank;
     private int[] writeval;
+    private int[] readval;
 
     public ReadImposeWriteConsultMajorityAtomicRegister() {
         subscribe(initHandler, control);
@@ -74,6 +71,7 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
             ts = new int[registerNumber];
             mrank = new int[registerNumber];
             writeval = new int[registerNumber];
+            readval = new int[registerNumber];
 
             i = rank(self, all);
             for (int j = 0; j < registerNumber; j++) {
@@ -111,7 +109,7 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
         @Override
         public void handle(BebDeliver event) {
             Address source = event.getSource();
-            String[] data = extractMessageData(event.getMessage());
+            String[] data = tokenize(event.getMessage());
 
             int type = Integer.parseInt(data[0]);
             int r = Integer.parseInt(data[1]);
@@ -125,8 +123,16 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
                     int j = Integer.parseInt(data[4]);
                     int val = Integer.parseInt(data[5]);
 
-                    
+                    if (true/*
+                             * (t,j)>(ts[r],mrank[r])
+                             */) {
+                        v[r] = val;
+                        ts[r] = t;
+                        mrank[r] = j;
+                    }
+                    trigger(new Pp2pSend(source, new AckMessage(self, r, id)), pp2p);
                     break;
+
             }
         }
     };
@@ -142,21 +148,77 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
 
             if (id == reqid[r]) {
                 readSet.get(r).add(new ReadSetEntry(t, rk, val));
+                checkReadSetEvent();
             }
         }
     };
     Handler<AckMessage> ackMessageHandler = new Handler<AckMessage>() {
         @Override
         public void handle(AckMessage event) {
+            Address source = event.getSource();
+            int r = event.getRegister();
+            int id = event.getRequestId();
+
+            if (id == reqid[r]) {
+                writeSet.get(r).add(source);
+                checkWriteSetEvent();
+            }
         }
     };
 
-    //procedures and functions
-    private int rank(Address self, Set<Address> all) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    //upon internal event
+    private void checkReadSetEvent() {
+        for (int r = 0; r < registerNumber; r++) {
+            if (readSet.get(r).size() > all.size() / 2) {
+                int val = 0;
+                int t = 0;
+                int rk = 0;
+                for (ReadSetEntry entry : readSet.get(r)) {
+                    if (true/*
+                             * (entry.getTimestamp,entry.getRank)>(highestTimestamp,
+                             * highestRank)
+                             */) {
+                        t = entry.getTimestamp();
+                        rk = entry.getRank();
+                        val = entry.getValue();
+                    }
+                }
+                readval[r] = val;
+                if (reading[r]) {
+                    trigger(new BebBroadcast(WRITE + DELIM + r + DELIM + reqid[r] + DELIM + t + DELIM + rk + DELIM + readval[r]), beb);
+                } else {
+                    trigger(new BebBroadcast(WRITE + DELIM + r + DELIM + reqid[r] + DELIM + (t + 1) + DELIM + i + DELIM + readval[r]), beb);
+                }
+            }
+        }
     }
 
-    private String[] extractMessageData(String m) {
+    private void checkWriteSetEvent() {
+        for (int r = 0; r < registerNumber; r++) {
+            if (writeSet.get(r).size() > all.size() / 2) {
+                if (reading[r]) {
+                    reading[r] = false;
+                    trigger(new ReadResponse(r, readval[r]), nnar);
+                } else {
+                    trigger(new WriteResponse(r), nnar);
+                }
+            }
+        }
+    }
+
+    //procedures and functions
+    private int rank(Address self, Set<Address> all) {
+        int rank = 0;
+        for (Address addr : all) {
+            if (self.equals(addr)) {
+                return rank;
+            }
+            ++rank;
+        }
+        return -1;
+    }
+
+    private String[] tokenize(String m) {
         StringTokenizer st = new StringTokenizer(m, DELIM);
         String[] res = new String[st.countTokens()];
         int j = 0;
@@ -212,10 +274,10 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
 
         @Override
         public int hashCode() {
-            int hash = 5;
-            hash = 37 * hash + this.timestamp;
-            hash = 37 * hash + this.rank;
-            hash = 37 * hash + this.value;
+            int hash = 3;
+            hash = 11 * hash + this.timestamp;
+            hash = 11 * hash + this.rank;
+            hash = 11 * hash + this.value;
             return hash;
         }
     }
