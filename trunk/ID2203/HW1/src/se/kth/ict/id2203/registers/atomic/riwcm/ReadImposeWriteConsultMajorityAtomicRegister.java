@@ -182,9 +182,9 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
 
     //upon internal event
     private void checkReadSetEvent() {
-        logger.debug("N/2 = {}; ReadSets = {}", (all.size() / 2), readSet);
         for (int r = 0; r < registerNumber; r++) {
             if (readSet.get(r).size() > all.size() / 2) {
+                logger.debug("Read majority");
                 readMajority = true;
                 int val = 0;
                 int t = -1;
@@ -208,9 +208,9 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
     }
 
     private void checkWriteSetEvent() {
-        logger.debug("N/2 = {}; WriteSets = {}", (all.size() / 2), writeSet);
         for (int r = 0; r < registerNumber; r++) {
             if (writeSet.get(r).size() > all.size() / 2) {
+                logger.debug("Write majority");
                 writeMajority = true;
                 if (reading[r]) {
                     reading[r] = false;
