@@ -17,7 +17,7 @@ public class ReadRequest extends Event {
         this.r = r;
     }
 
-    public int getR() {
+    public int getRegister() {
         return r;
     }
 }

@@ -5,6 +5,8 @@
 package se.kth.ict.id2203.registers.atomic.riwcm;
 
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.kth.ict.id2203.broadcast.beb.BebBroadcast;
 import se.kth.ict.id2203.broadcast.beb.BebDeliver;
 import se.kth.ict.id2203.broadcast.beb.BestEffortBroadcast;
@@ -22,6 +24,8 @@ import se.sics.kompics.address.Address;
  * @author Igor
  */
 public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefinition {
+    //logger
+    private static final Logger logger = LoggerFactory.getLogger(ReadImposeWriteConsultMajorityAtomicRegister.class);
     //ports
     Negative<AtomicRegister> nnar = provides(AtomicRegister.class);
     Positive<BestEffortBroadcast> beb = requires(BestEffortBroadcast.class);
@@ -71,7 +75,7 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
             writeval = new int[registerNumber];
             readval = new int[registerNumber];
 
-            i = rank(self, all);
+            i = rank();
             for (int j = 0; j < registerNumber; j++) {
                 writeSet.add(new HashSet<Address>());
                 readSet.add(new HashSet<ReadSetEntry>());
@@ -81,7 +85,8 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
     Handler<ReadRequest> readRequestHandler = new Handler<ReadRequest>() {
         @Override
         public void handle(ReadRequest event) {
-            int r = event.getR();
+            logger.debug("Invoking reading operation on register {}...", event.getRegister());
+            int r = event.getRegister();
 
             ++reqid[r];
             reading[r] = true;
@@ -93,8 +98,9 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
     Handler<WriteRequest> writeRequestHandler = new Handler<WriteRequest>() {
         @Override
         public void handle(WriteRequest event) {
-            int r = event.getR();
-            int val = event.getVal();
+            logger.debug("Invoking writing operation on register {} with value={}...", event.getRegister(), event.getValue());
+            int r = event.getRegister();
+            int val = event.getValue();
 
             ++reqid[r];
             writeval[r] = val;
@@ -114,9 +120,11 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
             int id = Integer.parseInt(data[2]);
             switch (type) {
                 case READ:
+                    logger.debug("Read message from {}: [{}]", event.getSource(), event.getMessage());
                     trigger(new Pp2pSend(source, new ReadValMessage(self, r, id, ts[r], mrank[r], v[r])), pp2p);
                     break;
                 case WRITE:
+                    logger.debug("Write message from {}: [{}]", event.getSource(), event.getMessage());
                     int t = Integer.parseInt(data[3]);
                     int j = Integer.parseInt(data[4]);
                     int val = Integer.parseInt(data[5]);
@@ -136,7 +144,8 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
     Handler<ReadValMessage> readValMessageHandler = new Handler<ReadValMessage>() {
         @Override
         public void handle(ReadValMessage event) {
-            Address source = event.getSource();
+            logger.debug("ReadVal from {}: [r={} id={} t={} rk={} val={}]",
+                    new Object[]{event.getSource(), event.getRegister(), event.getRequestId(), event.getTimestamp(), event.getRank(), event.getValue()});
             int r = event.getRegister();
             int id = event.getRequestId();
             int t = event.getTimestamp();
@@ -152,6 +161,8 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
     Handler<AckMessage> ackMessageHandler = new Handler<AckMessage>() {
         @Override
         public void handle(AckMessage event) {
+            logger.debug("Ack from {}: [r={} id={}]",
+                    new Object[]{event.getSource(), event.getRegister(), event.getRequestId()});
             Address source = event.getSource();
             int r = event.getRegister();
             int id = event.getRequestId();
@@ -165,6 +176,7 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
 
     //upon internal event
     private void checkReadSetEvent() {
+        logger.debug("N/2 = {}; ReadSets = {}", (all.size() / 2), readSet);
         for (int r = 0; r < registerNumber; r++) {
             if (readSet.get(r).size() > all.size() / 2) {
                 int val = 0;
@@ -189,6 +201,7 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
     }
 
     private void checkWriteSetEvent() {
+        logger.debug("N/2 = {}; WriteSets = {}", (all.size() / 2), writeSet);
         for (int r = 0; r < registerNumber; r++) {
             if (writeSet.get(r).size() > all.size() / 2) {
                 if (reading[r]) {
@@ -202,10 +215,11 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
     }
 
     //procedures and functions
-    private int rank(Address self, Set<Address> all) {
+    private int rank() {
         int rank = 0;
         for (Address addr : all) {
             if (self.equals(addr)) {
+                logger.debug("Rank={}", rank);
                 return rank;
             }
             ++rank;
@@ -274,6 +288,11 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
             hash = 11 * hash + this.rank;
             hash = 11 * hash + this.value;
             return hash;
+        }
+
+        @Override
+        public String toString() {
+            return "{" + timestamp + ":" + rank + ":" + value + '}';
         }
     }
 }
