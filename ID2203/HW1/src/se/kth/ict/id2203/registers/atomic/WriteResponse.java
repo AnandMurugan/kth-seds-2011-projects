@@ -10,6 +10,14 @@ import se.sics.kompics.Event;
  *
  * @author Igor
  */
-public class WriteResponse extends Event{
-    
+public class WriteResponse extends Event {
+    private int register;
+
+    public WriteResponse(int register) {
+        this.register = register;
+    }
+
+    public int getRegister() {
+        return register;
+    }
 }
