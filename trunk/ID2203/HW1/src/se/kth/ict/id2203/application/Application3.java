@@ -62,12 +62,14 @@ public class Application3 extends ComponentDefinition {
         @Override
         public void handle(ReadResponse event) {
             logger.info("register[{}] => {}", event.getRegister(), event.getValue());
+            doNextCommand();
         }
     };
     Handler<WriteResponse> writeResponseHandler = new Handler<WriteResponse>() {
         @Override
         public void handle(WriteResponse event) {
             logger.info("register[{}] updated", event.getRegister());
+            doNextCommand();
         }
     };
 
@@ -112,10 +114,10 @@ public class Application3 extends ComponentDefinition {
             doNextCommand();
         } else if (cmd.equals("R")) {
             doRead();
-            doNextCommand();
+            //doNextCommand();
         } else if (cmd.startsWith("W")) {
             doWrite(Integer.parseInt(cmd.substring(1)));
-            doNextCommand();
+            //doNextCommand();
         } else {
             logger.info("Bad command: '{}'. Try 'help'", cmd);
             doNextCommand();

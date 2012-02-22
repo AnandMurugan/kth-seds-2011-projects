@@ -15,32 +15,39 @@ public final class Assignment3bExecutor {
     private static final int NODES = 6;
 
     public static void main(String[] args) {
-        Topology topology1 = new Topology() {
+        Topology topology0 = new Topology() {
             {
                 node(1, "127.0.0.1", 10001);
                 node(2, "127.0.0.1", 10002);
                 node(3, "127.0.0.1", 10003);
                 node(4, "127.0.0.1", 10004);
 
-                //link(1, 2, 500, 0.5).bidirectional();
-                // link(1, 2, 3000, 0.5);
-                // link(2, 1, 3000, 0.5);
-                // link(3, 2, 3000, 0.5);
-                // link(4, 2, 3000, 0.5);
                 defaultLinks(100, 0.0);
             }
         };
-        Topology topology2 = new Topology() {
+        Topology topologyEx1And2 = new Topology() {
             {
-                for (int i = 1; i <= NODES; i++) {
-                    node(i, "127.0.0.1", 10000 + i);
-                }
-                link(1, 2, 100, 0.5).bidirectional();
-                link(2, 3, 100, 0.5).bidirectional();
-                defaultLinks(100, 0.0);
+                node(1, "127.0.0.1", 10001);
+                node(2, "127.0.0.1", 10002);
+                node(3, "127.0.0.1", 10003);
+
+                defaultLinks(1000, 0.0);
             }
         };
-        Scenario scenario1 = new Scenario(Assignment3bMain.class) {
+        Topology topologyEx3 = new Topology() {
+            {
+                node(1, "127.0.0.1", 10001);
+                node(2, "127.0.0.1", 10002);
+                node(3, "127.0.0.1", 10003);
+
+                link(1, 2, 1000, 0).bidirectional();
+                link(1, 3, 2000, 0).bidirectional();
+                link(2, 3, 1750, 0).bidirectional();
+            }
+        };
+
+
+        Scenario scenario0 = new Scenario(Assignment3bMain.class) {
             {
                 command(1, "S500");
                 command(2, "S500");
@@ -48,8 +55,29 @@ public final class Assignment3bExecutor {
                 command(4, "S500");
             }
         };
+        Scenario scenarioEx1 = new Scenario(Assignment3bMain.class) {
+            {
+                command(1, "S30000");
+                command(2, "S500:W4:S25000");
+                command(3, "S10000:R");
+            }
+        };
+        Scenario scenarioEx2 = new Scenario(Assignment3bMain.class) {
+            {
+                command(1, "S500:W5:R:S5000:R:S30000");
+                command(2, "S500:W6:R:S5000:R:S30000");
+                command(3, "S500:R:S500:R:S10000", 20000);
+            }
+        };
+        Scenario scenarioEx3 = new Scenario(Assignment3bMain.class) {
+            {
+                command(1, "S500:W1:R:S500:R:S8000");
+                command(2, "S500:W2:R:S500:R:S8000");
+                command(3, "S500:W3:R:S500:R:S8000");
+            }
+        };
 
-        scenario1.executeOn(topology1);
+        scenarioEx3.executeOn(topologyEx3);
 
         System.exit(0);
     }
