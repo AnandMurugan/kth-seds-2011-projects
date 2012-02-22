@@ -41,9 +41,9 @@ public class Assignment3aExecutor {
         };
         Scenario scenario1 = new Scenario(Assignment3aMain.class) {
             {
-                command(1, "D3000:R");
-                command(2, "D500:W4:D2500");
-                command(3, "D1000:R");
+                command(1, "D30000:R");
+                command(2, "D500:W4:D25000");
+                command(3, "D10000:R");
             }
         };
         Scenario scenario2 = new Scenario(Assignment3aMain.class) {
