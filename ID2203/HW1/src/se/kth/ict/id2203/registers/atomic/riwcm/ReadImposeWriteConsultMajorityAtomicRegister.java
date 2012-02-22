@@ -224,15 +224,17 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
 
     //procedures and functions
     private int rank() {
-        int rank = 0;
-        for (Address addr : all) {
-            if (self.equals(addr)) {
-                logger.debug("Rank={}", rank);
-                return rank;
-            }
-            ++rank;
-        }
-        return -1;
+//        int rank = 0;
+//        for (Address addr : all) {
+//            if (self.equals(addr)) {
+//                logger.debug("Rank={}", rank);
+//                return rank;
+//            }
+//            ++rank;
+//        }
+//        return -1;
+        logger.debug("Rank={}", self.getId());
+        return self.getId();
     }
 
     private String[] tokenize(String m) {
