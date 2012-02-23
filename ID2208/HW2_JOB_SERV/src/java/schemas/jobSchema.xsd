@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<xs:schema version="1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:ns2="http://xml.netbeans.org/schema/commonSchema"
+           targetNamespace="http://xml.netbeans.org/schema/jobSchema"
+           elementFormDefault="qualified">
+    <xs:import namespace="http://xml.netbeans.org/schema/commonSchema" schemaLocation="commonSchema.xsd"/>
+    <xs:element name="jobs">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="job" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="id" type="xs:string" />
+                            <xs:element name="type" type="xs:string" />
+                            <xs:element name="description" type="xs:string" />
+                            <xs:element name="category" type="xs:string" />
+                            <xs:element name="location" type="xs:string" />
+                            <xs:element name="contact" type="ns2:companyInfoType" />
+                            <xs:element name="deadline_for_application" type="xs:date" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+
