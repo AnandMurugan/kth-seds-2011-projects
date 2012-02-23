@@ -1,4 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><ns1:transcript xmlns:ns1="http://xml.netbeans.org/schema/transcriptSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xml.netbeans.org/schema/transcriptSchema ../schemas/transcriptSchema.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<ns1:transcript
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xmlns:ns1='http://xml.netbeans.org/schema/transcriptSchema'
+    xsi:schemaLocation='http://xml.netbeans.org/schema/transcriptSchema ../schemas/transcriptSchema.xsd'>
     <ns1:transcriptRecord personalNumber="881201-1234">
         <ns1:name>Anand</ns1:name>
         <ns1:university>KTH</ns1:university>

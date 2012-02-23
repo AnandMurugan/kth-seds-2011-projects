@@ -1,4 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?><ns0:records xmlns:ns0="http://xml.netbeans.org/schema/employmentRecordXmlSchema" xmlns:ns1="http://xml.netbeans.org/schema/commonSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xml.netbeans.org/schema/employmentRecordXmlSchema ../schemas/employmentRecordXmlSchema.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<ns0:records
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xmlns:ns0='http://xml.netbeans.org/schema/employmentRecordXmlSchema'
+    xmlns:ns1="http://xml.netbeans.org/schema/commonSchema"
+    xsi:schemaLocation='http://xml.netbeans.org/schema/employmentRecordXmlSchema ../schemas/employmentRecordXmlSchema.xsd'>
     <ns0:record personalNumber="881201-1234">
         <ns0:employmentRecord>
             <ns0:companyInfo name="Microsoft">
@@ -31,4 +42,5 @@
             </ns0:positions>
         </ns0:employmentRecord>
     </ns0:record>
+
 </ns0:records>

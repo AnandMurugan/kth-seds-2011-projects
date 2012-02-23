@@ -1,4 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?><ns0:companies xmlns:ns0="http://xml.netbeans.org/schema/companyInfoXmlSchema" xmlns:ns1="http://xml.netbeans.org/schema/commonSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xml.netbeans.org/schema/companyInfoXmlSchema ../schemas/companyInfoXmlSchema.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<ns0:companies
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xmlns:ns0='http://xml.netbeans.org/schema/companyInfoXmlSchema'
+    xmlns:ns1="http://xml.netbeans.org/schema/commonSchema"
+    xsi:schemaLocation='http://xml.netbeans.org/schema/companyInfoXmlSchema ../schemas/companyInfoXmlSchema.xsd'>
     <ns0:companyInfo name="Microsoft">
         <ns0:description>Is an American multinational corporation headquartered in Redmond, Washington, United States that develops, manufactures, licenses, and supports a wide range of products and services predominantly related to computing through its various product divisions.</ns0:description>
         <ns0:contactInfo>
@@ -22,9 +33,9 @@
             <ns0:product name="Xbox"/>
         </ns0:products>
     </ns0:companyInfo>
-    <ns0:companyInfo name="CarlBranchInsurance">
+    <ns0:companyInfo name="csc">
         <ns0:description>Calbranch Insurance is a local independent insurance agency located in upstate New York. 
-    We provide insurance protection for both personal and business clients.
+            We provide insurance protection for both personal and business clients.
         </ns0:description>
         <ns0:contactInfo>
             <ns1:email>contact@carlbranch.com</ns1:email>
@@ -48,4 +59,5 @@
             <ns0:product name="Farm Insurance"/>
         </ns0:products>
     </ns0:companyInfo>
+
 </ns0:companies>
