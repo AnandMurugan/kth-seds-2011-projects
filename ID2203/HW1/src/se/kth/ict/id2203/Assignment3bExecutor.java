@@ -11,7 +11,7 @@ import se.sics.kompics.launch.Topology;
  *
  * @author Igor
  */
-public final class Assignment3bExecutor {
+public class Assignment3bExecutor {
     private static final int NODES = 6;
 
     public static void main(String[] args) {

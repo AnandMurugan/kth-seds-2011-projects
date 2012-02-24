@@ -30,7 +30,7 @@ import se.sics.kompics.timer.java.JavaTimer;
  *
  * @author Igor
  */
-public final class Assignment2Main extends ComponentDefinition {
+public class Assignment2Main extends ComponentDefinition {
     static {
         PropertyConfigurator.configureAndWatch("log4j.properties");
     }
