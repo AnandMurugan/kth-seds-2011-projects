@@ -11,7 +11,7 @@ import se.sics.kompics.launch.Topology;
  *
  * @author Igor
  */
-public final class Assignment1bExecutor {
+public class Assignment1bExecutor {
     public static void main(String[] args) {
         Topology topology = new Topology() {
             {
