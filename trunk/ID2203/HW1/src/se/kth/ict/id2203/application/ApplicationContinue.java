@@ -29,7 +29,7 @@ import se.sics.kompics.timer.Timeout;
  * @author Cosmin Arad <cosmin@sics.se>
  * @version $Id: ApplicationContinue.java 516 2009-01-28 04:00:47Z cosmin $
  */
-public final class ApplicationContinue extends Timeout {
+public class ApplicationContinue extends Timeout {
     /**
      * Instantiates a new application continue.
      *

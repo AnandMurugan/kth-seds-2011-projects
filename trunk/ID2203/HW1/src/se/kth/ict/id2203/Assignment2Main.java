@@ -6,7 +6,7 @@ package se.kth.ict.id2203;
 
 import java.util.Set;
 import org.apache.log4j.PropertyConfigurator;
-import se.kth.ict.id2203.application.Application2;
+import se.kth.ict.id2203.application.assignment2.Application2;
 import se.kth.ict.id2203.application.ApplicationInit;
 import se.kth.ict.id2203.broadcast.pb.ProbabilisticBroadcast;
 import se.kth.ict.id2203.broadcast.pb.lazy.LazyProbabilisticBroadcast;
@@ -30,7 +30,7 @@ import se.sics.kompics.timer.java.JavaTimer;
  *
  * @author Igor
  */
-public class Assignment2Main extends ComponentDefinition {
+public final class Assignment2Main extends ComponentDefinition {
     static {
         PropertyConfigurator.configureAndWatch("log4j.properties");
     }
@@ -74,7 +74,7 @@ public class Assignment2Main extends ComponentDefinition {
         trigger(new DelayDropLinkInit(topology, System.nanoTime()), flp2p.control());
         trigger(new SimpleUnreliableBroadcastInit(neighborSet, self), un.control());
         trigger(new LazyProbabilisticBroadcastInit(neighborSet, self, System.nanoTime(), FANOUT, ALPHA, DELTA, MAX_ROUNDS), pb.control());
-        trigger(new ApplicationInit(commandScript), app.control());
+        trigger(new ApplicationInit(commandScript, self), app.control());
 
         // connect the components
         connect(app.required(ProbabilisticBroadcast.class), pb.provided(ProbabilisticBroadcast.class));

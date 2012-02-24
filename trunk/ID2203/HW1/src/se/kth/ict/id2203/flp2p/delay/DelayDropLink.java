@@ -22,7 +22,7 @@ package se.kth.ict.id2203.flp2p.delay;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.kth.ict.id2203.application.Application2;
+import se.kth.ict.id2203.application.assignment2.Application2;
 
 import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
 import se.kth.ict.id2203.flp2p.Flp2pDeliver;
@@ -45,7 +45,7 @@ import se.sics.kompics.timer.Timer;
  * @author Cosmin Arad <cosmin@sics.se>
  * @version $Id: DelayDropLink.java 516 2009-01-28 04:00:47Z cosmin $
  */
-public final class DelayDropLink extends ComponentDefinition {
+public class DelayDropLink extends ComponentDefinition {
     Negative<FairLossPointToPointLink> flp2p = provides(FairLossPointToPointLink.class);
     Positive<Network> network = requires(Network.class);
     Positive<Timer> timer = requires(Timer.class);

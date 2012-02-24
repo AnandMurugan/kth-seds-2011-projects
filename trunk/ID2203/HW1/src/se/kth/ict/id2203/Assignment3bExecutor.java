@@ -40,9 +40,13 @@ public final class Assignment3bExecutor {
                 node(2, "127.0.0.1", 10002);
                 node(3, "127.0.0.1", 10003);
 
+//                link(1, 2, 1000, 0).bidirectional();
+//                link(1, 3, 2000, 0).bidirectional();
+//                link(2, 3, 1750, 0).bidirectional();
+                //defaultLinks(1000, 0.0);
                 link(1, 2, 1000, 0).bidirectional();
                 link(1, 3, 2000, 0).bidirectional();
-                link(2, 3, 1750, 0).bidirectional();
+                link(2, 3, 0, 0).bidirectional();
             }
         };
 
@@ -71,13 +75,13 @@ public final class Assignment3bExecutor {
         };
         Scenario scenarioEx3 = new Scenario(Assignment3bMain.class) {
             {
-                command(1, "S500:W1:R:S500:R:S8000");
-                command(2, "S500:W2:R:S500:R:S8000");
-                command(3, "S500:W3:R:S500:R:S8000");
+                command(1, "S500:W1:R:S500:R:S8000",000);
+                command(2, "S500:W2:R:S500:R:S8000",100);
+                command(3, "S500:W3:R:S500:R:S8000",200);
             }
         };
 
-        scenarioEx3.executeOn(topologyEx3);
+        scenarioEx2.executeOn(topologyEx1And2);
 
         System.exit(0);
     }

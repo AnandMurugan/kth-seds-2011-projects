@@ -5,11 +5,7 @@
 package se.kth.ict.id2203.broadcast.un.simple;
 
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import se.kth.ict.id2203.broadcast.pb.lazy.DataMessage;
 import se.kth.ict.id2203.broadcast.un.UnBroadcast;
-import se.kth.ict.id2203.broadcast.un.UnDeliver;
 import se.kth.ict.id2203.broadcast.un.UnreliableBroadcast;
 import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
 import se.kth.ict.id2203.flp2p.Flp2pSend;
@@ -47,17 +43,17 @@ public class SimpleUnreliableBroadcast extends ComponentDefinition {
     Handler<UnBroadcast> unBroadcastHandler = new Handler<UnBroadcast>() {
         @Override
         public void handle(UnBroadcast event) {
-            SimpleMessage dm = new SimpleMessage(self, event.getMessage());
+            SimpleUnreliableBroadcastMessage m = new SimpleUnreliableBroadcastMessage(self, event.getDeliverEvent());
             for (Address p : neighborSet) {
-                trigger(new Flp2pSend(p, dm), flp2p);
+                trigger(new Flp2pSend(p, m), flp2p);
             }
-            trigger(new Flp2pSend(self, dm), flp2p);
+            trigger(new Flp2pSend(self, m), flp2p);
         }
     };
-    Handler<SimpleMessage> simpleMessageHandler = new Handler<SimpleMessage>() {
+    Handler<SimpleUnreliableBroadcastMessage> simpleMessageHandler = new Handler<SimpleUnreliableBroadcastMessage>() {
         @Override
-        public void handle(SimpleMessage event) {
-            trigger(new UnDeliver(event.getSource(), event.getMessage()), un);
+        public void handle(SimpleUnreliableBroadcastMessage event) {
+            trigger(event.getDeliverEvent(), un);
         }
     };
 }

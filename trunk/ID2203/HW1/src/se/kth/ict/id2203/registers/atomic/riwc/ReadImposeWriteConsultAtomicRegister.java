@@ -8,31 +8,26 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import se.kth.ict.id2203.broadcast.best.BebBroadcast;
-import se.kth.ict.id2203.broadcast.best.BestEffortBroadcast;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import se.kth.ict.id2203.broadcast.beb.BebBroadcast;
+import se.kth.ict.id2203.broadcast.beb.BestEffortBroadcast;
 import se.kth.ict.id2203.fd.pfd.Crash;
 import se.kth.ict.id2203.fd.pfd.PerfectFailureDetector;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
 import se.kth.ict.id2203.pp2p.Pp2pSend;
-import se.kth.ict.id2203.registers.atomic.AckMessage;
-import se.kth.ict.id2203.registers.atomic.AtomicRegister;
-import se.kth.ict.id2203.registers.atomic.ReadRequest;
-import se.kth.ict.id2203.registers.atomic.ReadResponse;
-import se.kth.ict.id2203.registers.atomic.WriteRequest;
-import se.kth.ict.id2203.registers.atomic.WriteResponse;
+import se.kth.ict.id2203.registers.atomic.*;
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
 import se.sics.kompics.Negative;
 import se.sics.kompics.Positive;
 import se.sics.kompics.address.Address;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author julio
  */
-public class ReadImposeWriteConsult extends ComponentDefinition {
+public class ReadImposeWriteConsultAtomicRegister extends ComponentDefinition {
     Negative<AtomicRegister> nnar = provides(AtomicRegister.class);
     Positive<BestEffortBroadcast> beb = requires(BestEffortBroadcast.class);
     Positive<PerfectPointToPointLink> pp2p = requires(PerfectPointToPointLink.class);
@@ -45,21 +40,21 @@ public class ReadImposeWriteConsult extends ComponentDefinition {
     private boolean[] reading;
     private int[] mrank, reqId, readVal, v, ts;
     private int iRank;
-    private static final Logger logger = LoggerFactory.getLogger(ReadImposeWriteConsult.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReadImposeWriteConsultAtomicRegister.class);
 
-    public ReadImposeWriteConsult() {
-        subscribe(InitHandler, control);
-        subscribe(ReadRequestHandler, nnar);
-        subscribe(WriteRequestHandler, nnar);
-        subscribe(WriteMessageHandler, beb);
-        subscribe(AckMessageHandler, pp2p);
-        subscribe(CrashHandler, pfd);
+    public ReadImposeWriteConsultAtomicRegister() {
+        subscribe(initHandler, control);
+        subscribe(readRequestHandler, nnar);
+        subscribe(writeRequestHandler, nnar);
+        subscribe(writeMessageHandler, beb);
+        subscribe(ackMessageHandler, pp2p);
+        subscribe(crashHandler, pfd);
 
         aliveNodes = new HashSet<Address>();
     }
-    Handler<RiwcInit> InitHandler = new Handler<RiwcInit>() {
+    Handler<ReadImposeWriteConsultAtomicRegisterInit> initHandler = new Handler<ReadImposeWriteConsultAtomicRegisterInit>() {
         @Override
-        public void handle(RiwcInit event) {
+        public void handle(ReadImposeWriteConsultAtomicRegisterInit event) {
             neighborNodes = event.getNeighborSet();
             aliveNodes.addAll(neighborNodes);
             self = event.getSelf();
@@ -84,7 +79,7 @@ public class ReadImposeWriteConsult extends ComponentDefinition {
             }
         }
     };
-    Handler<ReadRequest> ReadRequestHandler = new Handler<ReadRequest>() {
+    Handler<ReadRequest> readRequestHandler = new Handler<ReadRequest>() {
         @Override
         public void handle(ReadRequest event) {
             int r = event.getRegister();
@@ -93,11 +88,11 @@ public class ReadImposeWriteConsult extends ComponentDefinition {
             writeSet.get(r).clear();
             readVal[r] = v[r];
             //logger.info("READ REQUEST: {}", reqId[r]);
-            WriteMessage writeMsg = new WriteMessage(self, "", r, v[r], reqId[r], ts[r], mrank[r]);
+            WriteMessage writeMsg = new WriteMessage(self, r, reqId[r], ts[r], mrank[r], v[r]);
             trigger(new BebBroadcast(writeMsg), beb);
         }
     };
-    Handler<WriteRequest> WriteRequestHandler = new Handler<WriteRequest>() {
+    Handler<WriteRequest> writeRequestHandler = new Handler<WriteRequest>() {
         @Override
         public void handle(WriteRequest event) {
             int r = event.getRegister();
@@ -105,33 +100,33 @@ public class ReadImposeWriteConsult extends ComponentDefinition {
             reqId[r]++;
             writeSet.get(r).clear();
             //logger.info("WRITE REQUEST: {}", reqId[r]);
-            WriteMessage writeMsg = new WriteMessage(self, "", r, val, reqId[r], ts[r] + 1, iRank);
+            WriteMessage writeMsg = new WriteMessage(self, r, reqId[r], ts[r] + 1, iRank, val);
             trigger(new BebBroadcast(writeMsg), beb);
         }
     };
-    Handler<WriteMessage> WriteMessageHandler = new Handler<WriteMessage>() {
+    Handler<WriteMessage> writeMessageHandler = new Handler<WriteMessage>() {
         @Override
         public void handle(WriteMessage event) {
-            int r = event.getR();
+            int r = event.getRegister();
             int timestamp = event.getTimestamp();
             int rank = event.getRank();
 
             if (timestamp > ts[r] || (timestamp == ts[r] && rank > mrank[r])) {
-                v[r] = event.getV();
+                v[r] = event.getValue();
                 ts[r] = timestamp;
                 mrank[r] = rank;
             }
-            //logger.debug("HANDLING WRITE (reqId): {}", reqId[r]);
-            trigger(new Pp2pSend(event.getSource(), new AckMessage(self, r, event.getId())), pp2p);
+            logger.debug("HANDLING WRITE (reqId): {}", reqId[r]);
+            trigger(new Pp2pSend(event.getSource(), new AckMessage(self, r, event.getRequestId())), pp2p);
         }
     };
-    Handler<AckMessage> AckMessageHandler = new Handler<AckMessage>() {
+    Handler<AckMessage> ackMessageHandler = new Handler<AckMessage>() {
         @Override
         public void handle(AckMessage event) {
             int r = event.getRegister();
             int id = event.getRequestId();
-            //logger.debug("RECEIVING ACK FROM {}", event.getSource());
-            //logger.debug("data:((reqId, id) : {},{}", reqId[r], id);
+            logger.debug("RECEIVING ACK FROM {}", event.getSource());
+            logger.debug("data:((reqId, id) : {},{}", reqId[r], id);
             if (id == reqId[r]) {
                 writeSet.get(r).add(event.getSource());
             }
@@ -139,7 +134,7 @@ public class ReadImposeWriteConsult extends ComponentDefinition {
             checkReceivedAcks(r);
         }
     };
-    Handler<Crash> CrashHandler = new Handler<Crash>() {
+    Handler<Crash> crashHandler = new Handler<Crash>() {
         @Override
         public void handle(Crash event) {
             logger.debug("Node crashed: {}", event.getNodeCrashed());

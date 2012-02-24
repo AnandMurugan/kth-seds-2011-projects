@@ -6,7 +6,7 @@ package se.kth.ict.id2203;
 
 import java.util.Set;
 import org.apache.log4j.PropertyConfigurator;
-import se.kth.ict.id2203.application.Application3;
+import se.kth.ict.id2203.application.assignment3.Application3;
 import se.kth.ict.id2203.application.ApplicationInit;
 import se.kth.ict.id2203.broadcast.beb.BestEffortBroadcast;
 import se.kth.ict.id2203.broadcast.beb.basic.BasicBroadcast;

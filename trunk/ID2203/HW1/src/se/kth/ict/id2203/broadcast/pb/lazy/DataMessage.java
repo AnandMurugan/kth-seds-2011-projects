@@ -4,6 +4,7 @@
  */
 package se.kth.ict.id2203.broadcast.pb.lazy;
 
+import se.kth.ict.id2203.broadcast.pb.PbDeliver;
 import se.kth.ict.id2203.flp2p.Flp2pDeliver;
 import se.sics.kompics.address.Address;
 
@@ -12,26 +13,21 @@ import se.sics.kompics.address.Address;
  * @author Igor
  */
 public class DataMessage extends Flp2pDeliver implements Comparable<DataMessage> {
-    private final String message;
-    private final int sequenceNumber;
+    private PbDeliver deliverEvent;
+    private int sequenceNumber;
 
-    public DataMessage(Address source, String message, int sequenceNumber) {
+    public DataMessage(Address source, PbDeliver deliverEvent, int sequenceNumber) {
         super(source);
-        this.message = message;
+        this.deliverEvent = deliverEvent;
         this.sequenceNumber = sequenceNumber;
     }
 
-    public final String getMessage() {
-        return message;
+    public PbDeliver getDeliverEvent() {
+        return deliverEvent;
     }
 
-    public final int getSequenceNumber() {
+    public int getSequenceNumber() {
         return sequenceNumber;
-    }
-
-    @Override
-    public String toString() {
-        return "DataMessage{" + "source=" + this.getSource() + ", message=" + message + ", sequenceNumber=" + sequenceNumber + '}';
     }
 
     @Override
@@ -46,7 +42,7 @@ public class DataMessage extends Flp2pDeliver implements Comparable<DataMessage>
         if ((this.getSource() == null) ? (other.getSource() != null) : !this.getSource().equals(other.getSource())) {
             return false;
         }
-        if ((this.message == null) ? (other.message != null) : !this.message.equals(other.message)) {
+        if ((this.deliverEvent == null) ? (other.deliverEvent != null) : !this.deliverEvent.equals(other.deliverEvent)) {
             return false;
         }
         if (this.sequenceNumber != other.sequenceNumber) {
@@ -59,7 +55,7 @@ public class DataMessage extends Flp2pDeliver implements Comparable<DataMessage>
     public int hashCode() {
         int hash = 5;
         hash = 41 * hash + (this.getSource() != null ? this.getSource().hashCode() : 0);
-        hash = 41 * hash + (this.message != null ? this.message.hashCode() : 0);
+        hash = 41 * hash + (this.deliverEvent != null ? this.deliverEvent.hashCode() : 0);
         hash = 41 * hash + this.sequenceNumber;
         return hash;
     }

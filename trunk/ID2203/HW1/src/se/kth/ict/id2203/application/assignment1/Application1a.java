@@ -2,12 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.kth.ict.id2203.application;
+package se.kth.ict.id2203.application.assignment1;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.kth.ict.id2203.application.ApplicationContinue;
+import se.kth.ict.id2203.application.ApplicationInit;
 import se.kth.ict.id2203.fd.pfd.PerfectFailureDetector;
 import se.kth.ict.id2203.fd.pfd.Crash;
 import se.sics.kompics.ComponentDefinition;

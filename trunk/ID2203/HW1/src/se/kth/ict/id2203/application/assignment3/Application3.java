@@ -2,15 +2,19 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.kth.ict.id2203.application;
+package se.kth.ict.id2203.application.assignment3;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.kth.ict.id2203.broadcast.pb.PbBroadcast;
-import se.kth.ict.id2203.broadcast.pb.PbDeliver;
-import se.kth.ict.id2203.broadcast.pb.ProbabilisticBroadcast;
+import se.kth.ict.id2203.application.ApplicationContinue;
+import se.kth.ict.id2203.application.ApplicationInit;
+import se.kth.ict.id2203.registers.atomic.AtomicRegister;
+import se.kth.ict.id2203.registers.atomic.ReadRequest;
+import se.kth.ict.id2203.registers.atomic.ReadResponse;
+import se.kth.ict.id2203.registers.atomic.WriteRequest;
+import se.kth.ict.id2203.registers.atomic.WriteResponse;
 import se.sics.kompics.*;
 import se.sics.kompics.timer.ScheduleTimeout;
 import se.sics.kompics.timer.Timer;
@@ -19,21 +23,22 @@ import se.sics.kompics.timer.Timer;
  *
  * @author Igor
  */
-public class Application2 extends ComponentDefinition {
+public final class Application3 extends ComponentDefinition {
     //ports
-    Positive<ProbabilisticBroadcast> pb = requires(ProbabilisticBroadcast.class);
+    Positive<AtomicRegister> nnar = requires(AtomicRegister.class);
     Positive<Timer> timer = requires(Timer.class);
     //logger
-    private static final Logger logger = LoggerFactory.getLogger(Application2.class);
+    private static final Logger logger = LoggerFactory.getLogger(Application3.class);
     //local variables
     private String[] commands;
     private int lastCommand;
 
-    public Application2() {
+    public Application3() {
         subscribe(initHandler, control);
         subscribe(startHandler, control);
         subscribe(continueHandler, timer);
-        subscribe(pbDeliverHandler, pb);
+        subscribe(readResponseHandler, nnar);
+        subscribe(writeResponseHandler, nnar);
     }
     //handlers
     Handler<ApplicationInit> initHandler = new Handler<ApplicationInit>() {
@@ -55,10 +60,18 @@ public class Application2 extends ComponentDefinition {
             doNextCommand();
         }
     };
-    Handler<PbDeliver> pbDeliverHandler = new Handler<PbDeliver>() {
+    Handler<ReadResponse> readResponseHandler = new Handler<ReadResponse>() {
         @Override
-        public void handle(PbDeliver event) {
-            logger.info("Received broadcast message '{}' from {}", event.getMessage(), event.getSource());
+        public void handle(ReadResponse event) {
+            logger.info("register[{}] => {}", event.getRegister(), event.getValue());
+            doNextCommand();
+        }
+    };
+    Handler<WriteResponse> writeResponseHandler = new Handler<WriteResponse>() {
+        @Override
+        public void handle(WriteResponse event) {
+            logger.info("register[{}] updated", event.getRegister());
+            doNextCommand();
         }
     };
 
@@ -101,9 +114,12 @@ public class Application2 extends ComponentDefinition {
         } else if (cmd.equals("help")) {
             doHelp();
             doNextCommand();
-        } else if (cmd.startsWith("B")) {
-            doBroadcast(cmd.substring(1));
-            doNextCommand();
+        } else if (cmd.equals("R")) {
+            doRead();
+            //doNextCommand();
+        } else if (cmd.startsWith("W")) {
+            doWrite(Integer.parseInt(cmd.substring(1)));
+            //doNextCommand();
         } else {
             logger.info("Bad command: '{}'. Try 'help'", cmd);
             doNextCommand();
@@ -111,9 +127,10 @@ public class Application2 extends ComponentDefinition {
     }
 
     private void doHelp() {
-        logger.info("Available commands: S<n>, B<m>, help, X");
+        logger.info("Available commands: S<n>, R, W<v>, help, X");
         logger.info("Sn: sleeps 'n' milliseconds before the next command");
-        logger.info("Bm: broadcasts message 'm'");
+        logger.info("R: reads value from register 0");
+        logger.info("Wv: writes value 'v' to register 0");
         logger.info("help: shows this help message");
         logger.info("X: terminates this process");
     }
@@ -133,8 +150,13 @@ public class Application2 extends ComponentDefinition {
         Kompics.shutdown();
     }
 
-    private void doBroadcast(String message) {
-        logger.info("Broadcasting message '{}'...", message);
-        trigger(new PbBroadcast(message), pb);
+    private void doRead() {
+        logger.info("Reading from register 0...");
+        trigger(new ReadRequest(0), nnar);
+    }
+
+    private void doWrite(int value) {
+        logger.info("Writing {} to register 0...", value);
+        trigger(new WriteRequest(0, value), nnar);
     }
 }

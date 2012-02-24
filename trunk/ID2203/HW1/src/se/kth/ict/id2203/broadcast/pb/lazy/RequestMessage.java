@@ -12,8 +12,8 @@ import se.sics.kompics.address.Address;
  * @author Igor
  */
 public class RequestMessage extends Flp2pDeliver {
-    private final Address broadcastSource;
-    private final int sequenceNumber;
+    private Address broadcastSource;
+    private int sequenceNumber;
     public int ttl;
 
     public RequestMessage(Address source, Address broadcastSource, int sequenceNumber, int ttl) {
@@ -23,11 +23,11 @@ public class RequestMessage extends Flp2pDeliver {
         this.ttl = ttl;
     }
 
-    public final Address getBroadcastSource() {
+    public Address getBroadcastSource() {
         return broadcastSource;
     }
 
-    public final int getSequenceNumber() {
+    public int getSequenceNumber() {
         return sequenceNumber;
     }
 

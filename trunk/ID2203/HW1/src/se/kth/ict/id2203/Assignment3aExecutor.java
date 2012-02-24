@@ -11,7 +11,7 @@ import se.sics.kompics.launch.Topology;
  *
  * @author julio
  */
-public class Assignment3aExecutor {
+public final class Assignment3aExecutor {
     private static final int NODES = 3;
 
     public static void main(String[] args) {
@@ -26,7 +26,7 @@ public class Assignment3aExecutor {
                 // link(2, 1, 3000, 0.5);
                 // link(3, 2, 3000, 0.5);
                 // link(4, 2, 3000, 0.5);
-                defaultLinks(0, 0.0);
+                defaultLinks(0000, 0.0);
             }
         };
         Topology topology2 = new Topology() {
@@ -39,11 +39,18 @@ public class Assignment3aExecutor {
                 defaultLinks(100, 0.0);
             }
         };
+        Scenario scenario0 = new Scenario(Assignment3aMain.class) {
+            {
+                command(1, "S0");
+                command(2, "S0");
+                command(3, "S0");
+            }
+        };
         Scenario scenario1 = new Scenario(Assignment3aMain.class) {
             {
-                command(1, "D30000:R");
-                command(2, "D500:W4:D25000");
-                command(3, "D10000:R");
+                command(1, "S3000:R");
+                command(2, "S500:W4:S2500");
+                command(3, "S1000:R");
             }
         };
         Scenario scenario2 = new Scenario(Assignment3aMain.class) {
@@ -91,7 +98,7 @@ public class Assignment3aExecutor {
             }
         };
 
-        scenario1.executeOn(topology1);
+        scenario0.executeOn(topology1);
 
         System.exit(0);
     }

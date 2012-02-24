@@ -11,13 +11,7 @@ import se.sics.kompics.timer.Timeout;
  *
  * @author julio
  */
-public final class CheckTimeout extends Timeout {
-    /**
-     * Instantiates a new application continue.
-     * 
-     * @param request
-     *            the request
-     */
+public class CheckTimeout extends Timeout {
     public CheckTimeout(ScheduleTimeout request) {
         super(request);
     }

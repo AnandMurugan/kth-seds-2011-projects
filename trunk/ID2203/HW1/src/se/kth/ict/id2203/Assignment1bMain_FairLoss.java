@@ -6,11 +6,11 @@ package se.kth.ict.id2203;
 
 import java.util.Set;
 import org.apache.log4j.PropertyConfigurator;
-import se.kth.ict.id2203.application.Application1b;
+import se.kth.ict.id2203.application.assignment1.Application1b;
 import se.kth.ict.id2203.application.ApplicationInit;
 import se.kth.ict.id2203.fd.epfd.EventuallyPerfectFailureDetector;
-import se.kth.ict.id2203.fd.epfd.my.MyEventuallyPerfectFailureDetectorInit;
-import se.kth.ict.id2203.fd.epfd.my.MyEventuallyPerfectFailureDetector_FairLoss;
+import se.kth.ict.id2203.fd.epfd.simple.SimpleEventuallyPerfectFailureDetectorInit;
+import se.kth.ict.id2203.fd.epfd.simple.SimpleEventuallyPerfectFailureDetector_FairLoss;
 import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
 import se.kth.ict.id2203.flp2p.delay.DelayDropLink;
 import se.kth.ict.id2203.flp2p.delay.DelayDropLinkInit;
@@ -49,7 +49,7 @@ public class Assignment1bMain_FairLoss extends ComponentDefinition {
         Component time = create(JavaTimer.class);
         Component network = create(MinaNetwork.class);
         Component flp2p = create(DelayDropLink.class);
-        Component epfd = create(MyEventuallyPerfectFailureDetector_FairLoss.class);
+        Component epfd = create(SimpleEventuallyPerfectFailureDetector_FairLoss.class);
         Component app = create(Application1b.class);
 
         // handle possible faults in the components
@@ -65,7 +65,7 @@ public class Assignment1bMain_FairLoss extends ComponentDefinition {
         
         trigger(new MinaNetworkInit(self, 5), network.control());
         trigger(new DelayDropLinkInit(topology, System.nanoTime()), flp2p.control());
-        trigger(new MyEventuallyPerfectFailureDetectorInit(TIME_DELAY, DELTA, neighborSet, self), epfd.control());
+        trigger(new SimpleEventuallyPerfectFailureDetectorInit(TIME_DELAY, DELTA, neighborSet, self), epfd.control());
         trigger(new ApplicationInit(commandScript), app.control());
 
         // connect the components

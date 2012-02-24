@@ -11,13 +11,13 @@ import se.sics.kompics.Event;
  * @author Igor
  */
 public class UnBroadcast extends Event {
-    private final String message;
+    private UnDeliver deliverEvent;
 
-    public UnBroadcast(String message) {
-        this.message = message;
+    public UnBroadcast(UnDeliver deliverEvent) {
+        this.deliverEvent = deliverEvent;
     }
 
-    public String getMessage() {
-        return message;
+    public UnDeliver getDeliverEvent() {
+        return deliverEvent;
     }
 }

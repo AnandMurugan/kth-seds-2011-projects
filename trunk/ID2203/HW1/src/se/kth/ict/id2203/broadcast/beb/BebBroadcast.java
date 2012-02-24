@@ -11,14 +11,13 @@ import se.sics.kompics.Event;
  * @author julio
  */
 public class BebBroadcast extends Event {
-    private final String message;
+    private BebDeliver deliverEvent;
 
-    public BebBroadcast(String message) {
-        this.message = message;
+    public BebBroadcast(BebDeliver deliverEvent) {
+        this.deliverEvent = deliverEvent;
     }
 
-    public String getMessage() {
-        return message;
+    public BebDeliver getDeliverEvent() {
+        return deliverEvent;
     }
-    
 }
