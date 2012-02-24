@@ -11,15 +11,8 @@ import se.sics.kompics.launch.Topology;
  *
  * @author julio
  */
-@SuppressWarnings("serial")
 public class Assignment1aExecutor {
-    /**
-     * The main method.
-     *
-     * @param args the arguments
-     */
     public static void main(String[] args) {
-
         Topology topology1 = new Topology() {
             {
                 node(1, "127.0.0.1", 22031);
