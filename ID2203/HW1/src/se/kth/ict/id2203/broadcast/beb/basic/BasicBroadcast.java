@@ -44,17 +44,17 @@ public class BasicBroadcast extends ComponentDefinition {
     Handler<BebBroadcast> bebBroadcastHandler = new Handler<BebBroadcast>() {
         @Override
         public void handle(BebBroadcast event) {
-            BasicMessage bm = new BasicMessage(self, event.getMessage());
+            BasicBroadcastMessage m = new BasicBroadcastMessage(self, event.getDeliverEvent());
             for (Address p : neighborSet) {
-                trigger(new Pp2pSend(p, bm), pp2p);
+                trigger(new Pp2pSend(p, m), pp2p);
             }
-            trigger(new Pp2pSend(self, bm), pp2p);
+            trigger(new Pp2pSend(self, m), pp2p);
         }
     };
-    Handler<BasicMessage> basicMessageHandler = new Handler<BasicMessage>() {
+    Handler<BasicBroadcastMessage> basicMessageHandler = new Handler<BasicBroadcastMessage>() {
         @Override
-        public void handle(BasicMessage event) {
-            trigger(new BebDeliver(event.getSource(), event.getMessage()), beb);
+        public void handle(BasicBroadcastMessage event) {
+            trigger(event.getDeliverEvent(), beb);
         }
     };
 }

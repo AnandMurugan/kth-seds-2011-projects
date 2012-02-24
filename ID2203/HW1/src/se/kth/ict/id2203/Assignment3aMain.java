@@ -6,20 +6,20 @@ package se.kth.ict.id2203;
 
 import java.util.Set;
 import org.apache.log4j.PropertyConfigurator;
-import se.kth.ict.id2203.application.Application3a;
 import se.kth.ict.id2203.application.ApplicationInit;
-import se.kth.ict.id2203.broadcast.best.BestEffortBroadcast;
-import se.kth.ict.id2203.broadcast.best.basic.BasicBroadcast;
-import se.kth.ict.id2203.broadcast.best.basic.BasicBroadcastInit;
+import se.kth.ict.id2203.application.assignment3.Application3;
+import se.kth.ict.id2203.broadcast.beb.BestEffortBroadcast;
+import se.kth.ict.id2203.broadcast.beb.basic.BasicBroadcast;
+import se.kth.ict.id2203.broadcast.beb.basic.BasicBroadcastInit;
 import se.kth.ict.id2203.fd.pfd.PerfectFailureDetector;
-import se.kth.ict.id2203.fd.pfd.my.MyPerfectFailureDetector;
-import se.kth.ict.id2203.fd.pfd.my.MyPerfectFailureDetectorInit;
+import se.kth.ict.id2203.fd.pfd.simple.SimplePerfectFailureDetector;
+import se.kth.ict.id2203.fd.pfd.simple.SimplePerfectFailureDetectorInit;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
 import se.kth.ict.id2203.pp2p.delay.DelayLink;
 import se.kth.ict.id2203.pp2p.delay.DelayLinkInit;
 import se.kth.ict.id2203.registers.atomic.AtomicRegister;
-import se.kth.ict.id2203.registers.atomic.riwc.ReadImposeWriteConsult;
-import se.kth.ict.id2203.registers.atomic.riwc.RiwcInit;
+import se.kth.ict.id2203.registers.atomic.riwc.ReadImposeWriteConsultAtomicRegister;
+import se.kth.ict.id2203.registers.atomic.riwc.ReadImposeWriteConsultAtomicRegisterInit;
 import se.sics.kompics.Component;
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Fault;
@@ -61,10 +61,10 @@ public class Assignment3aMain extends ComponentDefinition {
         Component time = create(JavaTimer.class);
         Component network = create(MinaNetwork.class);
         Component pp2p = create(DelayLink.class);
-        Component pfd = create(MyPerfectFailureDetector.class);
+        Component pfd = create(SimplePerfectFailureDetector.class);
         Component beb = create(BasicBroadcast.class);
-        Component riwc = create(ReadImposeWriteConsult.class);
-        Component app = create(Application3a.class);
+        Component riwc = create(ReadImposeWriteConsultAtomicRegister.class);
+        Component app = create(Application3.class);
 
         // handle possible faults in the components
         subscribe(faultHandler, time.control());
@@ -85,23 +85,23 @@ public class Assignment3aMain extends ComponentDefinition {
         trigger(new MinaNetworkInit(self, 5), network.control());
         trigger(new DelayLinkInit(topology), pp2p.control());
         trigger(new BasicBroadcastInit(neighborSet, self), beb.control());
-        trigger(new MyPerfectFailureDetectorInit(neighborSet, self, heartbeatInterval, checkInterval), pfd.control());
-        trigger(new RiwcInit(neighborSet, self, numRegisters), riwc.control());
-        trigger(new ApplicationInit(commandScript), app.control());
+        trigger(new SimplePerfectFailureDetectorInit(neighborSet, self, heartbeatInterval, checkInterval), pfd.control());
+        trigger(new ReadImposeWriteConsultAtomicRegisterInit(neighborSet, self, numRegisters), riwc.control());
+        trigger(new ApplicationInit(commandScript, self), app.control());
 
         // connect the components
         connect(app.required(AtomicRegister.class), riwc.provided(AtomicRegister.class));
         connect(app.required(Timer.class), time.provided(Timer.class));
-        
+
         connect(riwc.required(BestEffortBroadcast.class), beb.provided(BestEffortBroadcast.class));
         connect(riwc.required(PerfectPointToPointLink.class), pp2p.provided(PerfectPointToPointLink.class));
         connect(riwc.required(PerfectFailureDetector.class), pfd.provided(PerfectFailureDetector.class));
-        
+
         connect(beb.required(PerfectPointToPointLink.class), pp2p.provided(PerfectPointToPointLink.class));
-        
+
         connect(pfd.required(PerfectPointToPointLink.class), pp2p.provided(PerfectPointToPointLink.class));
         connect(pfd.required(Timer.class), time.provided(Timer.class));
-        
+
         connect(pp2p.required(Network.class), network.provided(Network.class));
         connect(pp2p.required(Timer.class), time.provided(Timer.class));
     }

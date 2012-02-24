@@ -8,7 +8,6 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.ict.id2203.broadcast.beb.BebBroadcast;
-import se.kth.ict.id2203.broadcast.beb.BebDeliver;
 import se.kth.ict.id2203.broadcast.beb.BestEffortBroadcast;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
 import se.kth.ict.id2203.pp2p.Pp2pSend;
@@ -30,10 +29,6 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
     Negative<AtomicRegister> nnar = provides(AtomicRegister.class);
     Positive<BestEffortBroadcast> beb = requires(BestEffortBroadcast.class);
     Positive<PerfectPointToPointLink> pp2p = requires(PerfectPointToPointLink.class);
-    //consts
-    public final static String DELIM = " ";
-    public final static int READ = 1;
-    public final static int WRITE = 2;
     //local variables
     private Address self;
     private Set<Address> all;
@@ -55,7 +50,8 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
         subscribe(initHandler, control);
         subscribe(readRequestHandler, nnar);
         subscribe(writeRequestHandler, nnar);
-        subscribe(bebDeliverHandler, beb);
+        subscribe(readMessageHandler, beb);
+        subscribe(writeMessageHandler, beb);
         subscribe(readValMessageHandler, pp2p);
         subscribe(ackMessageHandler, pp2p);
     }
@@ -96,7 +92,7 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
             writeSet.get(r).clear();
             readMajority = false;
             writeMajority = false;
-            trigger(new BebBroadcast(READ + DELIM + r + DELIM + reqid[r]), beb);
+            trigger(new BebBroadcast(new ReadMessage(self, r, reqid[r])), beb);
         }
     };
     Handler<WriteRequest> writeRequestHandler = new Handler<WriteRequest>() {
@@ -112,39 +108,18 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
             writeSet.get(r).clear();
             readMajority = false;
             writeMajority = false;
-            trigger(new BebBroadcast(READ + DELIM + r + DELIM + reqid[r]), beb);
+            trigger(new BebBroadcast(new ReadMessage(self, r, reqid[r])), beb);
         }
     };
-    Handler<BebDeliver> bebDeliverHandler = new Handler<BebDeliver>() {
+    Handler<ReadMessage> readMessageHandler = new Handler<ReadMessage>() {
         @Override
-        public void handle(BebDeliver event) {
+        public void handle(ReadMessage event) {
             Address source = event.getSource();
-            String[] data = tokenize(event.getMessage());
-
-            int type = Integer.parseInt(data[0]);
-            int r = Integer.parseInt(data[1]);
-            int id = Integer.parseInt(data[2]);
-            switch (type) {
-                case READ:
-                    logger.debug("Read message from {}: [{}]", event.getSource(), event.getMessage());
-                    trigger(new Pp2pSend(source, new ReadValMessage(self, r, id, ts[r], mrank[r], v[r])), pp2p);
-                    break;
-                case WRITE:
-                    logger.debug("Write message from {}: [{}]", event.getSource(), event.getMessage());
-                    int t = Integer.parseInt(data[3]);
-                    int j = Integer.parseInt(data[4]);
-                    int val = Integer.parseInt(data[5]);
-
-                    if ((t > ts[r])
-                            || (t == ts[r] && j > mrank[r])) {
-                        v[r] = val;
-                        ts[r] = t;
-                        mrank[r] = j;
-                    }
-                    trigger(new Pp2pSend(source, new AckMessage(self, r, id)), pp2p);
-                    break;
-
-            }
+            int r = event.getRegister();
+            int id = event.getRequestId();
+            logger.debug("Read message from {}: [r={} id={}]",
+                    new Object[]{event.getSource(), event.getRegister(), event.getRequestId()});
+            trigger(new Pp2pSend(source, new ReadValMessage(self, r, id, ts[r], mrank[r], v[r])), pp2p);
         }
     };
     Handler<ReadValMessage> readValMessageHandler = new Handler<ReadValMessage>() {
@@ -160,8 +135,29 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
 
             if (id == reqid[r] && !readMajority) {
                 readSet.get(r).add(new ReadSetEntry(t, rk, val));
-                checkReadSetEvent();
+                checkReadSet();
             }
+        }
+    };
+    Handler<WriteMessage> writeMessageHandler = new Handler<WriteMessage>() {
+        @Override
+        public void handle(WriteMessage event) {
+            Address source = event.getSource();
+            int r = event.getRegister();
+            int id = event.getRequestId();
+            int t = event.getTimestamp();
+            int j = event.getRank();
+            int val = event.getValue();
+            logger.debug("Write message from {}: [r={} id={} t={} rk={} val={}]",
+                    new Object[]{event.getSource(), event.getRegister(), event.getRequestId(), event.getTimestamp(), event.getRank(), event.getValue()});
+
+            if ((t > ts[r])
+                    || (t == ts[r] && j > mrank[r])) {
+                v[r] = val;
+                ts[r] = t;
+                mrank[r] = j;
+            }
+            trigger(new Pp2pSend(source, new AckMessage(self, r, id)), pp2p);
         }
     };
     Handler<AckMessage> ackMessageHandler = new Handler<AckMessage>() {
@@ -175,13 +171,13 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
 
             if (id == reqid[r] && !writeMajority) {
                 writeSet.get(r).add(source);
-                checkWriteSetEvent();
+                checkWriteSet();
             }
         }
     };
 
     //upon internal event
-    private void checkReadSetEvent() {
+    private void checkReadSet() {
         for (int r = 0; r < registerNumber; r++) {
             if (readSet.get(r).size() > all.size() / 2) {
                 logger.debug("Read majority");
@@ -199,15 +195,15 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
                 }
                 readval[r] = val;
                 if (reading[r]) {
-                    trigger(new BebBroadcast(WRITE + DELIM + r + DELIM + reqid[r] + DELIM + t + DELIM + rk + DELIM + readval[r]), beb);
+                    trigger(new BebBroadcast(new WriteMessage(self, r, reqid[r], t, rk, readval[r])), beb);
                 } else {
-                    trigger(new BebBroadcast(WRITE + DELIM + r + DELIM + reqid[r] + DELIM + (t + 1) + DELIM + i + DELIM + writeval[r]), beb);
+                    trigger(new BebBroadcast(new WriteMessage(self, r, reqid[r], t + 1, i, writeval[r])), beb);
                 }
             }
         }
     }
 
-    private void checkWriteSetEvent() {
+    private void checkWriteSet() {
         for (int r = 0; r < registerNumber; r++) {
             if (writeSet.get(r).size() > all.size() / 2) {
                 logger.debug("Write majority");
@@ -237,16 +233,6 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
         return self.getId();
     }
 
-    private String[] tokenize(String m) {
-        StringTokenizer st = new StringTokenizer(m, DELIM);
-        String[] res = new String[st.countTokens()];
-        int j = 0;
-        while (st.hasMoreTokens()) {
-            res[j++] = st.nextToken();
-        }
-        return res;
-    }
-
     private class ReadSetEntry {
         private int timestamp;
         private int rank;
@@ -270,35 +256,6 @@ public class ReadImposeWriteConsultMajorityAtomicRegister extends ComponentDefin
             return value;
         }
 
-//        @Override
-//        public boolean equals(Object obj) {
-//            if (obj == null) {
-//                return false;
-//            }
-//            if (getClass() != obj.getClass()) {
-//                return false;
-//            }
-//            final ReadSetEntry other = (ReadSetEntry) obj;
-//            if (this.timestamp != other.timestamp) {
-//                return false;
-//            }
-//            if (this.rank != other.rank) {
-//                return false;
-//            }
-//            if (this.value != other.value) {
-//                return false;
-//            }
-//            return true;
-//        }
-//
-//        @Override
-//        public int hashCode() {
-//            int hash = 3;
-//            hash = 11 * hash + this.timestamp;
-//            hash = 11 * hash + this.rank;
-//            hash = 11 * hash + this.value;
-//            return hash;
-//        }
         @Override
         public String toString() {
             return "{" + timestamp + ":" + rank + ":" + value + '}';

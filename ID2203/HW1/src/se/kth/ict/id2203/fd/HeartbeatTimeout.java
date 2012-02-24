@@ -11,12 +11,11 @@ import se.sics.kompics.timer.Timeout;
  *
  * @author julio
  */
-public final class HeartbeatTimeout extends Timeout {
+public class HeartbeatTimeout extends Timeout {
     /**
      * Instantiates a new application continue.
-     * 
-     * @param request
-     *            the request
+     *
+     * @param request the request
      */
     public HeartbeatTimeout(ScheduleTimeout request) {
         super(request);

@@ -2,17 +2,17 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.kth.ict.id2203.application;
+package se.kth.ict.id2203.application.assignment1;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.kth.ict.id2203.registers.atomic.AtomicRegister;
-import se.kth.ict.id2203.registers.atomic.ReadRequest;
-import se.kth.ict.id2203.registers.atomic.ReadResponse;
-import se.kth.ict.id2203.registers.atomic.WriteRequest;
-import se.kth.ict.id2203.registers.atomic.WriteResponse;
+import se.kth.ict.id2203.application.ApplicationContinue;
+import se.kth.ict.id2203.application.ApplicationInit;
+import se.kth.ict.id2203.fd.epfd.EventuallyPerfectFailureDetector;
+import se.kth.ict.id2203.fd.epfd.Restore;
+import se.kth.ict.id2203.fd.epfd.Suspect;
 import se.sics.kompics.*;
 import se.sics.kompics.timer.ScheduleTimeout;
 import se.sics.kompics.timer.Timer;
@@ -21,22 +21,22 @@ import se.sics.kompics.timer.Timer;
  *
  * @author Igor
  */
-public class Application3 extends ComponentDefinition {
+public final class Application1b extends ComponentDefinition {
     //ports
-    Positive<AtomicRegister> nnar = requires(AtomicRegister.class);
+    Positive<EventuallyPerfectFailureDetector> epfd = requires(EventuallyPerfectFailureDetector.class);
     Positive<Timer> timer = requires(Timer.class);
     //logger
-    private static final Logger logger = LoggerFactory.getLogger(Application3.class);
+    private static final Logger logger = LoggerFactory.getLogger(Application1b.class);
     //local variables
     private String[] commands;
     private int lastCommand;
 
-    public Application3() {
+    public Application1b() {
         subscribe(initHandler, control);
         subscribe(startHandler, control);
         subscribe(continueHandler, timer);
-        subscribe(readResponseHandler, nnar);
-        subscribe(writeResponseHandler, nnar);
+        subscribe(suspectHandler, epfd);
+        subscribe(restoreHandler, epfd);
     }
     //handlers
     Handler<ApplicationInit> initHandler = new Handler<ApplicationInit>() {
@@ -58,18 +58,16 @@ public class Application3 extends ComponentDefinition {
             doNextCommand();
         }
     };
-    Handler<ReadResponse> readResponseHandler = new Handler<ReadResponse>() {
+    Handler<Suspect> suspectHandler = new Handler<Suspect>() {
         @Override
-        public void handle(ReadResponse event) {
-            logger.info("register[{}] => {}", event.getRegister(), event.getValue());
-            doNextCommand();
+        public void handle(Suspect event) {
+            logger.info("Node {} suspected of crash (period={})", event.getNode(), event.getPeriod());
         }
     };
-    Handler<WriteResponse> writeResponseHandler = new Handler<WriteResponse>() {
+    Handler<Restore> restoreHandler = new Handler<Restore>() {
         @Override
-        public void handle(WriteResponse event) {
-            logger.info("register[{}] updated", event.getRegister());
-            doNextCommand();
+        public void handle(Restore event) {
+            logger.info("Node {} is alive (period={})", event.getNode(), event.getPeriod());
         }
     };
 
@@ -112,12 +110,6 @@ public class Application3 extends ComponentDefinition {
         } else if (cmd.equals("help")) {
             doHelp();
             doNextCommand();
-        } else if (cmd.equals("R")) {
-            doRead();
-            //doNextCommand();
-        } else if (cmd.startsWith("W")) {
-            doWrite(Integer.parseInt(cmd.substring(1)));
-            //doNextCommand();
         } else {
             logger.info("Bad command: '{}'. Try 'help'", cmd);
             doNextCommand();
@@ -125,10 +117,8 @@ public class Application3 extends ComponentDefinition {
     }
 
     private void doHelp() {
-        logger.info("Available commands: S<n>, R, W<v>, help, X");
+        logger.info("Available commands: S<n>, help, X");
         logger.info("Sn: sleeps 'n' milliseconds before the next command");
-        logger.info("R: reads value from register 0");
-        logger.info("Wv: writes value 'v' to register 0");
         logger.info("help: shows this help message");
         logger.info("X: terminates this process");
     }
@@ -146,15 +136,5 @@ public class Application3 extends ComponentDefinition {
         System.out.close();
         System.err.close();
         Kompics.shutdown();
-    }
-
-    private void doRead() {
-        logger.info("Reading from register 0...");
-        trigger(new ReadRequest(0), nnar);
-    }
-
-    private void doWrite(int value) {
-        logger.info("Writing {} to register 0...", value);
-        trigger(new WriteRequest(0, value), nnar);
     }
 }

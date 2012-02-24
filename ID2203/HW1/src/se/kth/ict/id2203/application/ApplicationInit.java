@@ -5,19 +5,30 @@
 package se.kth.ict.id2203.application;
 
 import se.sics.kompics.Init;
+import se.sics.kompics.address.Address;
 
 /**
  *
  * @author Igor
  */
 public class ApplicationInit extends Init {
-    private final String commandScript;
+    private String commandScript;
+    private Address self;
 
     public ApplicationInit(String commandScript) {
         this.commandScript = commandScript;
     }
 
-    public final String getCommandScript() {
+    public ApplicationInit(String commandScript, Address self) {
+        this(commandScript);
+        this.self = self;
+    }
+
+    public String getCommandScript() {
         return commandScript;
+    }
+
+    public Address getSelf() {
+        return self;
     }
 }

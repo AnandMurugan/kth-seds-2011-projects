@@ -4,6 +4,7 @@
  */
 package se.kth.ict.id2203.broadcast.pb;
 
+import java.io.Serializable;
 import se.sics.kompics.Event;
 import se.sics.kompics.address.Address;
 
@@ -11,17 +12,11 @@ import se.sics.kompics.address.Address;
  *
  * @author Igor
  */
-public class PbDeliver extends Event {
-    private final String message;
-    private final Address source;
+public abstract class PbDeliver extends Event implements Serializable {
+    private Address source;
 
-    public PbDeliver(Address source, String message) {
-        this.message = message;
+    public PbDeliver(Address source) {
         this.source = source;
-    }
-
-    public String getMessage() {
-        return message;
     }
 
     public Address getSource() {

@@ -2,16 +2,18 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.kth.ict.id2203.application;
+package se.kth.ict.id2203.application.assignment2;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.kth.ict.id2203.fd.epfd.EventuallyPerfectFailureDetector;
-import se.kth.ict.id2203.fd.epfd.Restore;
-import se.kth.ict.id2203.fd.epfd.Suspect;
+import se.kth.ict.id2203.application.ApplicationContinue;
+import se.kth.ict.id2203.application.ApplicationInit;
+import se.kth.ict.id2203.broadcast.pb.PbBroadcast;
+import se.kth.ict.id2203.broadcast.pb.ProbabilisticBroadcast;
 import se.sics.kompics.*;
+import se.sics.kompics.address.Address;
 import se.sics.kompics.timer.ScheduleTimeout;
 import se.sics.kompics.timer.Timer;
 
@@ -19,28 +21,29 @@ import se.sics.kompics.timer.Timer;
  *
  * @author Igor
  */
-public class Application1b extends ComponentDefinition {
+public final class Application2 extends ComponentDefinition {
     //ports
-    Positive<EventuallyPerfectFailureDetector> epfd = requires(EventuallyPerfectFailureDetector.class);
+    Positive<ProbabilisticBroadcast> pb = requires(ProbabilisticBroadcast.class);
     Positive<Timer> timer = requires(Timer.class);
     //logger
-    private static final Logger logger = LoggerFactory.getLogger(Application1b.class);
+    private static final Logger logger = LoggerFactory.getLogger(Application2.class);
     //local variables
     private String[] commands;
     private int lastCommand;
+    private Address self;
 
-    public Application1b() {
+    public Application2() {
         subscribe(initHandler, control);
         subscribe(startHandler, control);
         subscribe(continueHandler, timer);
-        subscribe(suspectHandler, epfd);
-        subscribe(restoreHandler, epfd);
+        subscribe(textBroadcastMessageHandler, pb);
     }
     //handlers
     Handler<ApplicationInit> initHandler = new Handler<ApplicationInit>() {
         @Override
         public void handle(ApplicationInit event) {
             commands = event.getCommandScript().split(":");
+            self = event.getSelf();
             lastCommand = -1;
         }
     };
@@ -56,16 +59,10 @@ public class Application1b extends ComponentDefinition {
             doNextCommand();
         }
     };
-    Handler<Suspect> suspectHandler = new Handler<Suspect>() {
+    Handler<TextBroadcastMessage> textBroadcastMessageHandler = new Handler<TextBroadcastMessage>() {
         @Override
-        public void handle(Suspect event) {
-            logger.info("Node {} suspected of crash (period={})", event.getNode(), event.getPeriod());
-        }
-    };
-    Handler<Restore> restoreHandler = new Handler<Restore>() {
-        @Override
-        public void handle(Restore event) {
-            logger.info("Node {} is alive (period={})", event.getNode(), event.getPeriod());
+        public void handle(TextBroadcastMessage event) {
+            logger.info("Received broadcast message '{}' from {}", event.getText(), event.getSource());
         }
     };
 
@@ -108,6 +105,9 @@ public class Application1b extends ComponentDefinition {
         } else if (cmd.equals("help")) {
             doHelp();
             doNextCommand();
+        } else if (cmd.startsWith("B")) {
+            doBroadcast(cmd.substring(1));
+            doNextCommand();
         } else {
             logger.info("Bad command: '{}'. Try 'help'", cmd);
             doNextCommand();
@@ -115,8 +115,9 @@ public class Application1b extends ComponentDefinition {
     }
 
     private void doHelp() {
-        logger.info("Available commands: S<n>, help, X");
+        logger.info("Available commands: S<n>, B<m>, help, X");
         logger.info("Sn: sleeps 'n' milliseconds before the next command");
+        logger.info("Bm: broadcasts message 'm'");
         logger.info("help: shows this help message");
         logger.info("X: terminates this process");
     }
@@ -134,5 +135,10 @@ public class Application1b extends ComponentDefinition {
         System.out.close();
         System.err.close();
         Kompics.shutdown();
+    }
+
+    private void doBroadcast(String message) {
+        logger.info("Broadcasting message '{}'...", message);
+        trigger(new PbBroadcast(new TextBroadcastMessage(self, message)), pb);
     }
 }

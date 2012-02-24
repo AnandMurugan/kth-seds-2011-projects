@@ -13,8 +13,8 @@ import se.sics.kompics.timer.Timeout;
  * @author Igor
  */
 public class PullingTimeout extends Timeout {
-    private final Address broadcastSource;
-    private final int sequenceNumber;
+    private Address broadcastSource;
+    private int sequenceNumber;
 
     public PullingTimeout(ScheduleTimeout request, Address broadcastSource, int sequenceNumber) {
         super(request);
@@ -22,11 +22,11 @@ public class PullingTimeout extends Timeout {
         this.sequenceNumber = sequenceNumber;
     }
 
-    public final Address getBroadcastSource() {
+    public Address getBroadcastSource() {
         return broadcastSource;
     }
 
-    public final int getSequenceNumber() {
+    public int getSequenceNumber() {
         return sequenceNumber;
     }
 }

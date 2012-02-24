@@ -11,7 +11,6 @@ import se.kth.ict.id2203.broadcast.pb.PbBroadcast;
 import se.kth.ict.id2203.broadcast.pb.PbDeliver;
 import se.kth.ict.id2203.broadcast.pb.ProbabilisticBroadcast;
 import se.kth.ict.id2203.broadcast.un.UnBroadcast;
-import se.kth.ict.id2203.broadcast.un.UnDeliver;
 import se.kth.ict.id2203.broadcast.un.UnreliableBroadcast;
 import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
 import se.kth.ict.id2203.flp2p.Flp2pSend;
@@ -33,8 +32,6 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
     Positive<UnreliableBroadcast> un = requires(UnreliableBroadcast.class);
     Positive<FairLossPointToPointLink> flp2p = requires(FairLossPointToPointLink.class);
     Positive<Timer> timer = requires(Timer.class);
-    //consts
-    private final static String SN_DELIMITER = ";";
     //logger
     private static final Logger logger = LoggerFactory.getLogger(LazyProbabilisticBroadcast.class);
     //local variables    
@@ -42,8 +39,8 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
     private Set<Address> neighborSet;
     private Map<Address, Integer> next;
     private int lsn;
-    private final Set<DataMessage> pending = new TreeSet<DataMessage>();
-    private final Set<DataMessage> stored = new HashSet<DataMessage>();
+    private Set<DataMessage> pending = new TreeSet<DataMessage>();
+    private Set<DataMessage> stored = new HashSet<DataMessage>();
     private Random rand;
     private long seed;
     private int fanout;
@@ -54,7 +51,7 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
     public LazyProbabilisticBroadcast() {
         subscribe(initHandler, control);
         subscribe(pbBroadcastHandler, pb);
-        subscribe(unDeliverHandler, un);
+        subscribe(lazyProbabilisticBroadcastMessageHandler, un);
         subscribe(requestMessageHandler, flp2p);
         subscribe(dataMessageHandler, flp2p);
         subscribe(timeoutHandler, timer);
@@ -86,15 +83,15 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
         @Override
         public void handle(PbBroadcast event) {
             ++lsn;
-            trigger(new UnBroadcast(lsn + SN_DELIMITER + event.getMessage()), un); //piggybacking sn as a prefix to message
+            trigger(new UnBroadcast(new LazyProbabilisticBroadcastMessage(self, event.getDeliverEvent(), lsn)), un);
         }
     };
-    Handler<UnDeliver> unDeliverHandler = new Handler<UnDeliver>() {
+    Handler<LazyProbabilisticBroadcastMessage> lazyProbabilisticBroadcastMessageHandler = new Handler<LazyProbabilisticBroadcastMessage>() {
         @Override
-        public void handle(UnDeliver event) {
+        public void handle(LazyProbabilisticBroadcastMessage event) {
             Address s = event.getSource();
-            int sn = extractSequenceNumber(event.getMessage());
-            String message = extractMessage(event.getMessage());
+            int sn = event.getSequenceNumber();
+            PbDeliver message = event.getDeliverEvent();
 
             DataMessage current = new DataMessage(s, message, sn);
             if (rand.nextFloat() < alpha) {
@@ -104,7 +101,7 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
 
             if (sn == next.get(s)) {
                 next.put(s, next.remove(s) + 1);
-                trigger(new PbDeliver(s, message), pb);
+                trigger(message, pb);
             } else if (sn > next.get(s)) {
                 logger.debug("Missing some messages: from {} to {}", next.get(s), sn - 1);
                 pending.add(current);
@@ -161,27 +158,7 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
                 return;
             }
             pending.add(event);
-
-            //upon exists...
-            boolean hasNext;
-            do {
-                hasNext = false;
-                //synchronized (pending) {
-                Iterator<DataMessage> i = pending.iterator();
-                while (i.hasNext()) {
-                    DataMessage dm = i.next();
-                    int sn = dm.getSequenceNumber();
-                    String message = dm.getMessage();
-                    Address s = dm.getSource();
-                    if (sn == next.get(s)) {
-                        next.put(s, next.remove(s) + 1);
-                        i.remove();
-                        trigger(new PbDeliver(s, message), pb);
-                        hasNext = true;
-                    }
-                }
-                //}
-            } while (hasNext);
+            checkPending();
         }
     };
     Handler<PullingTimeout> timeoutHandler = new Handler<PullingTimeout>() {
@@ -197,20 +174,7 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
 
                 logger.debug("Delivering pending messages...");
                 logger.debug("Pending before={}", pending);
-                //synchronized (pending) {
-                Iterator<DataMessage> i = pending.iterator();
-                while (i.hasNext()) {
-                    DataMessage dm = i.next();
-                    String message = dm.getMessage();
-                    int sequenceNumber = dm.getSequenceNumber();
-                    Address source = dm.getSource();
-
-                    if (source.equals(s) && (sequenceNumber <= sn)) {
-                        i.remove();
-                        trigger(new PbDeliver(source, message), pb);
-                    }
-                }
-                //}
+                deliverPending(s, sn);
                 logger.debug("Pending after={}", pending);
             }
         }
@@ -242,13 +206,39 @@ public class LazyProbabilisticBroadcast extends ComponentDefinition {
         }
     }
 
-    private int extractSequenceNumber(String message) {
-        int pos = message.indexOf(SN_DELIMITER);
-        return Integer.parseInt(message.substring(0, pos));
+    private void checkPending() {
+        //upon exists...
+        boolean hasNext;
+        do {
+            hasNext = false;
+            Iterator<DataMessage> i = pending.iterator();
+            while (i.hasNext()) {
+                DataMessage dm = i.next();
+                int sn = dm.getSequenceNumber();
+                PbDeliver message = dm.getDeliverEvent();
+                Address s = dm.getSource();
+                if (sn == next.get(s)) {
+                    next.put(s, next.remove(s) + 1);
+                    i.remove();
+                    trigger(message, pb);
+                    hasNext = true;
+                }
+            }
+        } while (hasNext);
     }
 
-    private String extractMessage(String message) {
-        int pos = message.indexOf(SN_DELIMITER);
-        return message.substring(pos + 1);
+    private void deliverPending(Address s, int sn) {
+        Iterator<DataMessage> i = pending.iterator();
+        while (i.hasNext()) {
+            DataMessage dm = i.next();
+            PbDeliver message = dm.getDeliverEvent();
+            int sequenceNumber = dm.getSequenceNumber();
+            Address source = dm.getSource();
+
+            if (source.equals(s) && (sequenceNumber <= sn)) {
+                i.remove();
+                trigger(message, pb);
+            }
+        }
     }
 }

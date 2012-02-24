@@ -11,7 +11,7 @@ import se.sics.kompics.address.Address;
  *
  * @author julio
  */
-public final class HeartbeatMessage extends Pp2pDeliver {
+public class HeartbeatMessage extends Pp2pDeliver {
     /**
      * Instantiates a new Heartbeat message.
      *

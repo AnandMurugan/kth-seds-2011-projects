@@ -13,13 +13,13 @@ import se.sics.kompics.address.Address;
  * @author Igor
  */
 public class LazyProbabilisticBroadcastInit extends Init {
-    private final Set<Address> neighborSet;
-    private final Address self;
-    private final long seed;
-    private final int fanout;
-    private final float alpha;
-    private final int delta;
-    private final int maxRounds;
+    private Set<Address> neighborSet;
+    private Address self;
+    private long seed;
+    private int fanout;
+    private float alpha;
+    private int delta;
+    private int maxRounds;
 
     public LazyProbabilisticBroadcastInit(Set<Address> neighborSet, Address self,
             long seed, int fanout, float alpha, int delta, int maxRounds) {
@@ -32,31 +32,31 @@ public class LazyProbabilisticBroadcastInit extends Init {
         this.maxRounds = maxRounds;
     }
 
-    public final Set<Address> getNeighborSet() {
+    public Set<Address> getNeighborSet() {
         return neighborSet;
     }
 
-    public final Address getSelf() {
+    public Address getSelf() {
         return self;
     }
 
-    public final long getSeed() {
+    public long getSeed() {
         return seed;
     }
 
-    public final int getFanout() {
+    public int getFanout() {
         return fanout;
     }
 
-    public final float getAlpha() {
+    public float getAlpha() {
         return alpha;
     }
 
-    public final int getDelta() {
+    public int getDelta() {
         return delta;
     }
 
-    public final int getMaxRounds() {
+    public int getMaxRounds() {
         return maxRounds;
     }
 }

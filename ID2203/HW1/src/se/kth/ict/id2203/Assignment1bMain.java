@@ -6,11 +6,11 @@ package se.kth.ict.id2203;
 
 import java.util.Set;
 import org.apache.log4j.PropertyConfigurator;
-import se.kth.ict.id2203.application.Application1b;
+import se.kth.ict.id2203.application.assignment1.Application1b;
 import se.kth.ict.id2203.application.ApplicationInit;
 import se.kth.ict.id2203.fd.epfd.EventuallyPerfectFailureDetector;
-import se.kth.ict.id2203.fd.epfd.my.MyEventuallyPerfectFailureDetector;
-import se.kth.ict.id2203.fd.epfd.my.MyEventuallyPerfectFailureDetectorInit;
+import se.kth.ict.id2203.fd.epfd.simple.SimpleEventuallyPerfectFailureDetector;
+import se.kth.ict.id2203.fd.epfd.simple.SimpleEventuallyPerfectFailureDetectorInit;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
 import se.kth.ict.id2203.pp2p.delay.DelayLink;
 import se.kth.ict.id2203.pp2p.delay.DelayLinkInit;
@@ -49,7 +49,7 @@ public class Assignment1bMain extends ComponentDefinition {
         Component time = create(JavaTimer.class);
         Component network = create(MinaNetwork.class);
         Component pp2p = create(DelayLink.class);
-        Component epfd = create(MyEventuallyPerfectFailureDetector.class);
+        Component epfd = create(SimpleEventuallyPerfectFailureDetector.class);
         Component app = create(Application1b.class);
 
         // handle possible faults in the components
@@ -65,7 +65,7 @@ public class Assignment1bMain extends ComponentDefinition {
 
         trigger(new MinaNetworkInit(self, 5), network.control());
         trigger(new DelayLinkInit(topology), pp2p.control());
-        trigger(new MyEventuallyPerfectFailureDetectorInit(TIME_DELAY, DELTA, neighborSet, self), epfd.control());
+        trigger(new SimpleEventuallyPerfectFailureDetectorInit(TIME_DELAY, DELTA, neighborSet, self), epfd.control());
         trigger(new ApplicationInit(commandScript), app.control());
 
         // connect the components

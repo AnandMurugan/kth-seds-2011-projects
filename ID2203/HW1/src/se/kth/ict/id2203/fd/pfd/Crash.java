@@ -11,8 +11,8 @@ import se.sics.kompics.address.Address;
  *
  * @author julio
  */
-public final class Crash extends Event {
-    private final Address nodeCrashed;
+public class Crash extends Event {
+    private Address nodeCrashed;
 
     public Crash(Address nodeCrashed) {
         this.nodeCrashed = nodeCrashed;
