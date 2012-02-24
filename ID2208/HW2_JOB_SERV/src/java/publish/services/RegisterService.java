@@ -481,11 +481,11 @@ public class RegisterService {
             javax.xml.registry.infomodel.Key cKey = (javax.xml.registry.infomodel.Key) blm.createKey("uuid:C0B9FE13-179F-413D-8A5B-5004DB8E5BB2");
             cScheme.setKey(cKey);
 
-            Classification classification = (Classification) blm.createClassification(cScheme, "Recruitment services", "515221");
+            Classification classification = (Classification) blm.createClassification(cScheme, "Recruitment services", "517221");
 
             org.addClassification(classification);
 
-            Service service = blm.createService(blm.createInternationalString("Recruitment Coimpany"));
+            Service service = blm.createService(blm.createInternationalString("Recruitment Company"));
             service.setDescription(blm.createInternationalString("Services of Accenture Rcruitment service"));
 
             Collection<ServiceBinding> serviceBindings = new ArrayList<ServiceBinding>();
