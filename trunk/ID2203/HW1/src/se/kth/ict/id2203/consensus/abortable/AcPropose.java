@@ -4,15 +4,11 @@
  */
 package se.kth.ict.id2203.consensus.abortable;
 
-import se.sics.kompics.PortType;
+import se.sics.kompics.Event;
 
 /**
  *
  * @author Igor
  */
-public class AbortableConsensus extends PortType {
-    {
-        indication(AcDecide.class);
-        request(AcPropose.class);
-    }
+public class AcPropose extends Event {
 }

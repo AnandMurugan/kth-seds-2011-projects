@@ -4,15 +4,11 @@
  */
 package se.kth.ict.id2203.consensus.uniform;
 
-import se.sics.kompics.PortType;
+import se.sics.kompics.Event;
 
 /**
  *
  * @author Igor
  */
-public class UniformConsensus extends PortType {
-    {
-        indication(UcDecide.class);
-        request(UcPropose.class);
-    }
+public class UcDecide extends Event {
 }
