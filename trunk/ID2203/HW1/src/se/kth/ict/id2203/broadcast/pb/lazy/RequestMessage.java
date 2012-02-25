@@ -4,7 +4,7 @@
  */
 package se.kth.ict.id2203.broadcast.pb.lazy;
 
-import se.kth.ict.id2203.flp2p.Flp2pDeliver;
+import se.kth.ict.id2203.links.flp2p.Flp2pDeliver;
 import se.sics.kompics.address.Address;
 
 /**
