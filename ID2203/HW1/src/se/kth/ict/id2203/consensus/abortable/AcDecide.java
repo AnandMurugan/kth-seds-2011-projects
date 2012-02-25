@@ -11,4 +11,19 @@ import se.sics.kompics.Event;
  * @author Igor
  */
 public class AcDecide extends Event {
+    private int id;
+    private Object value;
+
+    public AcDecide(int id, Object value) {
+        this.id = id;
+        this.value = value;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public Object getValue() {
+        return value;
+    }
 }

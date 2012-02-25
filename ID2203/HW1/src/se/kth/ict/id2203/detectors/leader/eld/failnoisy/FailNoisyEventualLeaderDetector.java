@@ -6,13 +6,8 @@ package se.kth.ict.id2203.detectors.leader.eld.failnoisy;
 
 import java.util.HashSet;
 import java.util.Set;
-import se.kth.ict.id2203.detectors.failure.CheckTimeout;
 import se.kth.ict.id2203.detectors.failure.HeartbeatMessage;
 import se.kth.ict.id2203.detectors.failure.HeartbeatTimeout;
-import se.kth.ict.id2203.detectors.failure.epfd.EventuallyPerfectFailureDetector;
-import se.kth.ict.id2203.detectors.failure.epfd.Restore;
-import se.kth.ict.id2203.detectors.failure.epfd.Suspect;
-import se.kth.ict.id2203.detectors.failure.epfd.simple.SimpleEventuallyPerfectFailureDetectorInit;
 import se.kth.ict.id2203.detectors.leader.eld.EventualLeaderDetector;
 import se.kth.ict.id2203.detectors.leader.eld.Trust;
 import se.kth.ict.id2203.links.pp2p.PerfectPointToPointLink;
