@@ -4,7 +4,7 @@
  */
 package se.kth.ict.id2203.registers.atomic;
 
-import se.kth.ict.id2203.pp2p.Pp2pDeliver;
+import se.kth.ict.id2203.links.pp2p.Pp2pDeliver;
 import se.sics.kompics.address.Address;
 
 /**

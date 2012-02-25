@@ -5,7 +5,7 @@
 package se.kth.ict.id2203.broadcast.un.simple;
 
 import se.kth.ict.id2203.broadcast.un.UnDeliver;
-import se.kth.ict.id2203.flp2p.Flp2pDeliver;
+import se.kth.ict.id2203.links.flp2p.Flp2pDeliver;
 import se.sics.kompics.address.Address;
 
 /**
