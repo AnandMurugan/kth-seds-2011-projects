@@ -4,26 +4,22 @@
  */
 package se.kth.ict.id2203.consensus.abortable;
 
-import se.sics.kompics.Event;
+import se.kth.ict.id2203.links.pp2p.Pp2pDeliver;
+import se.sics.kompics.address.Address;
 
 /**
  *
  * @author Igor
  */
-public class AcPropose extends Event {
+public class NAckMessage extends Pp2pDeliver {
     private int id;
-    private Object value;
 
-    public AcPropose(int id, Object value) {
+    public NAckMessage(Address source, int id) {
+        super(source);
         this.id = id;
-        this.value = value;
     }
 
     public int getId() {
         return id;
-    }
-
-    public Object getValue() {
-        return value;
     }
 }

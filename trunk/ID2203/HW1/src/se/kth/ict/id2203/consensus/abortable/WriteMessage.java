@@ -4,23 +4,31 @@
  */
 package se.kth.ict.id2203.consensus.abortable;
 
-import se.sics.kompics.Event;
+import se.kth.ict.id2203.broadcast.beb.BebDeliver;
+import se.sics.kompics.address.Address;
 
 /**
  *
  * @author Igor
  */
-public class AcPropose extends Event {
+public class WriteMessage extends BebDeliver {
     private int id;
+    private int timestamp;
     private Object value;
 
-    public AcPropose(int id, Object value) {
+    public WriteMessage(Address source, int id, int timestamp, Object value) {
+        super(source);
         this.id = id;
+        this.timestamp = timestamp;
         this.value = value;
     }
 
     public int getId() {
         return id;
+    }
+
+    public int getTimestamp() {
+        return timestamp;
     }
 
     public Object getValue() {
