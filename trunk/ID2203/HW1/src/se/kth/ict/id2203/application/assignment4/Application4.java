@@ -6,17 +6,16 @@ package se.kth.ict.id2203.application.assignment4;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.ict.id2203.application.ApplicationContinue;
 import se.kth.ict.id2203.application.ApplicationInit;
 import se.kth.ict.id2203.consensus.uniform.UcDecide;
+import se.kth.ict.id2203.consensus.uniform.UcPropose;
 import se.kth.ict.id2203.consensus.uniform.UniformConsensus;
-import se.kth.ict.id2203.registers.atomic.AtomicRegister;
-import se.kth.ict.id2203.registers.atomic.ReadRequest;
-import se.kth.ict.id2203.registers.atomic.ReadResponse;
-import se.kth.ict.id2203.registers.atomic.WriteRequest;
-import se.kth.ict.id2203.registers.atomic.WriteResponse;
 import se.sics.kompics.*;
 import se.sics.kompics.timer.ScheduleTimeout;
 import se.sics.kompics.timer.Timer;
@@ -34,6 +33,7 @@ public final class Application4 extends ComponentDefinition {
     //local variables
     private String[] commands;
     private int lastCommand;
+    private Map<Integer, Object> decisions;
 
     public Application4() {
         subscribe(initHandler, control);
@@ -47,6 +47,7 @@ public final class Application4 extends ComponentDefinition {
         public void handle(ApplicationInit event) {
             commands = event.getCommandScript().split(":");
             lastCommand = -1;
+            decisions = new TreeMap<Integer, Object>();
         }
     };
     Handler<Start> startHandler = new Handler<Start>() {
@@ -64,7 +65,9 @@ public final class Application4 extends ComponentDefinition {
     Handler<UcDecide> ucDecideHandler = new Handler<UcDecide>() {
         @Override
         public void handle(UcDecide event) {
-            logger.info("UcDecide : [id={}, v={}]", event.getId(), event.getValue());
+            logger.info("Decision : [id={}, v={}]", event.getId(), event.getValue());
+
+            decisions.put(event.getId(), event.getValue());
         }
     };
 
@@ -107,12 +110,18 @@ public final class Application4 extends ComponentDefinition {
         } else if (cmd.equals("help")) {
             doHelp();
             doNextCommand();
-        } else if (cmd.equals("R")) {
-            doRead();
-            //doNextCommand();
-        } else if (cmd.startsWith("W")) {
-            doWrite(Integer.parseInt(cmd.substring(1)));
-            //doNextCommand();
+        } else if (cmd.equals("W")) {
+            doPrint();
+            doNextCommand();
+        } else if (cmd.startsWith("P")) {
+            int index = cmd.indexOf("-");
+            int i = Integer.parseInt(cmd.substring(1, index));
+            int j = Integer.parseInt(cmd.substring(index + 1));
+            doPropose(i, j);
+            doNextCommand();
+        } else if (cmd.startsWith("D")) {
+            doWait(Integer.parseInt(cmd.substring(1)));
+            doNextCommand();
         } else {
             logger.info("Bad command: '{}'. Try 'help'", cmd);
             doNextCommand();
@@ -120,10 +129,11 @@ public final class Application4 extends ComponentDefinition {
     }
 
     private void doHelp() {
-        logger.info("Available commands: S<n>, R, W<v>, help, X");
+        logger.info("Available commands: S<n>, P<i>-<j>, D<k>, W, help, X");
         logger.info("Sn: sleeps 'n' milliseconds before the next command");
-        logger.info("R: reads value from register 0");
-        logger.info("Wv: writes value 'v' to register 0");
+        logger.info("Pi-j: proposes the value 'j' for a consensus instance 'i'");
+        logger.info("Dk: waits until decision to all previous proposals made by the node, then sleeps 'k' milliseconds");
+        logger.info("W: prints all recieved decisions");
         logger.info("help: shows this help message");
         logger.info("X: terminates this process");
     }
@@ -143,13 +153,21 @@ public final class Application4 extends ComponentDefinition {
         Kompics.shutdown();
     }
 
-    private void doRead() {
-        logger.info("Reading from register 0...");
-        trigger(new ReadRequest(0), uc);
+    private void doPrint() {
+        logger.info("Decisions:");
+
+        for (Entry<Integer, Object> d : decisions.entrySet()) {
+            logger.info("\tid=" + d.getKey() + " value=" + d.getValue());
+        }
     }
 
-    private void doWrite(int value) {
-        logger.info("Writing {} to register 0...", value);
-        trigger(new WriteRequest(0, value), uc);
+    private void doPropose(int id, int value) {
+        logger.info("Proposing value={} for consensus instance {}", value, id);
+
+        trigger(new UcPropose(id, new Integer(value)), uc);
+    }
+
+    private void doWait(long delay) {
+        
     }
 }
