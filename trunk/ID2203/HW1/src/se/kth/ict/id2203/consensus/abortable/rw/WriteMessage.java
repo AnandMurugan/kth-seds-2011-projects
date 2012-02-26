@@ -2,35 +2,29 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.kth.ict.id2203.consensus.abortable;
+package se.kth.ict.id2203.consensus.abortable.rw;
 
-import se.kth.ict.id2203.links.pp2p.Pp2pDeliver;
+import se.kth.ict.id2203.broadcast.beb.BebDeliver;
 import se.sics.kompics.address.Address;
 
 /**
  *
  * @author Igor
  */
-public class ReadAckMessage extends Pp2pDeliver {
+public class WriteMessage extends BebDeliver {
     private int id;
     private int timestamp;
     private Object value;
-    private int sentTimestamp;
 
-    public ReadAckMessage(Address source, int id, int timestamp, Object value, int sentTimestamp) {
+    public WriteMessage(Address source, int id, int timestamp, Object value) {
         super(source);
         this.id = id;
         this.timestamp = timestamp;
         this.value = value;
-        this.sentTimestamp = sentTimestamp;
     }
 
     public int getId() {
         return id;
-    }
-
-    public int getSentTimestamp() {
-        return sentTimestamp;
     }
 
     public int getTimestamp() {
