@@ -9,8 +9,11 @@ import java.util.Set;
 import java.util.TreeSet;
 import se.kth.ict.id2203.broadcast.beb.BestEffortBroadcast;
 import se.kth.ict.id2203.consensus.abortable.AbortableConsensus;
+import se.kth.ict.id2203.consensus.abortable.AcDecide;
+import se.kth.ict.id2203.consensus.uniform.UcPropose;
 import se.kth.ict.id2203.consensus.uniform.UniformConsensus;
 import se.kth.ict.id2203.detectors.leader.eld.EventualLeaderDetector;
+import se.kth.ict.id2203.detectors.leader.eld.Trust;
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
 import se.sics.kompics.Negative;
@@ -37,6 +40,10 @@ public class PaxosUniformConsensus extends ComponentDefinition {
 
     public PaxosUniformConsensus() {
         subscribe(initHandler, control);
+        subscribe(trustHandler, eld);
+        subscribe(ucProposeHandler, uc);
+        subscribe(acDecideHandler, ac);
+        subscribe(decidedHandler, beb);
     }
     //handlers
     Handler<PaxosUniformConsensusInit> initHandler = new Handler<PaxosUniformConsensusInit>() {
@@ -46,6 +53,26 @@ public class PaxosUniformConsensus extends ComponentDefinition {
 
             seenIds = new TreeSet<Integer>();
             leader = false;
+        }
+    };
+    Handler<Trust> trustHandler = new Handler<Trust>() {
+        @Override
+        public void handle(Trust event) {
+        }
+    };
+    Handler<UcPropose> ucProposeHandler = new Handler<UcPropose>() {
+        @Override
+        public void handle(UcPropose event) {
+        }
+    };
+    Handler<AcDecide> acDecideHandler = new Handler<AcDecide>() {
+        @Override
+        public void handle(AcDecide event) {
+        }
+    };
+    Handler<PaxosUniformConsensusInit> decidedHandler = new Handler<PaxosUniformConsensusInit>() {
+        @Override
+        public void handle(PaxosUniformConsensusInit event) {
         }
     };
 
