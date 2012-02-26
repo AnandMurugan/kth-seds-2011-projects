@@ -1,6 +1,6 @@
-package se.kth.ict.id2203.links.pp2p.delay;
+package se.kth.ict.id2203.link.pp2p.delay;
 
-import se.kth.ict.id2203.links.pp2p.Pp2pDeliver;
+import se.kth.ict.id2203.link.pp2p.Pp2pDeliver;
 import se.sics.kompics.address.Address;
 import se.sics.kompics.network.Message;
 import se.sics.kompics.network.Transport;

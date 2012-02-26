@@ -7,9 +7,12 @@ package se.kth.ict.id2203.consensus.uniform.paxos;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import se.kth.ict.id2203.broadcast.beb.BebBroadcast;
 import se.kth.ict.id2203.broadcast.beb.BestEffortBroadcast;
 import se.kth.ict.id2203.consensus.abortable.AbortableConsensus;
 import se.kth.ict.id2203.consensus.abortable.AcDecide;
+import se.kth.ict.id2203.consensus.abortable.AcPropose;
+import se.kth.ict.id2203.consensus.uniform.UcDecide;
 import se.kth.ict.id2203.consensus.uniform.UcPropose;
 import se.kth.ict.id2203.consensus.uniform.UniformConsensus;
 import se.kth.ict.id2203.detectors.leader.eld.EventualLeaderDetector;
@@ -43,7 +46,7 @@ public class PaxosUniformConsensus extends ComponentDefinition {
         subscribe(trustHandler, eld);
         subscribe(ucProposeHandler, uc);
         subscribe(acDecideHandler, ac);
-        subscribe(decidedHandler, beb);
+        subscribe(decidedMessageHandler, beb);
     }
     //handlers
     Handler<PaxosUniformConsensusInit> initHandler = new Handler<PaxosUniformConsensusInit>() {
@@ -58,21 +61,51 @@ public class PaxosUniformConsensus extends ComponentDefinition {
     Handler<Trust> trustHandler = new Handler<Trust>() {
         @Override
         public void handle(Trust event) {
+            Address p = event.getLeader();
+
+            if (p.equals(self)) {
+                leader = true;
+                for (int id : seenIds) {
+                    tryPropose(id);
+                }
+            } else {
+                leader = false;
+            }
         }
     };
     Handler<UcPropose> ucProposeHandler = new Handler<UcPropose>() {
         @Override
         public void handle(UcPropose event) {
+            int id = event.getId();
+            Object v = event.getValue();
+
+            initInstance(id);
+            proposal.put(id, v);
+            tryPropose(id);
         }
     };
     Handler<AcDecide> acDecideHandler = new Handler<AcDecide>() {
         @Override
         public void handle(AcDecide event) {
+            int id = event.getId();
+            Object result = event.getValue();
+
+            if (result != null) {
+                trigger(new BebBroadcast(new DecidedMessage(self, id, result)), beb);
+            }
         }
     };
-    Handler<PaxosUniformConsensusInit> decidedHandler = new Handler<PaxosUniformConsensusInit>() {
+    Handler<DecidedMessage> decidedMessageHandler = new Handler<DecidedMessage>() {
         @Override
-        public void handle(PaxosUniformConsensusInit event) {
+        public void handle(DecidedMessage event) {
+            int id = event.getId();
+            Object v = event.getValue();
+
+            initInstance(id);
+            if (!decided.get(id)) {
+                decided.put(id, true);
+                trigger(new UcDecide(id, v), uc);
+            }
         }
     };
 
@@ -83,6 +116,13 @@ public class PaxosUniformConsensus extends ComponentDefinition {
             proposed.put(id, false);
             decided.put(id, false);
             seenIds.add(id);
+        }
+    }
+
+    private void tryPropose(int id) {
+        if (leader && !proposed.get(id) && proposal.get(id) != null) {
+            proposed.put(id, true);
+            trigger(new AcPropose(id, proposal.get(id)), ac);
         }
     }
 }

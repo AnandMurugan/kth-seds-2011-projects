@@ -17,16 +17,16 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-package se.kth.ict.id2203.links.flp2p.delay;
+package se.kth.ict.id2203.link.flp2p.delay;
 
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.ict.id2203.application.assignment2.Application2;
 
-import se.kth.ict.id2203.links.flp2p.FairLossPointToPointLink;
-import se.kth.ict.id2203.links.flp2p.Flp2pDeliver;
-import se.kth.ict.id2203.links.flp2p.Flp2pSend;
+import se.kth.ict.id2203.link.flp2p.FairLossPointToPointLink;
+import se.kth.ict.id2203.link.flp2p.Flp2pDeliver;
+import se.kth.ict.id2203.link.flp2p.Flp2pSend;
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
 import se.sics.kompics.Negative;

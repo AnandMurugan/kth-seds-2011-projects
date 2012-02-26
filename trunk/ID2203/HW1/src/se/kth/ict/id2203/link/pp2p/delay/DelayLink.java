@@ -1,8 +1,8 @@
-package se.kth.ict.id2203.links.pp2p.delay;
+package se.kth.ict.id2203.link.pp2p.delay;
 
-import se.kth.ict.id2203.links.pp2p.PerfectPointToPointLink;
-import se.kth.ict.id2203.links.pp2p.Pp2pDeliver;
-import se.kth.ict.id2203.links.pp2p.Pp2pSend;
+import se.kth.ict.id2203.link.pp2p.PerfectPointToPointLink;
+import se.kth.ict.id2203.link.pp2p.Pp2pDeliver;
+import se.kth.ict.id2203.link.pp2p.Pp2pSend;
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
 import se.sics.kompics.Negative;

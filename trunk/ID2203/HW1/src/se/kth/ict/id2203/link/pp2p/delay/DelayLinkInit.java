@@ -1,4 +1,4 @@
-package se.kth.ict.id2203.links.pp2p.delay;
+package se.kth.ict.id2203.link.pp2p.delay;
 
 import se.sics.kompics.Init;
 import se.sics.kompics.launch.Topology;
