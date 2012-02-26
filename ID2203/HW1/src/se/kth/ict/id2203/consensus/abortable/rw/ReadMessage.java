@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package se.kth.ict.id2203.consensus.abortable;
+package se.kth.ict.id2203.consensus.abortable.rw;
 
 import se.kth.ict.id2203.broadcast.beb.BebDeliver;
 import se.sics.kompics.address.Address;
@@ -11,16 +11,14 @@ import se.sics.kompics.address.Address;
  *
  * @author Igor
  */
-public class WriteMessage extends BebDeliver {
+public class ReadMessage extends BebDeliver {
     private int id;
     private int timestamp;
-    private Object value;
 
-    public WriteMessage(Address source, int id, int timestamp, Object value) {
+    public ReadMessage(Address source, int id, int timestamp) {
         super(source);
         this.id = id;
         this.timestamp = timestamp;
-        this.value = value;
     }
 
     public int getId() {
@@ -29,9 +27,5 @@ public class WriteMessage extends BebDeliver {
 
     public int getTimestamp() {
         return timestamp;
-    }
-
-    public Object getValue() {
-        return value;
     }
 }
