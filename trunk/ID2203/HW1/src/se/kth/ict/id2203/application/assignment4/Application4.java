@@ -6,8 +6,10 @@ package se.kth.ict.id2203.application.assignment4;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,9 @@ public final class Application4 extends ComponentDefinition {
     private String[] commands;
     private int lastCommand;
     private Map<Integer, Object> decisions;
+    private Set<Integer> ongoing;
+    private boolean waiting;
+    private long delayTime;
 
     public Application4() {
         subscribe(initHandler, control);
@@ -48,6 +53,7 @@ public final class Application4 extends ComponentDefinition {
             commands = event.getCommandScript().split(":");
             lastCommand = -1;
             decisions = new TreeMap<Integer, Object>();
+            ongoing = new HashSet<Integer>();
         }
     };
     Handler<Start> startHandler = new Handler<Start>() {
@@ -68,6 +74,14 @@ public final class Application4 extends ComponentDefinition {
             logger.info("Decision : [id={}, v={}]", event.getId(), event.getValue());
 
             decisions.put(event.getId(), event.getValue());
+            ongoing.remove(event.getId());
+            if (waiting && ongoing.isEmpty()) {
+                waiting = false;
+
+                ScheduleTimeout st = new ScheduleTimeout(delayTime);
+                st.setTimeoutEvent(new ApplicationContinue(st));
+                trigger(st, timer);
+            }
         }
     };
 
@@ -121,7 +135,6 @@ public final class Application4 extends ComponentDefinition {
             doNextCommand();
         } else if (cmd.startsWith("D")) {
             doWait(Integer.parseInt(cmd.substring(1)));
-            doNextCommand();
         } else {
             logger.info("Bad command: '{}'. Try 'help'", cmd);
             doNextCommand();
@@ -162,12 +175,14 @@ public final class Application4 extends ComponentDefinition {
     }
 
     private void doPropose(int id, int value) {
-        logger.info("Proposing value={} for consensus instance {}", value, id);
+        logger.info("Proposing value={} for consensus instance {}...", value, id);
 
+        ongoing.add(id);
         trigger(new UcPropose(id, new Integer(value)), uc);
     }
 
     private void doWait(long delay) {
-        
+        waiting = true;
+        delayTime = delay;
     }
 }
