@@ -17,46 +17,41 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-package se.kth.ict.id2203.links.flp2p.delay;
+package se.kth.ict.id2203.link.flp2p;
 
-import se.kth.ict.id2203.links.flp2p.Flp2pDeliver;
+import java.io.Serializable;
+import se.sics.kompics.Event;
 import se.sics.kompics.address.Address;
-import se.sics.kompics.network.Message;
-import se.sics.kompics.network.Transport;
 
 /**
  * The
- * <code>DelayDropLinkMessage</code> class.
+ * <code>Flp2pDeliver</code> class.
  *
  * @author Cosmin Arad <cosmin@sics.se>
- * @version $Id: DelayDropLinkMessage.java 516 2009-01-28 04:00:47Z cosmin $
+ * @version $Id: Flp2pDeliver.java 516 2009-01-28 04:00:47Z cosmin $
  */
-public class DelayDropLinkMessage extends Message {
+public abstract class Flp2pDeliver extends Event implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = -3397276101112877392L;
-    private Flp2pDeliver deliverEvent;
+    private static final long serialVersionUID = -1586328347200502315L;
+    private Address source;
 
     /**
-     * Instantiates a new delay drop link message.
+     * Instantiates a new flp2p deliver.
      *
      * @param source the source
-     * @param destination the destination
-     * @param deliverEvent the deliver event
      */
-    public DelayDropLinkMessage(Address source, Address destination,
-            Flp2pDeliver deliverEvent) {
-        super(source, destination, Transport.TCP);
-        this.deliverEvent = deliverEvent;
+    protected Flp2pDeliver(Address source) {
+        this.source = source;
     }
 
     /**
-     * Gets the deliver event.
+     * Gets the source.
      *
-     * @return the deliver event
+     * @return the source
      */
-    public Flp2pDeliver getDeliverEvent() {
-        return deliverEvent;
+    public Address getSource() {
+        return source;
     }
 }

@@ -1,4 +1,4 @@
-package se.kth.ict.id2203.links.pp2p;
+package se.kth.ict.id2203.link.pp2p;
 
 import se.sics.kompics.Event;
 import se.sics.kompics.address.Address;

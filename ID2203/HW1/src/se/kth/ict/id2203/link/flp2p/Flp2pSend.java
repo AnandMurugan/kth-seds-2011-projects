@@ -17,41 +17,48 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-package se.kth.ict.id2203.links.flp2p;
+package se.kth.ict.id2203.link.flp2p;
 
-import java.io.Serializable;
 import se.sics.kompics.Event;
 import se.sics.kompics.address.Address;
 
 /**
  * The
- * <code>Flp2pDeliver</code> class.
+ * <code>Flp2pSend</code> class.
  *
  * @author Cosmin Arad <cosmin@sics.se>
- * @version $Id: Flp2pDeliver.java 516 2009-01-28 04:00:47Z cosmin $
+ * @version $Id: Flp2pSend.java 516 2009-01-28 04:00:47Z cosmin $
  */
-public abstract class Flp2pDeliver extends Event implements Serializable {
-    /**
-     *
-     */
-    private static final long serialVersionUID = -1586328347200502315L;
-    private Address source;
+public class Flp2pSend extends Event {
+    private Flp2pDeliver deliverEvent;
+    private Address destination;
 
     /**
-     * Instantiates a new flp2p deliver.
+     * Instantiates a new flp2p send.
      *
-     * @param source the source
+     * @param destination the destination
+     * @param flp2pDeliver the flp2p deliver
      */
-    protected Flp2pDeliver(Address source) {
-        this.source = source;
+    public Flp2pSend(Address destination, Flp2pDeliver flp2pDeliver) {
+        this.destination = destination;
+        this.deliverEvent = flp2pDeliver;
     }
 
     /**
-     * Gets the source.
+     * Gets the deliver event.
      *
-     * @return the source
+     * @return the deliver event
      */
-    public Address getSource() {
-        return source;
+    public Flp2pDeliver getDeliverEvent() {
+        return deliverEvent;
+    }
+
+    /**
+     * Gets the destination.
+     *
+     * @return the destination
+     */
+    public Address getDestination() {
+        return destination;
     }
 }

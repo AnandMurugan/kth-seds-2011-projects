@@ -1,4 +1,4 @@
-package se.kth.ict.id2203.links.pp2p;
+package se.kth.ict.id2203.link.pp2p;
 
 import java.io.Serializable;
 import se.sics.kompics.Event;
