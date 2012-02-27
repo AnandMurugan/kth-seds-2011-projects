@@ -4,6 +4,7 @@
  */
 package se.kth.ict.id2203.consensus.uniform.paxos;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -56,6 +57,10 @@ public class PaxosUniformConsensus extends ComponentDefinition {
 
             seenIds = new TreeSet<Integer>();
             leader = false;
+            
+            proposal = new HashMap<Integer, Object>();
+            proposed = new HashMap<Integer, Boolean>();
+            decided = new HashMap<Integer, Boolean>();
         }
     };
     Handler<Trust> trustHandler = new Handler<Trust>() {

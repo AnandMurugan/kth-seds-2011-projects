@@ -88,6 +88,7 @@ public class ReadWriteAbortableConsensus extends ComponentDefinition {
             int id = event.getId();
             int ts = event.getTimestamp();
 
+            initInstance(id);
             if (rts.get(id) >= ts || wts.get(id) >= ts) {
                 trigger(new Pp2pSend(source, new NAckMessage(self, id)), pp2p);
             } else {
