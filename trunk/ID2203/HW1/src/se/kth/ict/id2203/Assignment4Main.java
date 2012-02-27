@@ -6,8 +6,8 @@ package se.kth.ict.id2203;
 
 import java.util.Set;
 import org.apache.log4j.PropertyConfigurator;
-import se.kth.ict.id2203.application.assignment3.Application3;
 import se.kth.ict.id2203.application.ApplicationInit;
+import se.kth.ict.id2203.application.assignment4.Application4;
 import se.kth.ict.id2203.broadcast.beb.BestEffortBroadcast;
 import se.kth.ict.id2203.broadcast.beb.basic.BasicBroadcast;
 import se.kth.ict.id2203.broadcast.beb.basic.BasicBroadcastInit;
@@ -23,8 +23,6 @@ import se.kth.ict.id2203.detectors.leader.eld.failnoisy.FailNoisyEventualLeaderD
 import se.kth.ict.id2203.link.pp2p.PerfectPointToPointLink;
 import se.kth.ict.id2203.link.pp2p.delay.DelayLink;
 import se.kth.ict.id2203.link.pp2p.delay.DelayLinkInit;
-import se.kth.ict.id2203.registers.atomic.AtomicRegister;
-import se.kth.ict.id2203.registers.atomic.riwcm.ReadImposeWriteConsultMajorityAtomicRegisterInit;
 import se.sics.kompics.*;
 import se.sics.kompics.address.Address;
 import se.sics.kompics.launch.Topology;
@@ -64,7 +62,7 @@ public class Assignment4Main extends ComponentDefinition {
         Component eld = create(FailNoisyEventualLeaderDetector.class);
         Component ac = create(ReadWriteAbortableConsensus.class);
         Component uc = create(PaxosUniformConsensus.class);
-        Component app = create(Application3.class);
+        Component app = create(Application4.class);
 
         // handle possible faults in the components
         subscribe(faultHandler, time.control());

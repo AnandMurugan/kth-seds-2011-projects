@@ -77,10 +77,7 @@ public final class Application4 extends ComponentDefinition {
             ongoing.remove(event.getId());
             if (waiting && ongoing.isEmpty()) {
                 waiting = false;
-
-                ScheduleTimeout st = new ScheduleTimeout(delayTime);
-                st.setTimeoutEvent(new ApplicationContinue(st));
-                trigger(st, timer);
+                doSleep(delayTime);
             }
         }
     };
@@ -145,7 +142,7 @@ public final class Application4 extends ComponentDefinition {
         logger.info("Available commands: S<n>, P<i>-<j>, D<k>, W, help, X");
         logger.info("Sn: sleeps 'n' milliseconds before the next command");
         logger.info("Pi-j: proposes the value 'j' for a consensus instance 'i'");
-        logger.info("Dk: waits until decision to all previous proposals made by the node, then sleeps 'k' milliseconds");
+        logger.info("Dk: waits for decisions to all previous proposals made by the node, then sleeps 'k' milliseconds");
         logger.info("W: prints all recieved decisions");
         logger.info("help: shows this help message");
         logger.info("X: terminates this process");
@@ -167,11 +164,11 @@ public final class Application4 extends ComponentDefinition {
     }
 
     private void doPrint() {
-        logger.info("Decisions:");
-
+        StringBuilder sb = new StringBuilder("Decisions:");
         for (Entry<Integer, Object> d : decisions.entrySet()) {
-            logger.info("\tid=" + d.getKey() + " value=" + d.getValue());
+            sb.append("\n\tid=").append(d.getKey()).append(" value=").append(d.getValue());
         }
+        logger.info(sb.toString());
     }
 
     private void doPropose(int id, int value) {
@@ -182,7 +179,13 @@ public final class Application4 extends ComponentDefinition {
     }
 
     private void doWait(long delay) {
-        waiting = true;
-        delayTime = delay;
+        logger.info("Waiting until get all decisions...");
+
+        if (ongoing.isEmpty()) {
+            doSleep(delay);
+        } else {
+            waiting = true;
+            delayTime = delay;
+        }
     }
 }
