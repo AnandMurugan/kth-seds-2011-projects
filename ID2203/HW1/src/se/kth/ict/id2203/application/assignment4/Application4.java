@@ -175,7 +175,7 @@ public final class Application4 extends ComponentDefinition {
         logger.info("Proposing value={} for consensus instance {}...", value, id);
 
         ongoing.add(id);
-        trigger(new UcPropose(id, new Integer(value)), uc);
+        trigger(new UcPropose(id, value), uc);
     }
 
     private void doWait(long delay) {
