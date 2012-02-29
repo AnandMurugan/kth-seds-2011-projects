@@ -97,6 +97,9 @@ public class PaxosUniformConsensus extends ComponentDefinition {
 
             if (result != null) {
                 trigger(new BebBroadcast(new DecidedMessage(self, id, result)), beb);
+            } else {
+                proposed.put(id, false);
+                tryPropose(id);
             }
         }
     };
