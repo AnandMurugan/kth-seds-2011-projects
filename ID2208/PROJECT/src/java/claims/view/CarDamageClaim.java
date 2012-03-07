@@ -5,6 +5,7 @@
 package claims.view;
 
 import claims.controller.ClaimsFacade;
+import java.util.Date;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
@@ -23,14 +24,17 @@ public class CarDamageClaim {
     /** Creates a new instance of CarDamageClaim */
     public CarDamageClaim() {
     }
+    
     private String carRegNo;
     private Double carValue;
     private String carModel;
     Exception registrationError;
 
-    /**
-     * Creates a new instance of CustomerManager
-     */
+    private String owner;    
+    private Integer carYear;
+    
+    
+    
     public void setCarRegNo(String carRegNo) {
         this.carRegNo = carRegNo;
     }
@@ -55,9 +59,25 @@ public class CarDamageClaim {
         return carModel;
     }
 
+    public  String getOwner(){
+        return owner;
+    }
+    
+    public void setOwner(String owner){
+        this.owner = owner;
+    }
+    
+    public Integer getCarYear(){
+        return this.carYear;
+    }
+    
+    public void setCarYear(Integer carYear){
+        this.carYear = carYear;
+    }
+    
     public String submitClaim() {
         try {
-            claimsFacade.submitClaim(carRegNo, carValue);
+            claimsFacade.submitClaim(carRegNo, carValue, carModel, owner, carYear);
             System.out.println("[JSF Managed bean]car reg no:"+carRegNo);
             registrationError = null;
             return "registered";
