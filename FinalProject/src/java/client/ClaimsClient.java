@@ -32,22 +32,13 @@ public class ClaimsClient {
         webResource = client.resource(BASE_URI).path("claims");
     }
 
-    public ClientResponse putClaim(Object requestEntity) throws UniformInterfaceException {
+   public ClientResponse putClaim(Object requestEntity) throws UniformInterfaceException {
         return webResource.type(javax.ws.rs.core.MediaType.APPLICATION_XML).put(ClientResponse.class, requestEntity);
     }
 
     public <T> T getClaim(Class<T> responseType) throws UniformInterfaceException {
         WebResource resource = webResource;
         return resource.accept(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
-    }
-
-    public Claim getClaim(String id) throws UniformInterfaceException {
-        GenericType<JAXBElement<Claim>> generic = new GenericType<JAXBElement<Claim>>() {
-        };
-        JAXBElement<Claim> jaxbContact = webResource.path(id).accept(javax.ws.rs.core.MediaType.APPLICATION_XML).get(generic);
-        Claim claim = jaxbContact.getValue();
-        System.out.println(claim.getId() + ": " + claim.getCarRegNo());
-        return claim;
     }
 
     public void deleteClaim() throws UniformInterfaceException {
@@ -57,4 +48,15 @@ public class ClaimsClient {
     public void close() {
         client.destroy();
     }
+
+//    public Claim getClaim(String id) throws UniformInterfaceException {
+//        GenericType<JAXBElement<Claim>> generic = new GenericType<JAXBElement<Claim>>() {
+//        };
+//        JAXBElement<Claim> jaxbContact = webResource.path(id).accept(javax.ws.rs.core.MediaType.APPLICATION_XML).get(generic);
+//        Claim claim = jaxbContact.getValue();
+//        System.out.println(claim.getId() + ": " + claim.getCarRegNo());
+//        return claim;
+//    }
+
+    
 }
