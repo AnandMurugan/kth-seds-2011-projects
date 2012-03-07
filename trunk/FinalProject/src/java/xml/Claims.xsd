@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="claim">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="claimant_details">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="name" type="xs:string" />
+                            <xs:element name="personal_number" type="xs:string" />
+                            <xs:element name="Address">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="door_no" type="xs:string" />
+                                        <xs:element name="street" type="xs:string" />
+                                        <xs:element name="county" type="xs:string" />
+                                        <xs:element name="city" type="xs:string" />
+                                        <xs:element name="country" type="xs:string" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="email_id" type="xs:string" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="claim_details">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="vehicle_information">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="registration_number" type="xs:string" />
+                                        <xs:element name="make" type="xs:string" />
+                                        <xs:element name="model" type="xs:string" />
+                                        <xs:element name="fuel_type" type="xs:string" />
+                                        <xs:element name="transmission" type="xs:string" />
+                                        <xs:element name="year" type="xs:unsignedShort" />
+                                        <xs:element name="engine_size" type="xs:string" />
+                                        <xs:element name="model_version" type="xs:string" />
+                                        <xs:element name="value" type="xs:unsignedInt" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="damage">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="type" type="xs:string" />
+                                        <xs:element name="date_occured" type="xs:string" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
