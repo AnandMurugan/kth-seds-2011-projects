@@ -12,7 +12,9 @@ import javax.persistence.EntityManager;
  * @author Anand
  */
 public abstract class AbstractFacade<T> {
+
     private Class<T> entityClass;
+    //private T[] arrClass;
 
     public AbstractFacade(Class<T> entityClass) {
         this.entityClass = entityClass;
@@ -40,6 +42,8 @@ public abstract class AbstractFacade<T> {
         javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         cq.select(cq.from(entityClass));
         return getEntityManager().createQuery(cq).getResultList();
+        //List<T> list = getEntityManager().createQuery(cq).getResultList();
+        //return list.toArray(arrClass);
     }
 
     public List<T> findRange(int[] range) {
@@ -58,5 +62,4 @@ public abstract class AbstractFacade<T> {
         javax.persistence.Query q = getEntityManager().createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
     }
-    
 }
