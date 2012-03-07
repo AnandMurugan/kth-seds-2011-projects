@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- =========== FULL CONFIGURATION FILE ================================== -->
+
+<faces-config version="2.0"
+    xmlns="http://java.sun.com/xml/ns/javaee" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
+    <navigation-rule>
+        <from-view-id>/index.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>registerPage</from-outcome>
+            <to-view-id>/register.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>homePage</from-outcome>
+            <to-view-id>/homepage.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>loginPage</from-outcome>
+            <to-view-id>/login.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>logout</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/newClaims.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>registered</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/homepage.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>customerNewClaims</from-outcome>
+            <to-view-id>/newClaims.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>logout</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/register.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>registered</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>not registered</from-outcome>
+            <to-view-id>/register.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>index</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/login_error.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>indexPage</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+</faces-config>
