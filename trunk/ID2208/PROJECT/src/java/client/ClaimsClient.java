@@ -4,9 +4,12 @@
  */
 package client;
 
+import claims.model.Claim;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
+import java.util.List;
 
 /** Jersey REST client generated for REST resource:ClaimFacadeREST [claims.model.claim]<br>
  *  USAGE:<pre>
@@ -38,9 +41,9 @@ public class ClaimsClient {
         return resource.accept(javax.ws.rs.core.MediaType.TEXT_PLAIN).get(String.class);
     }
 
-    public <T> T findAll_XML(Class<T> responseType) throws UniformInterfaceException {
+    public List<Claim> findAll_XML(Class<Claim> responseType) throws UniformInterfaceException {
         WebResource resource = webResource;
-        return resource.accept(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+        return resource.accept(javax.ws.rs.core.MediaType.APPLICATION_XML).get(new GenericType<List<Claim>>() {});
     }
 
     public <T> T findAll_JSON(Class<T> responseType) throws UniformInterfaceException {
