@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <link type="text/css" rel="stylesheet" href="../style.css" />
+    <h:head>
+        <title>Registration Page</title>
+    </h:head>
+    <h:body styleClass="form">
+        <h:form>
+            <c:choose>
+                <c:when test="#{customerMng.exception.cause != null}">
+                    <h:outputText value="#{customerMng.exception.cause.message}"/>
+                </c:when>
+                <c:otherwise>
+                    <h:outputText value="#{customerMng.exception.message}"/>
+                </c:otherwise>
+            </c:choose>
+            <h:panelGrid columns="2" id="register" border="1">
+                <f:facet name="header">
+                    <h:outputText value="Register Details"/>
+                </f:facet>
+                <h:outputLabel for="userName" value="Username:" />
+                <h:inputText id="userName" value="#{customerMng.userName}" />
+                <h:outputLabel for="password" value="Password:" />
+                <h:inputSecret id="password" value="#{customerMng.password}" />
+                <h:outputLabel for="fullName" value="Full Name:" />
+                <h:inputText id="fullName" value="#{customerMng.fullName}" />
+                <f:facet name="footer">
+                    <h:panelGroup style="display:block; text-align:center">
+                        <h:commandButton id="submit" value="Submit details" action="#{customerMng.registerCustomer()}"/>
+                    </h:panelGroup>
+                </f:facet>
+            </h:panelGrid>
+            <h:link value="back" outcome="index"/>
+        </h:form>
+    </h:body>
+</html>
+
