@@ -24,7 +24,7 @@ public class CarDamageClaim {
     public CarDamageClaim() {
     }
     private String carRegNo;
-    private String carValue;
+    private Double carValue;
     private String carModel;
     Exception registrationError;
 
@@ -39,11 +39,11 @@ public class CarDamageClaim {
         return carRegNo;
     }
 
-    public void setCarMake(String carValue) {
+    public void setCarValue(Double carValue) {
         this.carValue = carValue;
     }
 
-    public String getCarMake() {
+    public Double getCarValue() {
         return carValue;
     }
 
@@ -57,7 +57,7 @@ public class CarDamageClaim {
 
     public String submitClaim() {
         try {
-            claimsFacade.submitClaim(carRegNo);
+            claimsFacade.submitClaim(carRegNo, carValue);
             System.out.println("[JSF Managed bean]car reg no:"+carRegNo);
             registrationError = null;
             return "registered";
