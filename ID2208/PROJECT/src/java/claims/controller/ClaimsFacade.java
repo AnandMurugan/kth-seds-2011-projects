@@ -6,6 +6,7 @@ package claims.controller;
 
 import claims.model.Claim;
 import client.ClaimsClient;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 
@@ -32,5 +33,9 @@ public class ClaimsFacade {
         Claim claimObj = new Claim(carRegNo, carValue);
         client.create_XML(claimObj);
 
+    }
+
+    public List<Claim> getClaimsList() {
+        return client.findAll_XML(Claim.class);
     }
 }
