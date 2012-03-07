@@ -7,14 +7,14 @@ package claims.view;
 import claims.controller.ClaimsFacade;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.RequestScoped;
 
 /**
  *
  * @author Anand
  */
 @Named(value = "carDamageClaim")
-@Dependent
+@RequestScoped
 public class CarDamageClaim {
 
     @EJB
@@ -27,7 +27,6 @@ public class CarDamageClaim {
     private String carValue;
     private String carModel;
     Exception registrationError;
-    //ClaimsClient client;
 
     /**
      * Creates a new instance of CustomerManager
@@ -59,7 +58,6 @@ public class CarDamageClaim {
     public String submitClaim() {
         try {
             claimsFacade.submitClaim(carRegNo);
-            //client.create(obj);
             System.out.println("[JSF Managed bean]car reg no:"+carRegNo);
             registrationError = null;
             return "registered";
