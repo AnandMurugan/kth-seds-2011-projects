@@ -54,6 +54,7 @@ public class ClaimsResource {
     @Consumes("application/xml")
     public Response putClaim(JAXBElement<Claim> jaxbContact) {
         Claim c = jaxbContact.getValue();
+        System.out.println("adding a claim"+c.getCarRegNo());
         return putAndGetResponse(c);
     }
 

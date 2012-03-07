@@ -19,9 +19,11 @@ public class TestClient {
         System.out.println("===== Create claim =====");
         ClientResponse res = client.putClaim(claim);
         
-        System.out.println("===== All Claims =====");
-        
-        claim = client.getClaim(claim.getId().toString());
+        //System.out.println("===== All Claims =====");
+        //GenericType<JAXBElement<Claim>> generic = new GenericType<JAXBElement<Claim>>() {
+        //};
+        //JAXBElement<Claim> jaxbContact =  client.getClaim(claim.getId());
+        //claim = client.getClaim(claim.getId().toString());
 
     }
 }
