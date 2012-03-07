@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"   
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <link type="text/css" rel="stylesheet" href="../style.css" />
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <h:head>
+        <title>View Claims</title>
+    </h:head>
+   <h:body>
+        <h1> Claims List </h1>
+        <h:form id="viewclaimForm" styleClass="form">
+            <p><br></br></p>
+            <p><br></br></p>
+            <p>
+                <h:link value="Update Claims" outcome="updateClaims"/>
+                <br/>
+            </p>
+            <p>
+                <h:panelGrid id="claimItems" rendered="#{claimManager.listNotEmpty}" headerClass="list-header">
+                    <f:facet name="header">
+                        <h:outputText value="Claims List"/>
+                    </f:facet>
+                    <h:dataTable id="claimTbl" value="#{claimManager.claimsList}" var="claim"
+                                 styleClass="cart-table" headerClass="cart-table-header"
+                                 rowClasses="cart-table-odd-row,cart-table-even-row" border="1"
+                                 footerClass="footer">
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="ClaimId"/>
+                            </f:facet>
+                            <h:outputText value="#{claim.id}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Car Reg Number" />
+                            </f:facet>
+                            <h:outputText value="#{claim.carRegNo}" />
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Owner"/>
+                            </f:facet>
+                            <h:outputText value="#{claim.owner}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Car Value"/>
+                            </f:facet>
+                            <h:outputText value="#{claim.carValue}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Status"/>
+                            </f:facet>
+                            <h:outputText value="#{claim.status_desc}"/>
+                        </h:column>
+                    </h:dataTable>
+                </h:panelGrid>
+            </p>
+            <p>
+                <h:outputText value="No Claims in the database." rendered="#{not claimManager.listNotEmpty}" styleClass="error"/>
+                <h:message for="submit" errorClass="error" />
+            </p>
+        </h:form>
+    </h:body>
+</html>
+
