@@ -27,6 +27,10 @@ public class ClaimsFacade {
         Claim claimObj = new Claim(carRegNo);
         client.create_XML(claimObj);
     }
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+
+    public void submitClaim(String carRegNo, Double carValue) {
+        Claim claimObj = new Claim(carRegNo, carValue);
+        client.create_XML(claimObj);
+
+    }
 }
