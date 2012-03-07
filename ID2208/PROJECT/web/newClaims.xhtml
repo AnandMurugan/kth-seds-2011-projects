@@ -25,10 +25,14 @@
                 </f:facet>
                 <h:outputLabel for="carRegNo" value="Car Registration Number:" />
                 <h:inputText id="carRegNo" value="#{carDamageClaim.carRegNo}" />
-                <h:outputLabel for="carValue" value="Value:" />
+                <h:outputLabel for="carValue" value="Damage Cost:" />
                 <h:inputText id="carValue" value="#{carDamageClaim.carValue}" />
                 <h:outputLabel for="carModel" value="Car Model:" />
                 <h:inputText id="carModel" value="#{carDamageClaim.carModel}" />
+                <h:outputLabel for="carYear" value="Car Year:" />
+                <h:inputText id="carYear" value="#{carDamageClaim.carYear}" />
+                <h:outputLabel for="carOwner" value="Owner Name:" />
+                <h:inputText id="carOwner" value="#{carDamageClaim.owner}" />
                 <f:facet name="footer">
                     <h:panelGroup style="display:block; text-align:center">
                         <h:commandButton id="submit" value="Submit claim" action="#{carDamageClaim.submitClaim()}"/>
