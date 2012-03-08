@@ -46,6 +46,7 @@
                             <h:commandButton id="approve" value="Approve" action="#{evaluationClaim.approve}"/>
                             <h:commandButton id="reject" value="Reject" action="#{evaluationClaim.reject}"/>
                             <h:commandButton id="notify" value="Notify Incomplete" action="#{evaluationClaim.notifyClaimant}"/>
+                            <h:commandButton id="delete" value="Delete" action="#{evaluationClaim.delete}" rendered="#{evaluationClaim.isAdmin()}"/>
                         </h:panelGroup>
                     </f:facet>
                 </h:panelGrid>
