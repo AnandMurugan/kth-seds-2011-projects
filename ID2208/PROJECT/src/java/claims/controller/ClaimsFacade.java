@@ -74,6 +74,20 @@ public class ClaimsFacade {
     }
 
     public void approveClaim(Claim claim) {
-        claim.setStatus_code(Integer.MIN_VALUE);
+        claim.setStatus_code(4);
+        claim.setStatus_desc("approved");
+        client.edit_XML(claim);
+    }
+    
+    public void rejectClaim(Claim claim) {
+        claim.setStatus_code(3);
+        claim.setStatus_desc("rejected");
+        client.edit_XML(claim);
+    }
+    
+    public void notifyClaimant(Claim claim) {
+        claim.setStatus_code(1);
+        claim.setStatus_desc("incomplete");
+        client.edit_XML(claim);
     }
 }
