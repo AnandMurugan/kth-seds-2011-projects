@@ -22,6 +22,8 @@ public class ClaimsFacade {
     private ClaimsClient client;
     private final Double factor = 100000.00;
     private List<Claim> claimLst;
+    private String usrNm;
+    private String usrGrp;
 
     public ClaimsFacade() {
         client = new ClaimsClient();
@@ -58,16 +60,84 @@ public class ClaimsFacade {
         client.create_XML(claimObj);
     }
 
-    public List<Claim> getClaimsList() {
-        return client.findAll_XML(Claim.class);
+    public List<Claim> getClaimsList(String userName, String userGroup) {
+         if(userName!=null){
+            usrNm = userName;
+        }
+        if(userGroup!=null){
+            usrGrp = userGroup;
+        }
+        List<Claim> resultLst = new ArrayList<Claim>();
+        List<Claim> tempLst = new ArrayList<Claim>();
+        tempLst = client.findAll_XML(Claim.class);
+        if (usrGrp.equalsIgnoreCase("CUSTOMER")) {
+            for (Claim claim : tempLst) {
+                if (claim.getOwner().equalsIgnoreCase(usrNm)) {
+                    resultLst.add(claim);
+                }
+            }
+        } else if (usrGrp.equalsIgnoreCase("junior")) {
+            for (Claim claim : tempLst) {
+                if (claim.getType().equalsIgnoreCase("simple")) {
+                    resultLst.add(claim);
+                }
+            }
+        } else if (usrGrp.equalsIgnoreCase("senior")) {
+            for (Claim claim : tempLst) {
+                if (claim.getType().equalsIgnoreCase("complex")) {
+                    resultLst.add(claim);
+                }
+            }
+        } else if (usrGrp.equalsIgnoreCase("garage")) {
+            for (Claim claim : tempLst) {
+                if (claim.getStatus_code() == 4) {
+                    resultLst.add(claim);
+                }
+            }
+        } else if (usrGrp.equalsIgnoreCase("admin")) {
+            resultLst = tempLst;
+        }
+        return resultLst;
     }
 
-    public List<String> getClaimIdList() {
+    public List<String> getClaimIdList(String userName, String userGroup) {
+        if(userName!=null){
+            usrNm = userName;
+        }
+        if(userGroup!=null){
+            usrGrp = userGroup;
+        }
         List<String> claimIdLst = new ArrayList<String>();
         claimLst = client.findAll_XML(Claim.class);
         if (claimLst != null && claimLst.size() > 0) {
-            for (Claim claim : claimLst) {
-                claimIdLst.add(claim.getId().toString());
+            if (usrGrp.equalsIgnoreCase("CUSTOMER")) {
+                for (Claim claim : claimLst) {
+                    if (claim.getOwner().equalsIgnoreCase(usrNm)) {
+                        claimIdLst.add(claim.getId().toString());
+                    }
+                }
+            } else if (usrGrp.equalsIgnoreCase("junior")) {
+                for (Claim claim : claimLst) {
+                    if (claim.getType().equalsIgnoreCase("simple")) {
+                        claimIdLst.add(claim.getId().toString());
+                    }
+                }
+            } else if (usrGrp.equalsIgnoreCase("senior")) {
+                for (Claim claim : claimLst) {
+                    if (claim.getType().equalsIgnoreCase("complex")) {
+                        claimIdLst.add(claim.getId().toString());
+                    }
+                }
+            } else if (usrGrp.equalsIgnoreCase("garage")) {
+                for (Claim claim : claimLst) {
+                    if (claim.getStatus_code() == 4) {
+                        claimIdLst.add(claim.getId().toString());
+                    }
+                }
+            } else if (usrGrp.equalsIgnoreCase("admin")) {
+                for (Claim claim : claimLst) {
+                    claimIdLst.add(claim.getId().toString());
+                }
             }
         }
         return claimIdLst;
