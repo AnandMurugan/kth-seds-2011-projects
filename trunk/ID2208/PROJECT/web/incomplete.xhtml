@@ -6,7 +6,7 @@
     <link type="text/css" rel="stylesheet" href="../style.css" />
     <link type="text/css" rel="stylesheet" href="style.css" />
     <h:head>
-        <title>Evaluate Claims</title>
+        <title>Update Claims</title>
     </h:head>
     <h:body styleClass="form">
         <h:form>
@@ -18,9 +18,9 @@
             </p>
             <p>
                 <h:outputLabel for="claimDrpDown" value="Claims:" />
-                <h:selectOneMenu id="claimDrpDown" value="#{evaluationClaim.id}">
-                    <f:selectItems value="#{evaluationClaim.claimIdLst}" />
-                    <f:ajax event="change" listener="#{evaluationClaim.refreshClaimDetails}" render="id regno model value status type" />
+                <h:selectOneMenu id="claimDrpDown" value="#{updateIncompleteClaim.id}">
+                    <f:selectItems value="#{updateIncompleteClaim.claimIdLst}" />
+                    <f:ajax event="change" listener="#{updateIncompleteClaim.refreshClaimDetails}" render="id regno model value year" />
                 </h:selectOneMenu> 
                 <br/>
                 <br/>
@@ -30,22 +30,18 @@
                         <h:outputText value="Claim Details"/>
                     </f:facet>
                     <h:outputLabel for="id" value="Claim id:" />
-                    <h:outputText id="id" value="#{evaluationClaim.id}" />
+                    <h:outputText id="id" value="#{updateIncompleteClaim.id}" />
                     <h:outputLabel for="regno" value="Car Registration Number:" />
-                    <h:outputText id="regno" value="#{evaluationClaim.carRegNo}" />
+                    <h:inputText id="regno" value="#{updateIncompleteClaim.carRegNo}" />
                     <h:outputLabel for="model" value="Car Model:" />
-                    <h:outputText id="model" value="#{evaluationClaim.carModel}" />
+                    <h:inputText id="model" value="#{updateIncompleteClaim.carModel}" />
                     <h:outputLabel for="value" value="Car Value:" />
-                    <h:outputText id="value" value="#{evaluationClaim.carValue}" />
-                    <h:outputLabel for="status" value="Claim Status:" />
-                    <h:outputText id="status" value="#{evaluationClaim.status}" />
-                    <h:outputLabel for="type" value="Claim Type:" />
-                    <h:outputText id="type" value="#{evaluationClaim.type}" />
+                    <h:inputText id="value" value="#{updateIncompleteClaim.carValue}" />
+                    <h:outputLabel for="year" value="Car Year:" />
+                    <h:inputText id="year" value="#{updateIncompleteClaim.carYear}" />
                     <f:facet name="footer">
                         <h:panelGroup style="display:block; text-align:center">
-                            <h:commandButton id="approve" value="Approve" action="#{evaluationClaim.approve}"/>
-                            <h:commandButton id="reject" value="Reject" action="#{evaluationClaim.reject}"/>
-                            <h:commandButton id="notify" value="Notify Incomplete" action="#{evaluationClaim.notifyClaimant}"/>
+                            <h:commandButton id="update" value="Update" action="#{updateIncompleteClaim.update}"/>
                         </h:panelGroup>
                     </f:facet>
                 </h:panelGrid>

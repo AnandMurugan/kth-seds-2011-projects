@@ -27,8 +27,13 @@
                                     <f:setPropertyActionListener target="#{claimManager.userName}" value="#{login.userName}"/>
                                     <f:setPropertyActionListener target="#{claimManager.userGroup}" value="#{login.userRole}"/>
                                 </h:commandLink>
-
                                 <br/>
+                            </p>
+                            <p>
+                                <h:commandLink value="Update Incomplete Claim" action="incompleteClaims">
+                                    <f:setPropertyActionListener target="#{updateIncompleteClaim.userName}" value="#{login.userName}"/>
+                                    <f:setPropertyActionListener target="#{updateIncompleteClaim.userGroup}" value="#{login.userRole}"/>
+                                </h:commandLink>
                             </p>
                         </c:when>
                         <c:when test="#{login.renderPage('officerMain')}">

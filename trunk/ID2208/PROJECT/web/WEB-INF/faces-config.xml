@@ -85,6 +85,10 @@
             <to-view-id>/evaluate.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
+            <from-outcome>incompleteClaims</from-outcome>
+            <to-view-id>/incomplete.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
             <from-outcome>logout</from-outcome>
             <to-view-id>/index.xhtml</to-view-id>
         </navigation-case>
@@ -109,6 +113,17 @@
         <navigation-case>
             <from-outcome>indexPage</from-outcome>
             <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/incomplete.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>updated</from-outcome>
+            <to-view-id>/viewClaims.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>homePage</from-outcome>
+            <to-view-id>/homepage.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 </faces-config>
