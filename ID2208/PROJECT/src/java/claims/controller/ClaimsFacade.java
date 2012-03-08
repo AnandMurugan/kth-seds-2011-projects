@@ -25,6 +25,11 @@ public class ClaimsFacade {
     private String usrNm;
     private String usrGrp;
 
+    public String getUsrGrp() {
+        return usrGrp;
+    }
+    
+
     public ClaimsFacade() {
         client = new ClaimsClient();
     }
@@ -194,5 +199,9 @@ public class ClaimsFacade {
             }
         }
         return claimIdLst;
+    }
+
+    public void deleteClaim(Claim claim) {
+        client.remove(claim.getId().toString());
     }
 }
