@@ -9,8 +9,9 @@ import claims.model.Claim;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
-import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Named;
 import javax.faces.event.AjaxBehaviorEvent;
 
 /**
@@ -31,10 +32,31 @@ public class EvaluationClaim {
     private String carModel;
     private String owner;
     private String type;
+    private String userName;
+    private String userGroup;
+    
     List<String> claimIdLst = new ArrayList<String>();
 
+    public String getUserGroup() {
+        return userGroup;
+    }
+
+    public void setUserGroup(String userGroup) {
+        this.userGroup = userGroup;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     public List<String> getClaimIdLst() {
-        claimIdLst = claimFacade.getClaimIdList();
+        if(userName==null){
+        }
+        claimIdLst = claimFacade.getClaimIdList(userName, userGroup);
         if (claimIdLst.size() > 0) {
             refreshPage();
         }

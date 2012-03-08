@@ -30,6 +30,24 @@ public class ClaimManager implements Serializable {
     private String carValue;
     private String status_desc;
     private String type;
+    private String userName;
+    private String userGroup;
+
+    public String getUserGroup() {
+        return userGroup;
+    }
+
+    public void setUserGroup(String userGroup) {
+        this.userGroup = userGroup;
+    }
+    
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
     
     private List<Claim> claimsList = new ArrayList<Claim>();
 
@@ -74,7 +92,8 @@ public class ClaimManager implements Serializable {
     }
     
     private void refreshPage() {
-        setClaimsList(claimsFacade.getClaimsList());
+        //System.out.println("[]usergroup"+userGroup);
+        setClaimsList(claimsFacade.getClaimsList(userName, userGroup));
     }
     
     /** Creates a new instance of ClaimManager */
