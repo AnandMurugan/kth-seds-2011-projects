@@ -2,15 +2,56 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"   
-      xmlns:c="http://java.sun.com/jsp/jstl/core"
       xmlns:f="http://java.sun.com/jsf/core">
     <link type="text/css" rel="stylesheet" href="../style.css" />
     <link type="text/css" rel="stylesheet" href="style.css" />
     <h:head>
         <title>Evaluate Claims</title>
     </h:head>
-    <h:body>
-        Hello from Facelets
+    <h:body styleClass="form">
+        <h:form>
+            <p><br></br></p>
+            <p><br></br></p>
+            <p>
+                <h:link value="home" outcome="homePage"/>
+                <br/>
+            </p>
+            <p>
+                <h:outputLabel for="claimDrpDown" value="Claims:" />
+                <h:selectOneMenu id="claimDrpDown" value="#{evaluationClaim.id}">
+                    <f:selectItems value="#{evaluationClaim.claimIdLst}" />
+                    <f:ajax event="change" listener="#{evaluationClaim.refreshClaimDetails}" render="id regno model value status type" />
+                </h:selectOneMenu> 
+                <br/>
+                <br/>
+                <h:panelGrid columns="2" id="panel" border="1" styleClass="cart-table" headerClass="cart-table-header"
+                             footerClass="footer">
+                    <f:facet name="header">
+                        <h:outputText value="Claim Details"/>
+                    </f:facet>
+                    <h:outputLabel for="id" value="Claim id:" />
+                    <h:outputText id="id" value="#{evaluationClaim.id}" />
+                    <h:outputLabel for="regno" value="Car Registration Number:" />
+                    <h:outputText id="regno" value="#{evaluationClaim.carRegNo}" />
+                    <h:outputLabel for="model" value="Car Model:" />
+                    <h:outputText id="model" value="#{evaluationClaim.carModel}" />
+                    <h:outputLabel for="value" value="Car Value:" />
+                    <h:outputText id="value" value="#{evaluationClaim.carValue}" />
+                    <h:outputLabel for="status" value="Claim Status:" />
+                    <h:outputText id="status" value="#{evaluationClaim.status}" />
+                    <h:outputLabel for="type" value="Claim Type:" />
+                    <h:outputText id="type" value="#{evaluationClaim.type}" />
+                    <f:facet name="footer">
+                        <h:panelGroup style="display:block; text-align:center">
+                            <h:commandButton id="approve" value="Approve" action="#{evaluationClaim.approve}"/>
+                            <h:commandButton id="reject" value="Reject" action="#{evaluationClaim.approve}"/>
+                            <h:commandButton id="notify" value="Notify Incomplete" action="#{evaluationClaim.approve}"/>
+                        </h:panelGroup>
+                    </f:facet>
+                </h:panelGrid>
+                <br/>
+            </p>
+        </h:form>
     </h:body>
 </html>
 

@@ -11,6 +11,8 @@
     </h:head>
     <h:body styleClass="form">
         <h:form>
+            <p><br></br></p>
+            <p><br></br></p>
             <c:choose>
                 <c:when test="#{carDamageClaim.exception.cause != null}">
                     <h:outputText value="#{carDamageClaim.exception.cause.message}"/>
@@ -25,7 +27,7 @@
                 </f:facet>
                 <h:outputLabel for="carRegNo" value="Car Registration Number:" />
                 <h:inputText id="carRegNo" value="#{carDamageClaim.carRegNo}" />
-                <h:outputLabel for="carValue" value="Damage Cost:" />
+                <h:outputLabel for="carValue" value="Car Value:" />
                 <h:inputText id="carValue" value="#{carDamageClaim.carValue}" />
                 <h:outputLabel for="carModel" value="Car Model:" />
                 <h:inputText id="carModel" value="#{carDamageClaim.carModel}" />
