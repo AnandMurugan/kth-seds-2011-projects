@@ -65,8 +65,8 @@ public class ClaimsFacade {
     public List<String> getClaimIdList() {
         List<String> claimIdLst = new ArrayList<String>();
         claimLst = client.findAll_XML(Claim.class);
-        if(claimLst!=null && claimLst.size()>0){
-            for(Claim claim:claimLst){
+        if (claimLst != null && claimLst.size() > 0) {
+            for (Claim claim : claimLst) {
                 claimIdLst.add(claim.getId().toString());
             }
         }
@@ -78,16 +78,18 @@ public class ClaimsFacade {
         claim.setStatus_desc("approved");
         client.edit_XML(claim);
     }
-    
+
     public void rejectClaim(Claim claim) {
         claim.setStatus_code(3);
         claim.setStatus_desc("rejected");
         client.edit_XML(claim);
     }
-    
+
     public void notifyClaimant(Claim claim) {
+        Long id = claim.getId();
         claim.setStatus_code(1);
         claim.setStatus_desc("incomplete");
         client.edit_XML(claim);
+
     }
 }
