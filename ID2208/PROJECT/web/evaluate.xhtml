@@ -16,6 +16,8 @@
                 <h:link value="home" outcome="homePage"/>
                 <br/>
             </p>
+            <h:outputText id="user" value="#{evaluationClaim.userName}" />
+            <h:outputText id="group" value="#{evaluationClaim.userGroup}" />
             <p>
                 <h:outputLabel for="claimDrpDown" value="Claims:" />
                 <h:selectOneMenu id="claimDrpDown" value="#{evaluationClaim.id}">
