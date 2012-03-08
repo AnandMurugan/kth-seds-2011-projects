@@ -54,8 +54,6 @@ public class EvaluationClaim {
     }
 
     public List<String> getClaimIdLst() {
-        if(userName==null){
-        }
         claimIdLst = claimFacade.getClaimIdList(userName, userGroup);
         if (claimIdLst.size() > 0) {
             refreshPage();

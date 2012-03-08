@@ -61,10 +61,10 @@ public class ClaimsFacade {
     }
 
     public List<Claim> getClaimsList(String userName, String userGroup) {
-         if(userName!=null){
+        if (userName != null) {
             usrNm = userName;
         }
-        if(userGroup!=null){
+        if (userGroup != null) {
             usrGrp = userGroup;
         }
         List<Claim> resultLst = new ArrayList<Claim>();
@@ -101,10 +101,10 @@ public class ClaimsFacade {
     }
 
     public List<String> getClaimIdList(String userName, String userGroup) {
-        if(userName!=null){
+        if (userName != null) {
             usrNm = userName;
         }
-        if(userGroup!=null){
+        if (userGroup != null) {
             usrGrp = userGroup;
         }
         List<String> claimIdLst = new ArrayList<String>();
@@ -160,6 +160,32 @@ public class ClaimsFacade {
         claim.setStatus_code(1);
         claim.setStatus_desc("incomplete");
         client.edit_XML(claim);
+    }
 
+    public void updateClaim(Claim claim) {
+        claim.setStatus_code(2);
+        claim.setStatus_desc("complete");
+        client.edit_XML(claim);
+    }
+
+    public List<String> getIncompleteClaimIdList(String userName, String userGroup) {
+        if (userName != null) {
+            usrNm = userName;
+        }
+        if (userGroup != null) {
+            usrGrp = userGroup;
+        }
+        List<String> claimIdLst = new ArrayList<String>();
+        claimLst = client.findAll_XML(Claim.class);
+        if (claimLst != null && claimLst.size() > 0) {
+            if (usrGrp.equalsIgnoreCase("CUSTOMER")) {
+                for (Claim claim : claimLst) {
+                    if (claim.getOwner().equalsIgnoreCase(usrNm) && claim.getStatus_code()==1) {
+                        claimIdLst.add(claim.getId().toString());
+                    }
+                }
+            }
+        }
+        return claimIdLst;
     }
 }
