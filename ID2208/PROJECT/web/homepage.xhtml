@@ -15,51 +15,77 @@
             <h1>Index</h1>
             <p><br/><br/></p>
             <c:choose>
-                <c:when test="#{authBackingBean.loggedIn()}">
+                <c:when test="#{login.isLoggedIn}">
                     <c:choose>
-                        <c:when test="#{authBackingBean.renderPage('customerClaimsMain')}">
+                        <c:when test="#{login.renderPage('customerMain')}">
                             <p>
-                                <h:link value="Claims home" outcome="customerNewClaims" />
+                                <h:link value="Create Claim Damage Application" outcome="customerNewClaims" />
+                                <br/>
+                            </p>
+                            <p>
+                                <h:commandLink value="View Claims" action="viewClaims">
+                                    <f:setPropertyActionListener target="#{claimManager.userName}" value="#{login.userName}"/>
+                                    <f:setPropertyActionListener target="#{claimManager.userGroup}" value="#{login.userRole}"/>
+                                </h:commandLink>
+
                                 <br/>
                             </p>
                         </c:when>
-                        <c:when test="#{authBackingBean.renderPage('adminMain')}">
+                        <c:when test="#{login.renderPage('officerMain')}">
                             <p>
-                                <h:link value="go to admin page" outcome="admin" />
+                                <h:commandLink value="View Claims" action="viewClaims">
+                                    <f:setPropertyActionListener target="#{claimManager.userName}" value="#{login.userName}"/>
+                                    <f:setPropertyActionListener target="#{claimManager.userGroup}" value="#{login.userRole}"/>
+                                </h:commandLink>
+                                <br/>
+                            </p>
+                            <p>
+                                <h:commandLink value="Evaluate Claims" action="evaluateClaims">
+                                    <f:setPropertyActionListener target="#{evaluationClaim.userName}" value="#{login.userName}"/>
+                                    <f:setPropertyActionListener target="#{evaluationClaim.userGroup}" value="#{login.userRole}"/>
+                                </h:commandLink>
+                                <br/>
+                            </p>
+
+                        </c:when>
+                        <c:when test="#{login.renderPage('adminMain')}">
+                            <p>
+                                <h:commandLink value="View Claims" action="viewClaims">
+                                    <f:setPropertyActionListener target="#{claimManager.userName}" value="#{login.userName}"/>
+                                    <f:setPropertyActionListener target="#{claimManager.userGroup}" value="#{login.userRole}"/>
+                                </h:commandLink>
+                                <br/>
+                            </p>
+                            <p>
+                                <h:commandLink value="Update Claims" action="evaluateClaims">
+                                    <f:setPropertyActionListener target="#{evaluationClaim.userName}" value="#{login.userName}"/>
+                                    <f:setPropertyActionListener target="#{evaluationClaim.userGroup}" value="#{login.userRole}"/>
+                                </h:commandLink>
+                                <br/>
+                            </p>
+
+                        </c:when>
+                         <c:when test="#{login.renderPage('garageMain')}">
+                            <p>
+                                <h:commandLink value="View Claims" action="viewClaims">
+                                    <f:setPropertyActionListener target="#{claimManager.userName}" value="#{login.userName}"/>
+                                    <f:setPropertyActionListener target="#{claimManager.userGroup}" value="#{login.userRole}"/>
+                                </h:commandLink>
+                                <br/>
+                            </p>
+                            <p>
+                                <h:commandLink value="Update Claims" action="evaluateClaims">
+                                    <f:setPropertyActionListener target="#{evaluationClaim.userName}" value="#{login.userName}"/>
+                                    <f:setPropertyActionListener target="#{evaluationClaim.userGroup}" value="#{login.userRole}"/>
+                                </h:commandLink>
                                 <br/>
                             </p>
                         </c:when>
                     </c:choose>
-                    <h:form>
-                        <h:commandLink id="logout" action="#{authBackingBean.logout()}" rendered="#{authBackingBean.loggedIn()}">
-                            <p>
-                                <h:outputText value="logout"/>
-                            </p>
-                        </h:commandLink>
-                    </h:form>
                 </c:when>
                 <c:otherwise>
                     <p>
                         <h:link value="register" outcome="register" />
-                        <br/>
-                    </p>
-                    <p>
-                        <h:link value="Create Claim Damage Application" outcome="customerNewClaims" />
-                        <br/>
-                    </p>
-                    <p>
-                        <h:commandLink value="View Claims" action="viewClaims">
-                            <f:setPropertyActionListener target="#{claimManager.userName}" value="#{login.userName}"/>
-                            <f:setPropertyActionListener target="#{claimManager.userGroup}" value="#{login.userRole}"/>
-                        </h:commandLink>
-
-                        <br/>
-                    </p>
-                    <p>
-                        <h:commandLink value="Update Claims" action="evaluateClaims">
-                            <f:setPropertyActionListener target="#{evaluationClaim.userName}" value="#{login.userName}"/>
-                            <f:setPropertyActionListener target="#{evaluationClaim.userGroup}" value="#{login.userRole}"/>
-                        </h:commandLink>
                         <br/>
                     </p>
                 </c:otherwise>
