@@ -31,6 +31,7 @@ public class Claim implements Serializable {
     private String owner;
     private String car_model;
     private Integer car_year;
+    private Double damageCost;
     // Updated by the officer
     private String type;
     /* status code usage: 0-initiate claim by customer, 1 - application incomplete, 2 - competed application on notification
@@ -42,6 +43,8 @@ public class Claim implements Serializable {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date repair_date;    
     private Integer car_status;
+    //0-sent to garage, 1-partial, 2-fully repaired
+    private String car_status_desc;
     private Double repair_cost;
 
     // Constructors
@@ -54,6 +57,14 @@ public class Claim implements Serializable {
     }
     public Claim(String carRegNo) {
         this.carRegNo = carRegNo;
+    }
+
+    public Double getDamageCost() {
+        return damageCost;
+    }
+
+    public void setDamageCost(Double damageCost) {
+        this.damageCost = damageCost;
     }
 
     // Getters
@@ -151,6 +162,30 @@ public class Claim implements Serializable {
     
     public void setCar_year(Integer car_year){
         this.car_year = car_year;
+    }
+
+    public String getCar_status_desc() {
+        return car_status_desc;
+    }
+
+    public void setCar_status_desc(String car_status_desc) {
+        this.car_status_desc = car_status_desc;
+    }
+
+    public Double getRepair_cost() {
+        return repair_cost;
+    }
+
+    public void setRepair_cost(Double repair_cost) {
+        this.repair_cost = repair_cost;
+    }
+
+    public Date getRepair_date() {
+        return repair_date;
+    }
+
+    public void setRepair_date(Date repair_date) {
+        this.repair_date = repair_date;
     }
 
     @Override
