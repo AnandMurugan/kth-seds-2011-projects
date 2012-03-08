@@ -10,47 +10,50 @@
         <title>Claim Insurance Home Page</title>
     </h:head>
     <h:body styleClass="form">
-        <h1>Index</h1>
-        <p><br/><br/></p>
-        <c:choose>
-            <c:when test="#{authBackingBean.loggedIn()}">
-                <c:choose>
-                    <c:when test="#{authBackingBean.renderPage('customerClaimsMain')}">
-                        <p>
-                            <h:link value="Claims home" outcome="customerNewClaims" />
-                            <br/>
-                        </p>
-                    </c:when>
-                    <c:when test="#{authBackingBean.renderPage('adminMain')}">
-                        <p>
-                            <h:link value="go to admin page" outcome="admin" />
-                            <br/>
-                        </p>
-                    </c:when>
-                </c:choose>
-                <h:form>
-                    <h:commandLink id="logout" action="#{authBackingBean.logout()}" rendered="#{authBackingBean.loggedIn()}">
-                        <p>
-                            <h:outputText value="logout"/>
-                        </p>
-                    </h:commandLink>
-                </h:form>
-            </c:when>
-            <c:otherwise>
-                <p>
-                    <h:link value="register" outcome="register" />
-                    <br/>
-                </p>
-                <p>
-                    <h:link value="Create Claim Damage Application" outcome="customerNewClaims" />
-                    <br/>
-                </p>
-                <p>
-                    <h:link value="View/Update Application" outcome="viewClaims"/>
-                    <br/>
-                </p>
-            </c:otherwise>
-        </c:choose>
+        <h:form>
+            <h:commandLink value="Logout" action="#{login.logout()}" />
+            <h1>Index</h1>
+            <p><br/><br/></p>
+            <c:choose>
+                <c:when test="#{authBackingBean.loggedIn()}">
+                    <c:choose>
+                        <c:when test="#{authBackingBean.renderPage('customerClaimsMain')}">
+                            <p>
+                                <h:link value="Claims home" outcome="customerNewClaims" />
+                                <br/>
+                            </p>
+                        </c:when>
+                        <c:when test="#{authBackingBean.renderPage('adminMain')}">
+                            <p>
+                                <h:link value="go to admin page" outcome="admin" />
+                                <br/>
+                            </p>
+                        </c:when>
+                    </c:choose>
+                    <h:form>
+                        <h:commandLink id="logout" action="#{authBackingBean.logout()}" rendered="#{authBackingBean.loggedIn()}">
+                            <p>
+                                <h:outputText value="logout"/>
+                            </p>
+                        </h:commandLink>
+                    </h:form>
+                </c:when>
+                <c:otherwise>
+                    <p>
+                        <h:link value="register" outcome="register" />
+                        <br/>
+                    </p>
+                    <p>
+                        <h:link value="Create Claim Damage Application" outcome="customerNewClaims" />
+                        <br/>
+                    </p>
+                    <p>
+                        <h:link value="View/Update Application" outcome="viewClaims"/>
+                        <br/>
+                    </p>
+                </c:otherwise>
+            </c:choose>
+        </h:form>
     </h:body>
 </html>
 
