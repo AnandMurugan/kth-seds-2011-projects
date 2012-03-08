@@ -5,7 +5,6 @@
 package user.model;
 
 import java.io.Serializable;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -24,7 +23,7 @@ public class UserDetails implements Serializable {
     private String lusergroup;
     private String fullName;
     private boolean loggedIn;
-    
+
     public UserDetails() {
     }
 
@@ -32,17 +31,7 @@ public class UserDetails implements Serializable {
         this.luserName = userName;
         this.lusergroup = group;
         this.fullName = fullName;
-
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        md.update(password.getBytes(), 0, password.length());
-        byte[] mdbytes = md.digest();
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < mdbytes.length; i++) {
-            sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
-        }
-
-        this.lpassword = new String(sb);
-
+        this.lpassword = password;
     }
 
     public String getLuserName() {
@@ -77,14 +66,14 @@ public class UserDetails implements Serializable {
         this.fullName = fullName;
     }
 
-    public void setLoggedIn(boolean logged){
-       this.loggedIn = logged;
-   }
-   
-   public boolean getLoggedIn(){
-       return this.loggedIn;
-   }
-    
+    public void setLoggedIn(boolean logged) {
+        this.loggedIn = logged;
+    }
+
+    public boolean getLoggedIn() {
+        return this.loggedIn;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
