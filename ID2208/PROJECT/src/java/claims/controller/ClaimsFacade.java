@@ -41,11 +41,12 @@ public class ClaimsFacade {
         client.create_XML(claimObj);
     }
 
-    public void submitClaim(String carRegNo, Double carValue, String carModel, String owner, Integer carYear) {
+    public void submitClaim(String carRegNo, Double carValue, String carModel, String owner, Integer carYear, Double damageCost) {
         Claim claimObj = new Claim(carRegNo, carValue);
         claimObj.setCar_model(carModel);
         claimObj.setOwner(owner);
         claimObj.setCar_year(carYear);
+        claimObj.setDamageCost(damageCost);
         if (carValue != null) {
             if (carValue < factor) {
                 claimObj.setType("simple");
@@ -146,6 +147,8 @@ public class ClaimsFacade {
     public void approveClaim(Claim claim) {
         claim.setStatus_code(4);
         claim.setStatus_desc("approved");
+        claim.setCar_status(0);
+        claim.setCar_status_desc("sent to garage");
         client.edit_XML(claim);
     }
 
@@ -165,6 +168,10 @@ public class ClaimsFacade {
     public void updateClaim(Claim claim) {
         claim.setStatus_code(2);
         claim.setStatus_desc("complete");
+        client.edit_XML(claim);
+    }
+    
+    public void update(Claim claim) {
         client.edit_XML(claim);
     }
 
