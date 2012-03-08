@@ -34,7 +34,6 @@ public class EvaluationClaim {
     private String type;
     private String userName;
     private String userGroup;
-    
     List<String> claimIdLst = new ArrayList<String>();
 
     public String getUserGroup() {
@@ -71,6 +70,12 @@ public class EvaluationClaim {
     public String approve() {
         claim = claimFacade.getClaim(id);
         claimFacade.approveClaim(claim);
+        return "modified";
+    }
+
+    public String delete() {
+        claim = claimFacade.getClaim(id);
+        claimFacade.deleteClaim(claim);
         return "modified";
     }
 
@@ -170,6 +175,16 @@ public class EvaluationClaim {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean isAdmin() {
+        if (userGroup == null) {
+            userGroup = claimFacade.getUsrGrp();
+        }
+        if (userGroup!=null && userGroup.equalsIgnoreCase("ADMIN")) {
+            return true;
+        }
+        return false;
     }
 
     /** Creates a new instance of EvaluationClaim */
