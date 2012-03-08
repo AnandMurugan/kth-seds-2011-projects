@@ -37,7 +37,7 @@
         <from-view-id>/newClaims.xhtml</from-view-id>
         <navigation-case>
             <from-outcome>registered</from-outcome>
-            <to-view-id>/index.xhtml</to-view-id>
+            <to-view-id>/homepage.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
     <navigation-rule>
@@ -89,6 +89,10 @@
             <to-view-id>/incomplete.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
+            <from-outcome>repairCar</from-outcome>
+            <to-view-id>/repairCar.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
             <from-outcome>logout</from-outcome>
             <to-view-id>/index.xhtml</to-view-id>
         </navigation-case>
@@ -117,6 +121,17 @@
     </navigation-rule>
     <navigation-rule>
         <from-view-id>/incomplete.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>updated</from-outcome>
+            <to-view-id>/viewClaims.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>homePage</from-outcome>
+            <to-view-id>/homepage.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/repairCar.xhtml</from-view-id>
         <navigation-case>
             <from-outcome>updated</from-outcome>
             <to-view-id>/viewClaims.xhtml</to-view-id>

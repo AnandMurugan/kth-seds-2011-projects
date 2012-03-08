@@ -18,9 +18,9 @@
             </p>
             <p>
                 <h:outputLabel for="claimDrpDown" value="Claims:" />
-                <h:selectOneMenu id="claimDrpDown" value="#{updateIncompleteClaim.id}">
-                    <f:selectItems value="#{updateIncompleteClaim.claimIdLst}" />
-                    <f:ajax event="change" listener="#{updateIncompleteClaim.refreshClaimDetails}" render="id regno model value year" />
+                <h:selectOneMenu id="claimDrpDown" value="#{garageManager.id}">
+                    <f:selectItems value="#{garageManager.claimIdLst}" />
+                    <f:ajax event="change" listener="#{garageManager.refreshClaimDetails}" render="id regno year repaircost" />
                 </h:selectOneMenu> 
                 <br/>
                 <br/>
@@ -30,20 +30,18 @@
                         <h:outputText value="Claim Details"/>
                     </f:facet>
                     <h:outputLabel for="id" value="Claim id:" />
-                    <h:outputText id="id" value="#{updateIncompleteClaim.id}" />
+                    <h:outputText id="id" value="#{garageManager.id}" />
                     <h:outputLabel for="regno" value="Car Registration Number:" />
-                    <h:inputText id="regno" value="#{updateIncompleteClaim.carRegNo}" />
-                    <h:outputLabel for="model" value="Car Model:" />
-                    <h:inputText id="model" value="#{updateIncompleteClaim.carModel}" />
-                    <h:outputLabel for="value" value="Car Value:" />
-                    <h:inputText id="value" value="#{updateIncompleteClaim.carValue}" />
+                    <h:outputText id="regno" value="#{garageManager.carRegNo}" />
                     <h:outputLabel for="year" value="Car Year:" />
-                    <h:inputText id="year" value="#{updateIncompleteClaim.carYear}" />
-                    <h:outputLabel for="damage" value="Damage Cost:" />
-                    <h:inputText id="damage" value="#{updateIncompleteClaim.damageCost}" />
+                    <h:outputText id="year" value="#{garageManager.carYear}" />
+                    <h:outputLabel for="repaircost" value="Repair Cost:" />
+                    <h:inputText id="repaircost" value="#{garageManager.carRepairCost}" />
+                    <h:outputLabel for="status" value="Status:" />
+                    <h:inputText id="status" value="#{garageManager.carStatusDesc}" />
                     <f:facet name="footer">
                         <h:panelGroup style="display:block; text-align:center">
-                            <h:commandButton id="update" value="Update" action="#{updateIncompleteClaim.update}"/>
+                            <h:commandButton id="update" value="Update" action="#{garageManager.update}"/>
                         </h:panelGroup>
                     </f:facet>
                 </h:panelGrid>

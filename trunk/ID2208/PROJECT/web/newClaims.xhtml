@@ -33,6 +33,8 @@
                 <h:inputText id="carModel" value="#{carDamageClaim.carModel}" />
                 <h:outputLabel for="carYear" value="Car Year:" />
                 <h:inputText id="carYear" value="#{carDamageClaim.carYear}" />
+                <h:outputLabel for="damage" value="Damage Cost:" />
+                <h:inputText id="damage" value="#{carDamageClaim.damageCost}" />
                 <f:facet name="footer">
                     <h:panelGroup style="display:block; text-align:center">
                         <h:commandButton id="submit" value="Submit claim" action="#{carDamageClaim.submitClaim()}">
