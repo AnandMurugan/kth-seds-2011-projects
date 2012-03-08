@@ -33,8 +33,8 @@ public class Claim implements Serializable {
     private Integer car_year;
     // Updated by the officer
     private String type;
-    /* status code usage: 0-initiate claim by customer, 1 - 
-     * 
+    /* status code usage: 0-initiate claim by customer, 1 - application incomplete, 2 - competed application on notification
+     *  3 - rejected claim, 4 - claim approved, 5 - garage repaired car, 6 - archived
      */
     private Integer status_code;
     private String status_desc;   
