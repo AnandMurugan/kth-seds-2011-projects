@@ -23,7 +23,8 @@ public class UserDetails implements Serializable {
     private String lpassword;
     private String lusergroup;
     private String fullName;
-
+    private boolean loggedIn;
+    
     public UserDetails() {
     }
 
@@ -76,6 +77,14 @@ public class UserDetails implements Serializable {
         this.fullName = fullName;
     }
 
+    public void setLoggedIn(boolean logged){
+       this.loggedIn = logged;
+   }
+   
+   public boolean getLoggedIn(){
+       return this.loggedIn;
+   }
+    
     @Override
     public int hashCode() {
         int hash = 0;
