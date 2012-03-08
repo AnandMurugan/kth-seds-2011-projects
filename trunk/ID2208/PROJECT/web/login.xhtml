@@ -9,22 +9,22 @@
         <title>Login page</title>
     </h:head>
     <h:body styleClass="form">
-        <form method="post" action="j_security_check">
+        <h:form >
             <h1>Login page</h1>
             <p><br/><br/></p>
             <h:panelGrid columns="2">
-                <h:outputLabel for="j_username" value="Username" />
-                <input type="text" name="j_username" />
+                <h:outputLabel for="userName" value="Username" />
+                <h:inputText id="userName" value="#{login.userName}" />
 
-                <h:outputLabel for="j_password" value="Password" />
-                <input type="password" name="j_password" />
+                <h:outputLabel for="password" value="Password" />
+                <h:inputText id="password" value="#{login.password}" />
 
                 <h:outputText value="" />
                 <h:panelGrid columns="2">
-                    <input type="submit" name="submit" value="Login"/>
+                    <h:commandButton id="submit" value="Submit claim" action="#{login.loginUser()}"/>
                 </h:panelGrid>
             </h:panelGrid>
-        </form>
+        </h:form>
 
     </h:body>
 </html>
