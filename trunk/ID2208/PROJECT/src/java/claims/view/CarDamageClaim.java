@@ -78,7 +78,6 @@ public class CarDamageClaim {
     public String submitClaim() {
         try {
             claimsFacade.submitClaim(carRegNo, carValue, carModel, owner, carYear);
-            System.out.println("[JSF Managed bean]car reg no:"+carRegNo);
             registrationError = null;
             return "registered";
         } catch (Exception e) {
