@@ -65,7 +65,7 @@ public class ClaimFacadeREST extends AbstractFacade<Claim> {
     public List<Claim> findAll() {
         return super.findAll();
     }
-
+    
     @GET
     @Path("{from}/{to}")
     @Produces({"application/xml", "application/json"})
