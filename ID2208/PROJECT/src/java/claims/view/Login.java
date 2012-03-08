@@ -11,6 +11,8 @@ import javax.ejb.Stateful;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Model;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 import user.controller.UserFacade;
 
 /**
@@ -22,6 +24,7 @@ import user.controller.UserFacade;
 @SessionScoped
 @Model
 public class Login implements Serializable {
+
     /** Creates a new instance of Login */
     private String userName;
     private String password;
@@ -29,6 +32,14 @@ public class Login implements Serializable {
     private String userRole;
     @EJB
     private UserFacade userFacade;
+
+    public String getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
+    }
 
     public Login() {
     }
@@ -55,6 +66,8 @@ public class Login implements Serializable {
             isLoggedIn = false;
             this.userName = "";
             this.password = "";
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.getExternalContext().invalidateSession();
             return "logout";
         }
 
@@ -73,6 +86,11 @@ public class Login implements Serializable {
         if (userFacade.logIn(userName, password)) {
             isLoggedIn = true;
             userRole = userFacade.getUserRole(userName);
+            HttpSession session =
+                    (HttpSession) FacesContext.getCurrentInstance().
+                    getExternalContext().getSession(false);
+            session.setAttribute("user", userName);
+            session.setAttribute("role", userRole);
         }
     }
 }
