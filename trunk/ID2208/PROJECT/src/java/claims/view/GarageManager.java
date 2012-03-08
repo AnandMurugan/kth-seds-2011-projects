@@ -103,6 +103,7 @@ public class GarageManager {
             claim.setCar_status(1);
         }
         claim.setStatus_code(5);
+        claim.setStatus_desc("garage repaired car and archived");
         claim.setCar_status_desc(carStatusDesc);
         claim.setCarRegNo(carRegNo);
         claim.setRepair_cost(carRepairCost);
