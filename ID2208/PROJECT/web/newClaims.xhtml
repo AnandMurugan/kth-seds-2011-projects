@@ -33,11 +33,11 @@
                 <h:inputText id="carModel" value="#{carDamageClaim.carModel}" />
                 <h:outputLabel for="carYear" value="Car Year:" />
                 <h:inputText id="carYear" value="#{carDamageClaim.carYear}" />
-                <h:outputLabel for="carOwner" value="Owner Name:" />
-                <h:inputText id="carOwner" value="#{carDamageClaim.owner}" />
                 <f:facet name="footer">
                     <h:panelGroup style="display:block; text-align:center">
-                        <h:commandButton id="submit" value="Submit claim" action="#{carDamageClaim.submitClaim()}"/>
+                        <h:commandButton id="submit" value="Submit claim" action="#{carDamageClaim.submitClaim()}">
+                            <f:setPropertyActionListener target="#{carDamageClaim.owner}" value="#{login.userName}"/>
+                        </h:commandButton>
                     </h:panelGroup>
                 </f:facet>
             </h:panelGrid>
