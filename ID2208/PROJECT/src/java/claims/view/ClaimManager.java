@@ -29,6 +29,7 @@ public class ClaimManager implements Serializable {
     private String owner;
     private String carValue;
     private String status_desc;
+    private String type;
     
     private List<Claim> claimsList = new ArrayList<Claim>();
 
@@ -58,6 +59,10 @@ public class ClaimManager implements Serializable {
 
     public void setStatus(String status) {
         this.status_desc = status;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
     
     public boolean isListNotEmpty() {
