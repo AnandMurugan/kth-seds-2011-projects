@@ -66,12 +66,29 @@ public class Login implements Serializable {
             isLoggedIn = false;
             this.userName = "";
             this.password = "";
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.getExternalContext().invalidateSession();
             return "logout";
         }
 
         return "";
+    }
+
+    public boolean renderPage(String page) {
+        if (userRole.equalsIgnoreCase("ADMIN") && page.equals("adminMain")) {
+            return true;
+        }
+        if (userRole.equalsIgnoreCase("JUNIOR") && page.equals("officerMain")) {
+            return true;
+        }
+        if (userRole.equalsIgnoreCase("SENIOR") && page.equals("officerMain")) {
+            return true;
+        }
+        if (userRole.equalsIgnoreCase("CUSTOMER") && page.equals("customerMain")) {
+            return true;
+        }
+         if (userRole.equalsIgnoreCase("GARAGE") && page.equals("garageMain")) {
+            return true;
+        }
+        return false;
     }
 
     public boolean getIsLoggedIn() {
@@ -86,11 +103,6 @@ public class Login implements Serializable {
         if (userFacade.logIn(userName, password)) {
             isLoggedIn = true;
             userRole = userFacade.getUserRole(userName);
-            HttpSession session =
-                    (HttpSession) FacesContext.getCurrentInstance().
-                    getExternalContext().getSession(false);
-            session.setAttribute("user", userName);
-            session.setAttribute("role", userRole);
         }
     }
 }
