@@ -31,8 +31,15 @@ public class CarDamageClaim {
 
     private String owner;    
     private Integer carYear;
-    
-    
+    private Double damageCost;
+
+    public Double getDamageCost() {
+        return damageCost;
+    }
+
+    public void setDamageCost(Double damageCost) {
+        this.damageCost = damageCost;
+    }
     
     public void setCarRegNo(String carRegNo) {
         this.carRegNo = carRegNo;
@@ -76,7 +83,7 @@ public class CarDamageClaim {
     
     public String submitClaim() {
         try {
-            claimsFacade.submitClaim(carRegNo, carValue, carModel, owner, carYear);
+            claimsFacade.submitClaim(carRegNo, carValue, carModel, owner, carYear, damageCost);
             registrationError = null;
             return "registered";
         } catch (Exception e) {
