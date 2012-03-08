@@ -20,7 +20,6 @@ import user.model.UserDetails;
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 @Stateless
 public class UserFacade {
-
     @PersistenceContext(unitName = "ClaimsInsurancePU")
     private EntityManager em;
 
@@ -46,12 +45,30 @@ public class UserFacade {
         usrLst = (List) em.createNamedQuery("RetrieveUsers").getResultList();
         return usrLst;
     }
-    
+
     public String getUserRole(String userName) {
         UserDetails user = em.find(UserDetails.class, userName);
-        if(user != null) {
+        if (user != null) {
             return user.getLusergroup();
         }
         return "not a user";
+    }
+
+    public boolean logIn(String userName, String pwd) {
+        UserDetails user = em.find(UserDetails.class, userName);
+        if (user != null && user.getLpassword().equals(pwd)) {
+            user.setLoggedIn(true);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean logOut(String userName) {
+        UserDetails user = em.find(UserDetails.class, userName);
+        if (user != null) {
+            user.setLoggedIn(false);
+            return true;
+        }
+        return false;
     }
 }
