@@ -33,10 +33,32 @@
         </navigation-case>
     </navigation-rule>
     <navigation-rule>
+        <from-view-id>/evaluate.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>homePage</from-outcome>
+            <to-view-id>/homepage.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/viewClaims.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>evaluateClaims</from-outcome>
+            <to-view-id>/evaluate.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>logout</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
         <from-view-id>/homepage.xhtml</from-view-id>
         <navigation-case>
             <from-outcome>customerNewClaims</from-outcome>
             <to-view-id>/newClaims.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>viewClaims</from-outcome>
+            <to-view-id>/viewClaims.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>logout</from-outcome>
