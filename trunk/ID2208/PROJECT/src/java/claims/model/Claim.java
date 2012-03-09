@@ -20,7 +20,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @XmlRootElement
 public class Claim implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,10 +37,10 @@ public class Claim implements Serializable {
      *  3 - rejected claim, 4 - claim approved, 5 - garage repaired car and archived
      */
     private Integer status_code;
-    private String status_desc;   
+    private String status_desc;
     // Updated by garage
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date repair_date;    
+    private Date repair_date;
     private Integer car_status;
     //0-sent to garage, 1-partial, 2-fully repaired
     private String car_status_desc;
@@ -50,11 +49,12 @@ public class Claim implements Serializable {
     // Constructors
     public Claim() {
     }
-    
+
     public Claim(String carRegNo, Double carValue) {
         this.carRegNo = carRegNo;
         this.carValue = carValue;
     }
+
     public Claim(String carRegNo) {
         this.carRegNo = carRegNo;
     }
@@ -68,7 +68,6 @@ public class Claim implements Serializable {
     }
 
     // Getters
-    
     public Integer getStatus_code() {
         return status_code;
     }
@@ -88,7 +87,7 @@ public class Claim implements Serializable {
     public Long getId() {
         return id;
     }
-    
+
     public String getOwner() {
         return owner;
     }
@@ -97,25 +96,26 @@ public class Claim implements Serializable {
         return carValue;
     }
 
-    public Date getRepair_Date(){
+    public Date getRepair_Date() {
         return repair_date;
-    }    
-    
-    public Integer getCar_status(){
+    }
+
+    public Integer getCar_status() {
         return car_status;
     }
-    public Double getRepair_Cost(){
+
+    public Double getRepair_Cost() {
         return repair_cost;
     }
-    
-    public String getCar_model(){
+
+    public String getCar_model() {
         return car_model;
     }
-    
-    public Integer getCar_year(){
+
+    public Integer getCar_year() {
         return car_year;
     }
-    
+
     public void setCarRegNo(String carRegNo) {
         this.carRegNo = carRegNo;
     }
@@ -135,32 +135,32 @@ public class Claim implements Serializable {
     public void setType(String type) {
         this.type = type;
     }
-   
+
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public void setOwner(String owner) {
         this.owner = owner;
     }
-    
-    public void setRepair_Date(Date repair_date){
+
+    public void setRepair_Date(Date repair_date) {
         this.repair_date = repair_date;
-    }    
-    
-    public void setCar_status(Integer car_status){
+    }
+
+    public void setCar_status(Integer car_status) {
         this.car_status = car_status;
     }
-    
-    public void setRepair_Cost(Double repair_cost){
+
+    public void setRepair_Cost(Double repair_cost) {
         this.repair_cost = repair_cost;
     }
-    
-    public void setCar_model(String car_model){
+
+    public void setCar_model(String car_model) {
         this.car_model = car_model;
     }
-    
-    public void setCar_year(Integer car_year){
+
+    public void setCar_year(Integer car_year) {
         this.car_year = car_year;
     }
 
@@ -212,6 +212,4 @@ public class Claim implements Serializable {
     public String toString() {
         return "Claim{" + "id=" + id + '}';
     }
-
-    
 }
