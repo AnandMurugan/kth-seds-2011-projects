@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://xml.netbeans.org/schema/RequestXmlSchema"
+    xmlns:tns="http://xml.netbeans.org/schema/RequestXmlSchema"
+    elementFormDefault="qualified">
+    <xsd:element name="request">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="userId" type="xsd:string"/>
+                <xsd:element name="groupId" type="xsd:string"/>
+                <xsd:element name="groupAdminId" type="xsd:string"/>
+                <xsd:element name="resourceId" type="xsd:string"/>
+                <xsd:element name="actionId" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
