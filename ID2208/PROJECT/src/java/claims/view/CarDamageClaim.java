@@ -19,6 +19,8 @@ public class CarDamageClaim {
 
     @EJB
     private ClaimsFacade claimsFacade;
+    
+    
 
     /** Creates a new instance of CarDamageClaim */
     public CarDamageClaim() {
