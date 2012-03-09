@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
+import service.*;
 
 /**
  *
@@ -24,14 +25,15 @@ public class ClaimsFacade {
     private List<Claim> claimLst;
     private String usrNm;
     private String usrGrp;
+    AuthorizationWebService pepClient;
 
     public String getUsrGrp() {
         return usrGrp;
     }
-    
 
     public ClaimsFacade() {
         client = new ClaimsClient();
+        pepClient = new AuthorizationWebService_Service().getAuthorizationWebServicePort();
     }
 
     public Claim getClaim(String claimId) {
@@ -75,6 +77,13 @@ public class ClaimsFacade {
         }
         List<Claim> resultLst = new ArrayList<Claim>();
         List<Claim> tempLst = new ArrayList<Claim>();
+
+        // Authorize the request
+        if(!authorizeReq("read")){
+            return resultLst;
+        }
+
+        //GET resource
         tempLst = client.findAll_XML(Claim.class);
         if (usrGrp.equalsIgnoreCase("CUSTOMER")) {
             for (Claim claim : tempLst) {
@@ -114,6 +123,11 @@ public class ClaimsFacade {
             usrGrp = userGroup;
         }
         List<String> claimIdLst = new ArrayList<String>();
+        // Authorize the request
+        if(!authorizeReq("read")){
+            return claimIdLst;
+        }
+        //GET resource
         claimLst = client.findAll_XML(Claim.class);
         if (claimLst != null && claimLst.size() > 0) {
             if (usrGrp.equalsIgnoreCase("CUSTOMER")) {
@@ -154,12 +168,20 @@ public class ClaimsFacade {
         claim.setStatus_desc("approved");
         claim.setCar_status(0);
         claim.setCar_status_desc("sent to garage");
+        // Authorize the request
+        if (!authorizeReq("update")) {
+            return;
+        }
         client.edit_XML(claim);
     }
 
     public void rejectClaim(Claim claim) {
         claim.setStatus_code(3);
         claim.setStatus_desc("rejected");
+        // Authorize the request
+        if (!authorizeReq("update")) {
+            return;
+        }
         client.edit_XML(claim);
     }
 
@@ -167,16 +189,31 @@ public class ClaimsFacade {
         Long id = claim.getId();
         claim.setStatus_code(1);
         claim.setStatus_desc("incomplete");
+        // Authorize the request
+        if (!authorizeReq("update")) {
+            return;
+        }
+
         client.edit_XML(claim);
     }
 
     public void updateClaim(Claim claim) {
         claim.setStatus_code(2);
         claim.setStatus_desc("complete");
+        // Authorize the request
+        if (!authorizeReq("update")) {
+            return;
+        }
         client.edit_XML(claim);
     }
-    
+
     public void update(Claim claim) {
+
+        // Authorize the request
+        if (!authorizeReq("update")) {
+            return;
+        }
+
         client.edit_XML(claim);
     }
 
@@ -188,11 +225,17 @@ public class ClaimsFacade {
             usrGrp = userGroup;
         }
         List<String> claimIdLst = new ArrayList<String>();
+
+        // Authorize the request
+        if (!authorizeReq("read")) {
+            return claimIdLst;
+        }
+
         claimLst = client.findAll_XML(Claim.class);
         if (claimLst != null && claimLst.size() > 0) {
             if (usrGrp.equalsIgnoreCase("CUSTOMER")) {
                 for (Claim claim : claimLst) {
-                    if (claim.getOwner().equalsIgnoreCase(usrNm) && claim.getStatus_code()==1) {
+                    if (claim.getOwner().equalsIgnoreCase(usrNm) && claim.getStatus_code() == 1) {
                         claimIdLst.add(claim.getId().toString());
                     }
                 }
@@ -202,6 +245,36 @@ public class ClaimsFacade {
     }
 
     public void deleteClaim(Claim claim) {
+        // Authorize the request
+        if (!authorizeReq("delete")) {
+            return;
+        }
         client.remove(claim.getId().toString());
     }
+
+    public boolean authorizeReq(String operation) {
+        if (usrNm != null) {
+            AuthorizationRequest request = new AuthorizationRequest();
+            request.setUserId(usrNm.toLowerCase() + "@insurance.se");
+            request.setResourceId("http://localhost:8080/ClaimsInsurance/resources/claims");
+            request.setActionId(operation);
+            request.setGroupAdminId("admin@insurance.se");
+            if (usrGrp.equalsIgnoreCase("junior") || usrGrp.equalsIgnoreCase("senior")) {
+                request.setGroupId("Officers");
+            } else {
+                request.setGroupId(usrGrp.toLowerCase());
+            }
+            AuthorizationResponse response = pepClient.evaluate(request);
+            if (response != null) {
+                System.out.println("response - " + response.getDecision());
+                if ((response.getDecision().startsWith("Permit"))) {
+                    return true;
+                }
+            }
+        } else {
+            System.out.println("[UserName] is NULL");
+        }
+        return false;
+    }
+    // Authorize the request
 }
