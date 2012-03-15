@@ -4,6 +4,7 @@
  */
 package authenticator;
 
+import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -52,7 +53,7 @@ public class Authenticator {
                 MacAddress aMac = new MacAddress(
                         NetworkInterface.getByInetAddress(supplicantSocket.getLocalAddress()).getHardwareAddress());
                 MacAddress sMac = new MacAddress(
-                        NetworkInterface.getByInetAddress(supplicantSocket.getLocalAddress()).getHardwareAddress());
+                        NetworkInterface.getByInetAddress(supplicantSocket.getInetAddress()).getHardwareAddress());
                 byte[] pmk = macToPmk.get(sMac);
 
                 (new SupplicantHandler(supplicantSocket, aMac, sMac, pmk)).start();
