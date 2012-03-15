@@ -13,7 +13,7 @@ import java.util.BitSet;
  * @author Igor
  */
 public class EapolKeyMessage {
-    private static final int MIN_MESSAGE_SIZE = 95;
+    public static final int MIN_MESSAGE_SIZE = 95;
     //
     private byte descriptorType; //1 byte
     private BitSet keyInformation; //2 bytes
@@ -26,6 +26,14 @@ public class EapolKeyMessage {
     private byte[] keyMic; //16 bytes
     private int keyDataLength; //4 bytes
     private byte[] keyData; //0...n bytes
+
+    public EapolKeyMessage() {
+        keyInformation = new BitSet(16);
+        keyNonce = new byte[32];
+        eapolKeyIv = new byte[16];
+        keyMic = new byte[16];
+        keyData = new byte[0];
+    }
 
     public static byte[] toBytes(EapolKeyMessage message) {
         ByteBuffer outBuffer = ByteBuffer.allocate(MIN_MESSAGE_SIZE + message.keyDataLength);
@@ -109,19 +117,20 @@ public class EapolKeyMessage {
 
     @Override
     public String toString() {
-        return "EapolKeyMessage{"
-                + "\n\tdescriptorType=" + descriptorType
-                + ", \n\tkeyInformation=" + keyInformation
-                + ", \n\tkeyLength=" + keyLength
-                + ", \n\treplayCounter=" + replayCounter
-                + ", \n\tkeyNonce=" + keyNonce
-                + ", \n\teapolKeyIv=" + eapolKeyIv
-                + ", \n\tkeyRsc=" + keyRsc
-                + ", \n\tkeyIdentifier=" + keyIdentifier
-                + ", \n\tkeyMic=" + keyMic
-                + ", \n\tkeyDataLength=" + keyDataLength
-                + ", \n\tkeyData=" + keyData
-                + "\n}";
+//        return "EapolKeyMessage{"
+//                + "\n\tdescriptorType=" + descriptorType
+//                + ", \n\tkeyInformation=" + keyInformation
+//                + ", \n\tkeyLength=" + keyLength
+//                + ", \n\treplayCounter=" + replayCounter
+//                + ", \n\tkeyNonce=" + keyNonce
+//                + ", \n\teapolKeyIv=" + eapolKeyIv
+//                + ", \n\tkeyRsc=" + keyRsc
+//                + ", \n\tkeyIdentifier=" + keyIdentifier
+//                + ", \n\tkeyMic=" + keyMic
+//                + ", \n\tkeyDataLength=" + keyDataLength
+//                + ", \n\tkeyData=" + keyData
+//                + "\n}";
+        return Arrays.toString(EapolKeyMessage.toBytes(this));
     }
 
     @Override
@@ -184,6 +193,98 @@ public class EapolKeyMessage {
         hash = 73 * hash + this.keyDataLength;
         hash = 73 * hash + Arrays.hashCode(this.keyData);
         return hash;
+    }
+
+    public static int getMIN_MESSAGE_SIZE() {
+        return MIN_MESSAGE_SIZE;
+    }
+
+    public byte getDescriptorType() {
+        return descriptorType;
+    }
+
+    public byte[] getEapolKeyIv() {
+        return eapolKeyIv;
+    }
+
+    public byte[] getKeyData() {
+        return keyData;
+    }
+
+    public int getKeyDataLength() {
+        return keyDataLength;
+    }
+
+    public long getKeyIdentifier() {
+        return keyIdentifier;
+    }
+
+    public BitSet getKeyInformation() {
+        return keyInformation;
+    }
+
+    public int getKeyLength() {
+        return keyLength;
+    }
+
+    public byte[] getKeyMic() {
+        return keyMic;
+    }
+
+    public byte[] getKeyNonce() {
+        return keyNonce;
+    }
+
+    public long getKeyRsc() {
+        return keyRsc;
+    }
+
+    public long getReplayCounter() {
+        return replayCounter;
+    }
+
+    public void setDescriptorType(byte descriptorType) {
+        this.descriptorType = descriptorType;
+    }
+
+    public void setEapolKeyIv(byte[] eapolKeyIv) {
+        this.eapolKeyIv = eapolKeyIv;
+    }
+
+    public void setKeyData(byte[] keyData) {
+        this.keyData = keyData;
+    }
+
+    public void setKeyDataLength(int keyDataLength) {
+        this.keyDataLength = keyDataLength;
+    }
+
+    public void setKeyIdentifier(long keyIdentifier) {
+        this.keyIdentifier = keyIdentifier;
+    }
+
+    public void setKeyInformation(BitSet keyInformation) {
+        this.keyInformation = keyInformation;
+    }
+
+    public void setKeyLength(int keyLength) {
+        this.keyLength = keyLength;
+    }
+
+    public void setKeyMic(byte[] keyMic) {
+        this.keyMic = keyMic;
+    }
+
+    public void setKeyNonce(byte[] keyNonce) {
+        this.keyNonce = keyNonce;
+    }
+
+    public void setKeyRsc(long keyRsc) {
+        this.keyRsc = keyRsc;
+    }
+
+    public void setReplayCounter(long replayCounter) {
+        this.replayCounter = replayCounter;
     }
 
     public static void main(String[] args) {

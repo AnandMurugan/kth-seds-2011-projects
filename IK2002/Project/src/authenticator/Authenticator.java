@@ -48,14 +48,14 @@ public class Authenticator {
         try {
             servSocket = new ServerSocket(port);
             while (true) {
-                System.out.println("Waiting for incomming supplicants...");
                 Socket supplicantSocket = servSocket.accept();
-                System.out.println("New client connection started.");
+                System.out.println("New supplicant connection started.");
                 MacAddress aMac = new MacAddress(
                         NetworkInterface.getByInetAddress(supplicantSocket.getLocalAddress()).getHardwareAddress());
                 MacAddress sMac = new MacAddress(
                         NetworkInterface.getByInetAddress(supplicantSocket.getLocalAddress()).getHardwareAddress());
                 byte[] pmk = macToPmk.get(sMac);
+                
                 (new SupplicantHandler(supplicantSocket, aMac, sMac, pmk)).start();
             }
         } catch (Exception ex) {
