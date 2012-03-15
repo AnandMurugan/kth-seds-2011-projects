@@ -12,7 +12,7 @@ import java.util.BitSet;
  *
  * @author Igor
  */
-public class EAPOLKeyMessage2 {
+public class EapolKeyMessage {
     private static final int MIN_MESSAGE_SIZE = 95;
     //
     private byte descriptorType; //1 byte
@@ -27,7 +27,7 @@ public class EAPOLKeyMessage2 {
     private int keyDataLength; //4 bytes
     private byte[] keyData; //0...n bytes
 
-    public static byte[] toBytes(EAPOLKeyMessage2 message) {
+    public static byte[] toBytes(EapolKeyMessage message) {
         ByteBuffer outBuffer = ByteBuffer.allocate(MIN_MESSAGE_SIZE + message.keyDataLength);
         ByteBuffer aux;
 
@@ -63,11 +63,11 @@ public class EAPOLKeyMessage2 {
         return outBuffer.array();
     }
 
-    public static EAPOLKeyMessage2 fromBytes(byte[] bytes) {
+    public static EapolKeyMessage fromBytes(byte[] bytes) {
         ByteBuffer inBuffer = ByteBuffer.wrap(bytes);
         ByteBuffer aux;
         byte[] buf;
-        EAPOLKeyMessage2 message = new EAPOLKeyMessage2();
+        EapolKeyMessage message = new EapolKeyMessage();
 
         message.descriptorType = inBuffer.get();
 
@@ -132,7 +132,7 @@ public class EAPOLKeyMessage2 {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final EAPOLKeyMessage2 other = (EAPOLKeyMessage2) obj;
+        final EapolKeyMessage other = (EapolKeyMessage) obj;
         if (this.descriptorType != other.descriptorType) {
             return false;
         }
@@ -187,7 +187,7 @@ public class EAPOLKeyMessage2 {
     }
 
     public static void main(String[] args) {
-        EAPOLKeyMessage2 m1 = new EAPOLKeyMessage2();
+        EapolKeyMessage m1 = new EapolKeyMessage();
         m1.descriptorType = 1;
         m1.keyInformation = new BitSet(16);
         //m1.keyInformation.flip(0, 8);
@@ -201,10 +201,10 @@ public class EAPOLKeyMessage2 {
         m1.keyDataLength = 0;
         m1.keyData = new byte[0];
 
-        byte[] bytes = EAPOLKeyMessage2.toBytes(m1);
+        byte[] bytes = EapolKeyMessage.toBytes(m1);
         System.out.println(Arrays.toString(bytes));
 
-        EAPOLKeyMessage2 m2 = EAPOLKeyMessage2.fromBytes(bytes);
+        EapolKeyMessage m2 = EapolKeyMessage.fromBytes(bytes);
 
         System.out.println(m1 + "\n\n" + m2);
 
