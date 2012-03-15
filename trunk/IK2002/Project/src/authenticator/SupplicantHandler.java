@@ -14,4 +14,9 @@ import utility.MacAddress;
 class SupplicantHandler extends Thread {
     public SupplicantHandler(Socket supplicantSocket, MacAddress aMac, MacAddress sMac, byte[] pmk) {
     }
+
+    @Override
+    public void run() {
+        super.run();
+    }    
 }
