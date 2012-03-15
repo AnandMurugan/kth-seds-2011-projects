@@ -8,11 +8,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.security.Key;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import utility.EapolKeyMessage;
 import utility.MacAddress;
 
@@ -93,7 +96,9 @@ class SupplicantHandler extends Thread {
             //ptk = derive(pmk,aMac,sMac,aNonce,sNonce);
 
             micReceived = messageB.getKeyMic();
-            mic = null; //= hmacMd5(ptk,messageB);
+            mic = hmacMD5(
+                    Arrays.copyOfRange(ptk, 48, 64),
+                    Arrays.copyOfRange(EapolKeyMessage.toBytes(messageB), 0, 77));
             if (!Arrays.equals(mic, micReceived)) {
                 System.out.println("ERROR: message modified or supplicant is wrong!");
                 socket.close();
@@ -123,7 +128,10 @@ class SupplicantHandler extends Thread {
             //EAP-Key IV == 0
             messageC.setKeyRsc(0L); //RSC == Starting Sequence Number
             messageC.setKeyIdentifier(0L);
-            messageC.setKeyMic(null); //MIC == MIC Value
+            mic = hmacMD5(
+                    Arrays.copyOfRange(ptk, 48, 64),
+                    Arrays.copyOfRange(EapolKeyMessage.toBytes(messageC), 0, 77));
+            messageC.setKeyMic(mic); //MIC == MIC Value
             messageC.setKeyDataLength(0); //we are ignoring this
             //Key Data == we are ignoring this
 
@@ -145,7 +153,9 @@ class SupplicantHandler extends Thread {
             System.out.println("\tReplay counter: OK");
 
             micReceived = messageD.getKeyMic();
-            mic = null; //= hmacMd5(ptk,messageD);
+            mic = hmacMD5(
+                    Arrays.copyOfRange(ptk, 48, 64),
+                    Arrays.copyOfRange(EapolKeyMessage.toBytes(messageD), 0, 77));
             if (!Arrays.equals(mic, micReceived)) {
                 System.out.println("ERROR: message modified or supplicant is wrong!");
                 socket.close();
@@ -166,6 +176,17 @@ class SupplicantHandler extends Thread {
             } catch (IOException ex) {
                 Logger.getLogger(SupplicantHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+    }
+
+    private byte[] hmacMD5(byte[] key, byte[] message) {
+        try {
+            Key k = new SecretKeySpec(key, "HmacMD5");
+            Mac mac = Mac.getInstance("HmacMD5");
+            mac.init(k);
+            return mac.doFinal(message);
+        } catch (Exception ex) {
+            return null;
         }
     }
 
