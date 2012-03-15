@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Random;
@@ -41,10 +40,10 @@ class SupplicantHandler extends Thread {
             //Setup*************************************************************             
             InputStream in = socket.getInputStream();
             OutputStream out = socket.getOutputStream();
-            ByteBuffer aux;
             Random rand = new Random(System.nanoTime());
             long replayCounter = rand.nextLong();
             byte[] micReceived, mic;
+            System.out.println("Starting four-way exchange...");
 
             //Message A*********************************************************
             EapolKeyMessage messageA = new EapolKeyMessage();
@@ -73,7 +72,7 @@ class SupplicantHandler extends Thread {
             //Key Data == we are ignoring this
 
             System.out.println("Sending message A...");
-            System.out.println("\tANonce = " + Arrays.toString(aNonce));
+            System.out.println("\tANonce = " + byteArrayToHexString(aNonce));
             out.write(EapolKeyMessage.toBytes(messageA));
 
             //Message B*********************************************************
@@ -90,7 +89,7 @@ class SupplicantHandler extends Thread {
             System.out.println("\tReplay counter: OK");
 
             sNonce = messageB.getKeyNonce();
-            System.out.println("\tSNonce = " + Arrays.toString(sNonce));
+            System.out.println("\tSNonce = " + byteArrayToHexString(sNonce));
             //ptk = derive(pmk,aMac,sMac,aNonce,sNonce);
 
             micReceived = messageB.getKeyMic();
@@ -156,10 +155,10 @@ class SupplicantHandler extends Thread {
 
             //Print PTK*********************************************************
             System.out.println("Four-way exchange is done!");
-            System.out.println("\tData Encr Key =\t" + ptk);
-            System.out.println("\tData MIC Key =\t" + ptk);
-            System.out.println("\tEAPOL Encr Key =\t" + ptk);
-            System.out.println("\tEAPOL MIC Key =\t" + ptk);
+            System.out.println("\tData Encr Key =\t" + byteArrayToHexString(ptk, 0, 16));
+            System.out.println("\tData MIC Key =\t" + byteArrayToHexString(ptk, 16, 16));
+            System.out.println("\tEAPOL Encr Key =\t" + byteArrayToHexString(ptk, 32, 16));
+            System.out.println("\tEAPOL MIC Key =\t" + byteArrayToHexString(ptk, 48, 16));
         } catch (Exception ex) {
         } finally {
             try {
@@ -168,5 +167,18 @@ class SupplicantHandler extends Thread {
                 Logger.getLogger(SupplicantHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    private String byteArrayToHexString(byte[] bytes, int offset, int length) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = offset; (i < bytes.length) && (i < offset + length); i++) {
+            sb.append(String.format("%02x", bytes[i]));
+        }
+
+        return sb.toString();
+    }
+
+    private String byteArrayToHexString(byte[] bytes) {
+        return byteArrayToHexString(bytes, 0, bytes.length);
     }
 }

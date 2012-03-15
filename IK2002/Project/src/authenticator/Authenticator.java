@@ -4,7 +4,6 @@
  */
 package authenticator;
 
-import java.io.IOException;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -42,20 +41,20 @@ public class Authenticator {
             }
         }
 
-        System.out.println("Starting server...");
+        System.out.println("Authenticator is running...");
 
         ServerSocket servSocket;
         try {
             servSocket = new ServerSocket(port);
             while (true) {
                 Socket supplicantSocket = servSocket.accept();
-                System.out.println("New supplicant connection started.");
+                System.out.println("New supplicant connection started...");
                 MacAddress aMac = new MacAddress(
                         NetworkInterface.getByInetAddress(supplicantSocket.getLocalAddress()).getHardwareAddress());
                 MacAddress sMac = new MacAddress(
                         NetworkInterface.getByInetAddress(supplicantSocket.getLocalAddress()).getHardwareAddress());
                 byte[] pmk = macToPmk.get(sMac);
-                
+
                 (new SupplicantHandler(supplicantSocket, aMac, sMac, pmk)).start();
             }
         } catch (Exception ex) {
