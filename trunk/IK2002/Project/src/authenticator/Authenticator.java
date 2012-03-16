@@ -20,12 +20,13 @@ import utility.MacAddress;
  */
 public class Authenticator {
     private static final int DEFAULT_PORT = 8080;
-    private static Map<MacAddress, byte[]> macToPmk = new HashMap<MacAddress, byte[]>();
+    private static final Map<MacAddress, byte[]> macToPmk = new HashMap<MacAddress, byte[]>();
 
-    {
+    static {
         try {
             macToPmk.put(new MacAddress("70-f1-a1-3f-a0-f7"), "1234567812345678".getBytes());
             macToPmk.put(new MacAddress("00-23-4d-d3-63-b0"), "1234567812345678".getBytes());
+            macToPmk.put(new MacAddress("00-1f-16-43-e0-db"), "1234567812345678".getBytes());
         } catch (Exception ex) {
             Logger.getLogger(Authenticator.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -7,11 +7,9 @@ package supplicant;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.security.Key;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -19,18 +17,15 @@ import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import utility.EapolKeyMessage;
 import utility.MacAddress;
-import utility.Prf;
+import utility.CryptoSuite;
 
 /**
  *
  * @author Alex
  */
 public class Suplicant {
-
     private static final int DEFAULT_PORT = 8080;
     private static Map<MacAddress, byte[]> macToPmk = new HashMap<MacAddress, byte[]>();
 
@@ -38,6 +33,7 @@ public class Suplicant {
         try {
             macToPmk.put(new MacAddress("70-f1-a1-3f-a0-f7"), "1234567812345678".getBytes());
             macToPmk.put(new MacAddress("00-23-4d-d3-63-b0"), "1234567812345678".getBytes());
+            macToPmk.put(new MacAddress("00-1f-16-43-e0-db"), "1234567812345678".getBytes());
         } catch (Exception ex) {
             Logger.getLogger(Suplicant.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -54,10 +50,8 @@ public class Suplicant {
     }
 
     private void connect(String ip, int port) {
-        InetAddress authenticatorAddress;
         try {
-            authenticatorAddress = InetAddress.getByName(ip);
-            socket = new Socket(authenticatorAddress, port);
+            socket = new Socket(ip, port);
             System.out.println("Authenticator connection started...");
             MacAddress authenticatorMac = new MacAddress(
                     NetworkInterface.getByInetAddress(socket.getInetAddress()).getHardwareAddress());
@@ -77,8 +71,13 @@ public class Suplicant {
             OutputStream out = socket.getOutputStream();
             Random rand = new Random(System.nanoTime());
             long replayCounter;
-            byte[] micReceived, mic = null;
+            byte[] micReceived, mic;
             System.out.println("Starting four-way exchange...");
+
+            //generate sNonce
+            ByteBuffer keyBuf = ByteBuffer.allocate(8);
+            keyBuf.putLong(rand.nextLong());
+            sNonce = CryptoSuite.prf(256, keyBuf.array(), "Init Counter", CryptoSuite.generateByteSeqForNonce(sMac));
 
             //Message A*********************************************************
             byte[] bytesA = new byte[EapolKeyMessage.MIN_MESSAGE_SIZE];
@@ -90,19 +89,10 @@ public class Suplicant {
 
             aNonce = messageA.getKeyNonce();
             System.out.println("\tANonce = " + byteArrayToHexString(aNonce));
-            //ptk = derive(pmk,aMac,sMac,aNonce,sNonce);
 
-            //generate sNonce
-            long randNr = rand.nextLong();
-            ByteBuffer randNrBuf = ByteBuffer.allocate(8);
-            randNrBuf.putLong(randNr);
-            ByteBuffer timeBuf = ByteBuffer.allocate(8);
-            timeBuf.putLong(System.nanoTime());
-            sNonce = Prf.prf256(randNrBuf.array(), "Init Counter", sMac, timeBuf.array());
-               
             //generate ptk
-            ptk = Prf.prf512(pmk, "Pairwaise key expansion", sMac, aMac, sNonce, aNonce);
-            
+            ptk = CryptoSuite.prf(512, pmk, "Pairwaise key expansion", CryptoSuite.generateByteSeqForPTK(aMac, sMac, aNonce, sNonce));
+
             //Message B*********************************************************
             EapolKeyMessage messageB = new EapolKeyMessage();
             messageB.setDescriptorType((byte) 254);
@@ -125,7 +115,7 @@ public class Suplicant {
             //EAP-Key IV == 0
             //RSC == 0
             messageB.setKeyIdentifier(0L);
-            mic = Prf.hmacMD5(
+            mic = CryptoSuite.hmacMD5(
                     Arrays.copyOfRange(ptk, 48, 64),
                     Arrays.copyOfRange(EapolKeyMessage.toBytes(messageB), 0, 77));
             messageB.setKeyMic(mic);
@@ -142,7 +132,7 @@ public class Suplicant {
             EapolKeyMessage messageC = EapolKeyMessage.fromBytes(bytesC);
             System.out.println("Received message C...");
 
-            if (messageC.getReplayCounter() != replayCounter) {
+            if (messageC.getReplayCounter() != ++replayCounter) {
                 System.out.println("ERROR: replay attack!");
                 socket.close();
                 return;
@@ -150,7 +140,7 @@ public class Suplicant {
             System.out.println("\tReplay counter: OK");
 
             micReceived = messageC.getKeyMic();
-            mic = Prf.hmacMD5(
+            mic = CryptoSuite.hmacMD5(
                     Arrays.copyOfRange(ptk, 48, 64),
                     Arrays.copyOfRange(EapolKeyMessage.toBytes(messageC), 0, 77));
             if (!Arrays.equals(mic, micReceived)) {
@@ -183,7 +173,7 @@ public class Suplicant {
             //EAP-Key IV == 0
             //RSC == 0
             messageD.setKeyIdentifier(0L);
-            mic = Prf.hmacMD5(
+            mic = CryptoSuite.hmacMD5(
                     Arrays.copyOfRange(ptk, 48, 64),
                     Arrays.copyOfRange(EapolKeyMessage.toBytes(messageD), 0, 77));
             messageD.setKeyMic(mic);
@@ -196,10 +186,10 @@ public class Suplicant {
 
             //Print PTK*********************************************************
             System.out.println("Four-way exchange is done!");
-            System.out.println("\tData Encr Key =\t" + byteArrayToHexString(ptk, 0, 16));
-            System.out.println("\tData MIC Key =\t" + byteArrayToHexString(ptk, 16, 16));
-            System.out.println("\tEAPOL Encr Key =\t" + byteArrayToHexString(ptk, 32, 16));
-            System.out.println("\tEAPOL MIC Key =\t" + byteArrayToHexString(ptk, 48, 16));
+            System.out.println("\tData Encr Key\t= " + byteArrayToHexString(ptk, 0, 16));
+            System.out.println("\tData MIC Key\t= " + byteArrayToHexString(ptk, 16, 16));
+            System.out.println("\tEAPOL Encr Key\t= " + byteArrayToHexString(ptk, 32, 16));
+            System.out.println("\tEAPOL MIC Key\t= " + byteArrayToHexString(ptk, 48, 16));
         } catch (Exception ex) {
         } finally {
             try {

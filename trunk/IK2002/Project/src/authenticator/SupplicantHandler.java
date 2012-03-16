@@ -16,7 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import utility.EapolKeyMessage;
 import utility.MacAddress;
-import utility.Prf;
+import utility.CryptoSuite;
 
 /**
  *
@@ -45,16 +45,14 @@ class SupplicantHandler extends Thread {
             Random rand = new Random(System.nanoTime());
             long replayCounter = rand.nextLong();
             byte[] micReceived, mic;
+            ByteBuffer byteSeqBuf;
             System.out.println("Starting four-way exchange...");
 
             //generate aNonce
-            long randNr = rand.nextLong();
-            ByteBuffer randNrBuf = ByteBuffer.allocate(8);
-            randNrBuf.putLong(randNr);
-            ByteBuffer timeBuf = ByteBuffer.allocate(8);
-            timeBuf.putLong(System.nanoTime());
-            aNonce = Prf.prf256(randNrBuf.array(), "Init Counter", aMac, timeBuf.array());
-               
+            ByteBuffer keyBuf = ByteBuffer.allocate(8);
+            keyBuf.putLong(rand.nextLong());
+            aNonce = CryptoSuite.prf(256, keyBuf.array(), "Init Counter", CryptoSuite.generateByteSeqForNonce(aMac));
+
             //Message A*********************************************************
             EapolKeyMessage messageA = new EapolKeyMessage();
             messageA.setDescriptorType((byte) 254);
@@ -100,12 +98,12 @@ class SupplicantHandler extends Thread {
 
             sNonce = messageB.getKeyNonce();
             System.out.println("\tSNonce = " + byteArrayToHexString(sNonce));
-            
-            //generate ptk
-            ptk = Prf.prf512(pmk, "Pairwaise key expansion", sMac, aMac, sNonce, aNonce);
-            
+
+            //generate ptk            
+            ptk = CryptoSuite.prf(512, pmk, "Pairwaise key expansion", CryptoSuite.generateByteSeqForPTK(aMac, sMac, aNonce, sNonce));
+
             micReceived = messageB.getKeyMic();
-            mic = Prf.hmacMD5(
+            mic = CryptoSuite.hmacMD5(
                     Arrays.copyOfRange(ptk, 48, 64),
                     Arrays.copyOfRange(EapolKeyMessage.toBytes(messageB), 0, 77));
             if (!Arrays.equals(mic, micReceived)) {
@@ -137,7 +135,7 @@ class SupplicantHandler extends Thread {
             //EAP-Key IV == 0
             messageC.setKeyRsc(0L); //RSC == Starting Sequence Number
             messageC.setKeyIdentifier(0L);
-            mic = Prf.hmacMD5(
+            mic = CryptoSuite.hmacMD5(
                     Arrays.copyOfRange(ptk, 48, 64),
                     Arrays.copyOfRange(EapolKeyMessage.toBytes(messageC), 0, 77));
             messageC.setKeyMic(mic); //MIC == MIC Value
@@ -162,7 +160,7 @@ class SupplicantHandler extends Thread {
             System.out.println("\tReplay counter: OK");
 
             micReceived = messageD.getKeyMic();
-            mic = Prf.hmacMD5(
+            mic = CryptoSuite.hmacMD5(
                     Arrays.copyOfRange(ptk, 48, 64),
                     Arrays.copyOfRange(EapolKeyMessage.toBytes(messageD), 0, 77));
             if (!Arrays.equals(mic, micReceived)) {
@@ -174,10 +172,10 @@ class SupplicantHandler extends Thread {
 
             //Print PTK*********************************************************
             System.out.println("Four-way exchange is done!");
-            System.out.println("\tData Encr Key =\t" + byteArrayToHexString(ptk, 0, 16));
-            System.out.println("\tData MIC Key =\t" + byteArrayToHexString(ptk, 16, 16));
-            System.out.println("\tEAPOL Encr Key =\t" + byteArrayToHexString(ptk, 32, 16));
-            System.out.println("\tEAPOL MIC Key =\t" + byteArrayToHexString(ptk, 48, 16));
+            System.out.println("\tData Encr Key\t= " + byteArrayToHexString(ptk, 0, 16));
+            System.out.println("\tData MIC Key\t= " + byteArrayToHexString(ptk, 16, 16));
+            System.out.println("\tEAPOL Encr Key\t= " + byteArrayToHexString(ptk, 32, 16));
+            System.out.println("\tEAPOL MIC Key\t= " + byteArrayToHexString(ptk, 48, 16));
         } catch (Exception ex) {
         } finally {
             try {

@@ -44,7 +44,7 @@ public class EapolKeyMessage {
         aux = ByteBuffer.allocate(2);
         aux.put(message.keyInformation.toByteArray());
         outBuffer.put(aux.array(), 0, 2);
-        System.out.println(Arrays.toString(aux.array()));
+        //System.out.println(Arrays.toString(aux.array()));
 
         aux = ByteBuffer.allocate(4);
         aux.putInt(message.keyLength);
@@ -82,7 +82,7 @@ public class EapolKeyMessage {
         buf = new byte[2];
         inBuffer.get(buf);
         message.keyInformation = BitSet.valueOf(buf);
-        System.out.println(Arrays.toString(buf));
+        //System.out.println(Arrays.toString(buf));
 
         buf = new byte[4];
         inBuffer.get(buf, 2, 2);
