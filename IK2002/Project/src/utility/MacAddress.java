@@ -12,6 +12,7 @@ import java.util.StringTokenizer;
  * @author Igor
  */
 public class MacAddress {
+
     private byte[] bytes;
 
     public MacAddress(byte[] address) throws Exception {
@@ -28,8 +29,13 @@ public class MacAddress {
             throw new Exception();
         }
         bytes = new byte[6];
+
         for (int i = 0; i < length; i++) {
-            bytes[i] = Byte.parseByte(st.nextToken(), 16);
+            byte data;
+            String nextToken = st.nextToken();
+            data = (byte) ((Character.digit(nextToken.charAt(0), 16) << 4)
+                        + Character.digit(nextToken.charAt(1), 16));
+            bytes[i] = data;
         }
     }
 
