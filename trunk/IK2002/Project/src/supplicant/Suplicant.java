@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -22,6 +23,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import utility.EapolKeyMessage;
 import utility.MacAddress;
+import utility.Prf;
 
 /**
  *
@@ -90,8 +92,17 @@ public class Suplicant {
             System.out.println("\tANonce = " + byteArrayToHexString(aNonce));
             //ptk = derive(pmk,aMac,sMac,aNonce,sNonce);
 
-            //TODO mic bit = 0 and install bit set...foul
-
+            //generate sNonce
+            long randNr = rand.nextLong();
+            ByteBuffer randNrBuf = ByteBuffer.allocate(8);
+            randNrBuf.putLong(randNr);
+            ByteBuffer timeBuf = ByteBuffer.allocate(8);
+            timeBuf.putLong(System.nanoTime());
+            sNonce = Prf.prf256(randNrBuf.array(), "Init Counter", sMac, timeBuf.array());
+               
+            //generate ptk
+            ptk = Prf.prf512(pmk, "Pairwaise key expansion", sMac, aMac, sNonce, aNonce);
+            
             //Message B*********************************************************
             EapolKeyMessage messageB = new EapolKeyMessage();
             messageB.setDescriptorType((byte) 254);
@@ -110,12 +121,11 @@ public class Suplicant {
             keyInformationB.set(15, false); //descriptor type: 001
             messageB.setKeyLength(64);
             messageB.setReplayCounter(replayCounter);
-            generateSNonce();
             messageB.setKeyNonce(sNonce);
             //EAP-Key IV == 0
             //RSC == 0
             messageB.setKeyIdentifier(0L);
-            mic = hmacMD5(
+            mic = Prf.hmacMD5(
                     Arrays.copyOfRange(ptk, 48, 64),
                     Arrays.copyOfRange(EapolKeyMessage.toBytes(messageB), 0, 77));
             messageB.setKeyMic(mic);
@@ -140,7 +150,7 @@ public class Suplicant {
             System.out.println("\tReplay counter: OK");
 
             micReceived = messageC.getKeyMic();
-            mic = hmacMD5(
+            mic = Prf.hmacMD5(
                     Arrays.copyOfRange(ptk, 48, 64),
                     Arrays.copyOfRange(EapolKeyMessage.toBytes(messageC), 0, 77));
             if (!Arrays.equals(mic, micReceived)) {
@@ -173,7 +183,7 @@ public class Suplicant {
             //EAP-Key IV == 0
             //RSC == 0
             messageD.setKeyIdentifier(0L);
-            mic = hmacMD5(
+            mic = Prf.hmacMD5(
                     Arrays.copyOfRange(ptk, 48, 64),
                     Arrays.copyOfRange(EapolKeyMessage.toBytes(messageD), 0, 77));
             messageD.setKeyMic(mic);
@@ -197,21 +207,6 @@ public class Suplicant {
             } catch (IOException ex) {
                 Logger.getLogger(Suplicant.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-    }
-
-    private void generateSNonce() {
-        
-    }
-
-    private byte[] hmacMD5(byte[] key, byte[] message) {
-        try {
-            Key k = new SecretKeySpec(key, "HmacMD5");
-            Mac mac = Mac.getInstance("HmacMD5");
-            mac.init(k);
-            return mac.doFinal(message);
-        } catch (Exception ex) {
-            return null;
         }
     }
 
