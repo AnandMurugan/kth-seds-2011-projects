@@ -84,4 +84,15 @@ public class Prf {
 
         return returnBuf.array();
     }
+    
+    public static byte[] hmacMD5(byte[] key, byte[] message) {
+        try {
+            Key k = new SecretKeySpec(key, "HmacMD5");
+            Mac mac = Mac.getInstance("HmacMD5");
+            mac.init(k);
+            return mac.doFinal(message);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
 }
