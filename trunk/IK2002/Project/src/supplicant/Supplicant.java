@@ -25,7 +25,7 @@ import utility.CryptoSuite;
  *
  * @author Alex
  */
-public class Suplicant {
+public class Supplicant {
     private static final int DEFAULT_PORT = 8080;
     private static Map<MacAddress, byte[]> macToPmk = new HashMap<MacAddress, byte[]>();
 
@@ -35,7 +35,7 @@ public class Suplicant {
             macToPmk.put(new MacAddress("00-23-4d-d3-63-b0"), "1234567812345678".getBytes());
             macToPmk.put(new MacAddress("00-1f-16-43-e0-db"), "1234567812345678".getBytes());
         } catch (Exception ex) {
-            Logger.getLogger(Suplicant.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Supplicant.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     private Socket socket;
@@ -60,7 +60,7 @@ public class Suplicant {
                     NetworkInterface.getByInetAddress(socket.getLocalAddress()).getHardwareAddress()).getBytes();
             pmk = macToPmk.get(authenticatorMac);
         } catch (Exception ex) {
-            Logger.getLogger(Suplicant.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Supplicant.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -181,7 +181,7 @@ public class Suplicant {
             //Key Data == we are ignoring this
 
             System.out.println("Sending message D...");
-            System.out.println("\tSNonce = " + byteArrayToHexString(sNonce));
+            //System.out.println("\tSNonce = " + byteArrayToHexString(sNonce));
             out.write(EapolKeyMessage.toBytes(messageD));
 
             //Print PTK*********************************************************
@@ -195,7 +195,7 @@ public class Suplicant {
             try {
                 socket.close();
             } catch (IOException ex) {
-                Logger.getLogger(Suplicant.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Supplicant.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -222,13 +222,13 @@ public class Suplicant {
                 port = Integer.parseInt(args[0]);
                 ip = args[1];
             } catch (NumberFormatException ex) {
-                Logger.getLogger(Suplicant.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Supplicant.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
         System.out.println("Suplicant is running...");
 
-        Suplicant s = new Suplicant();
+        Supplicant s = new Supplicant();
         s.authenticate(ip, port);
     }
 }
