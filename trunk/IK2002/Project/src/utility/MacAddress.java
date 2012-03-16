@@ -27,6 +27,7 @@ public class MacAddress {
         if (length != 6) {
             throw new Exception();
         }
+        bytes = new byte[6];
         for (int i = 0; i < length; i++) {
             bytes[i] = Byte.parseByte(st.nextToken(), 16);
         }
