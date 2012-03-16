@@ -50,10 +50,8 @@ public class Prf {
         return returnBuf.array();
     }
 
-    public static byte[] prf512(int key, String textString, byte[] mac1, byte[] mac2, byte[] nonce1, byte[] nonce2) {
+    public static byte[] prf512(byte[] key, String textString, byte[] mac1, byte[] mac2, byte[] nonce1, byte[] nonce2) {
         ByteBuffer returnBuf = ByteBuffer.allocate(512);
-        ByteBuffer keyBuf = ByteBuffer.allocate(4);
-        keyBuf.putInt(key);
 
         ByteBuffer byteSeqBuf = ByteBuffer.allocate(mac1.length + mac2.length + nonce1.length + nonce2.length);
         ByteBuffer auxBuf1, auxBuf2;
@@ -81,10 +79,8 @@ public class Prf {
         }
         
         byte[] byteSequence = byteSeqBuf.array();
-        returnBuf.put(prf128(keyBuf.array(), textString, byteSequence, 0));
-        returnBuf.put(prf128(keyBuf.array(), textString, byteSequence, 1));
-        returnBuf.put(prf128(keyBuf.array(), textString, byteSequence, 2));
-        returnBuf.put(prf128(keyBuf.array(), textString, byteSequence, 3));
+        returnBuf.put(prf128(key, textString, byteSequence, 0));
+        returnBuf.put(prf128(key, textString, byteSequence, 1));
 
         return returnBuf.array();
     }
