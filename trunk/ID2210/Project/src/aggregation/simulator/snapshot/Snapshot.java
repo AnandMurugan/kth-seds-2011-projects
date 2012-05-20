@@ -111,7 +111,7 @@ public class Snapshot {
         
         str += "estimated correctly: " + correct + "\n";
         str += "average: " + average + "\n";
-        str += "standard deviation: " + Math.sqrt(averageSqr - average * average) + "\n";
+        str += "standard deviation: " + Math.sqrt(Math.abs(averageSqr - average * average)) + "\n";
         return str;
     }
 }
