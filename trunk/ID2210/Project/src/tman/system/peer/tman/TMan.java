@@ -7,9 +7,8 @@ import java.util.ArrayList;
 import cyclon.system.peer.cyclon.CyclonPartnersPort;
 import cyclon.system.peer.cyclon.CyclonPartnersRequest;
 import cyclon.system.peer.cyclon.CyclonPartnersResponse;
-import java.util.AbstractList;
-import java.util.List;
-import java.util.Random;
+import java.math.BigInteger;
+import java.util.*;
 
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
@@ -27,6 +26,7 @@ public final class TMan extends ComponentDefinition {
     Positive<Network> networkPort = positive(Network.class);
     Positive<Timer> timerPort = positive(Timer.class);
     private long period;
+    private BigInteger identifierSpaceSize;
     private PeerAddress self;
     private PeerAddress succ;
     private PeerAddress pred;
@@ -34,6 +34,9 @@ public final class TMan extends ComponentDefinition {
     private ArrayList<PeerAddress> cyclonPartners;
     private TManConfiguration tmanConfiguration;
     private Random rand = new Random(System.nanoTime());
+    private boolean active;
+    private List<PeerAddress> tmanPeerBuf;
+    private PeerAddress tmanPeer;
 
 //-------------------------------------------------------------------	
     public TMan() {
@@ -54,6 +57,7 @@ public final class TMan extends ComponentDefinition {
             self = init.getSelf();
             tmanConfiguration = init.getConfiguration();
             period = tmanConfiguration.getPeriod();
+            identifierSpaceSize = tmanConfiguration.getIdentifierSpaceSize();
             succ = self;
             pred = self;
 
@@ -69,9 +73,9 @@ public final class TMan extends ComponentDefinition {
     Handler<TManSchedule> handleRound = new Handler<TManSchedule>() {
         @Override
         public void handle(TManSchedule event) {
-            CyclonPartnersRequest response = new CyclonPartnersRequest();
-            trigger(response, cyclonPartnersPort);
-
+            CyclonPartnersRequest request = new CyclonPartnersRequest();
+            active = true;
+            trigger(request, cyclonPartnersPort);
         }
     };
 //-------------------------------------------------------------------	
@@ -80,44 +84,58 @@ public final class TMan extends ComponentDefinition {
         public void handle(CyclonPartnersResponse event) {
             cyclonPartners = event.getPartners();
 
-            PeerAddress peer;
-            //TODO
-            if (tmanPartners.isEmpty()) {
-                peer = cyclonPartners.get(rand.nextInt(cyclonPartners.size()));
+            if (active) {
+                PeerAddress peer;
+                if (!tmanPartners.isEmpty()) {
+                    peer = selectPeer(succ, pred, tmanPartners);
+                } else if (!cyclonPartners.isEmpty()) {
+                    peer = selectPeer(succ, pred, cyclonPartners);
+                } else {
+                    active = false;
+                    return;
+                }
+
+                List<PeerAddress> buf = new ArrayList<PeerAddress>();
+                buf.add(succ);
+                buf.add(pred);
+                buf.addAll(tmanPartners);
+                buf.add(self);
+                buf.addAll(cyclonPartners);
+
+                active = false;
+                trigger(new TManUpdateRequest(buf, self, peer), networkPort);
             } else {
-                peer = tmanPartners.get(rand.nextInt(tmanPartners.size()));
+                List<PeerAddress> buf = new ArrayList<PeerAddress>();
+                buf.add(succ);
+                buf.add(pred);
+                buf.addAll(tmanPartners);
+                buf.add(self);
+                buf.addAll(cyclonPartners);
+
+                trigger(new TManUpdateResponse(buf, self, tmanPeer), networkPort);
+
+                buf.clear();
+                buf.add(succ);
+                buf.add(pred);
+                buf.addAll(tmanPartners);
+                buf.addAll(tmanPeerBuf);
+
+                selectView(buf);
+
+                Snapshot.updateTManPartners(self, tmanPartners);
+                Snapshot.updateSuccPred(self, succ, pred);
             }
-
-            List< PeerAddress> buf = new ArrayList<PeerAddress>();
-            buf.addAll(tmanPartners);
-            buf.add(self);
-            buf.addAll(cyclonPartners);
-
-            trigger(new TManUpdateRequest(buf, self, peer), networkPort);
         }
     };
 //-------------------------------------------------------------------	
     Handler<TManUpdateRequest> handleTManUpdateRequest = new Handler<TManUpdateRequest>() {
         @Override
         public void handle(TManUpdateRequest event) {
-            List<PeerAddress> bufPeer = event.getBuffer();
-            PeerAddress peer = event.getPeerSource();
+            tmanPeerBuf = event.getBuffer();
+            tmanPeer = event.getPeerSource();
 
-            List< PeerAddress> buf = new ArrayList<PeerAddress>();
-            buf.addAll(tmanPartners);
-            buf.add(self);
-            buf.addAll(cyclonPartners);
-
-            trigger(new TManUpdateResponse(buf, self, peer), networkPort);
-
-            buf.clear();
-            buf.addAll(tmanPartners);
-            buf.addAll(bufPeer);
-
-            //TODO
-            
-            Snapshot.updateTManPartners(self, tmanPartners);
-            Snapshot.updateSuccPred(self, succ, pred);
+            CyclonPartnersRequest request = new CyclonPartnersRequest();
+            trigger(request, cyclonPartnersPort);
         }
     };
 //-------------------------------------------------------------------	
@@ -127,11 +145,13 @@ public final class TMan extends ComponentDefinition {
             List<PeerAddress> bufPeer = event.getBuffer();
 
             List<PeerAddress> buf = new ArrayList<PeerAddress>();
+            buf.add(succ);
+            buf.add(pred);
             buf.addAll(tmanPartners);
             buf.addAll(bufPeer);
 
-            //TODO
-            
+            selectView(buf);
+
             Snapshot.updateTManPartners(self, tmanPartners);
             Snapshot.updateSuccPred(self, succ, pred);
         }
@@ -144,8 +164,117 @@ public final class TMan extends ComponentDefinition {
             trigger(response, tmanPartnersPort);
         }
     };
+//-------------------------------------------------------------------	
 
-    private int ranking(PeerAddress a, PeerAddress b) {
-        return 0;
+    private int compareSucc(BigInteger a, BigInteger b) {
+//        if (a.equals(b)) {
+//            return identifierSpaceSize.intValue();
+//        }
+//        BigInteger first = identifierSpaceSize.subtract(a.subtract(b).abs());
+//        BigInteger second = a.subtract(b).abs();
+//        return first.min(second).intValue();
+        BigInteger res = b.subtract(a);
+        if (res.signum() <= 0) {
+            res = identifierSpaceSize.add(res);
+        }
+        return res.intValue();
     }
+
+    private int comparePred(BigInteger a, BigInteger b) {
+        BigInteger res = a.subtract(b);
+        if (res.signum() <= 0) {
+            res = identifierSpaceSize.add(res);
+        }
+        return res.intValue();
+    }
+
+    private int compareFinger(BigInteger a, BigInteger b) {
+        BigInteger res = b.subtract(a);
+        if (res.signum() < 0) {
+            res = identifierSpaceSize.add(res);
+        }
+        return res.intValue();
+    }
+
+    private PeerAddress selectPeer(PeerAddress succ, PeerAddress pred, List<PeerAddress> fingers) {
+        Pair[] pairs = new Pair[fingers.size() + 2];
+        for (int i = 0; i < pairs.length; i++) {
+            pairs[i] = new Pair();
+        }
+
+        pairs[0].ranking = compareSucc(self.getPeerId(), succ.getPeerId());
+        pairs[0].peer = succ;
+        pairs[1].ranking = comparePred(self.getPeerId(), pred.getPeerId());
+        pairs[1].peer = pred;
+        for (int i = 0; i < fingers.size(); i++) {
+            pairs[i + 2].ranking = compareFinger(self.getPeerId().add(new BigInteger("2").pow(i)).mod(identifierSpaceSize),
+                    fingers.get(i).getPeerId());
+            pairs[i + 2].peer = fingers.get(i);
+        }
+
+        Arrays.sort(pairs, c);
+
+        return pairs[rand.nextInt((int) Math.ceil(pairs.length / 2.0))].peer;
+    }
+
+    private synchronized void selectView(List<PeerAddress> buf) {
+        Pair[] pairs;
+
+        //succ
+        pairs = new Pair[buf.size()];
+        for (int i = 0; i < pairs.length; i++) {
+            pairs[i] = new Pair();
+        }
+        for (int i = 0; i < buf.size(); i++) {
+            pairs[i].ranking = compareSucc(self.getPeerId(), buf.get(i).getPeerId());
+            pairs[i].peer = buf.get(i);
+        }
+        Arrays.sort(pairs, c);
+        succ = pairs[0].peer;
+
+        //pred
+        pairs = new Pair[buf.size()];
+        for (int i = 0; i < pairs.length; i++) {
+            pairs[i] = new Pair();
+        }
+        for (int i = 0; i < buf.size(); i++) {
+            pairs[i].ranking = comparePred(self.getPeerId(), buf.get(i).getPeerId());
+            pairs[i].peer = buf.get(i);
+        }
+        Arrays.sort(pairs, c);
+        pred = pairs[0].peer;
+
+        //fingers
+        int n = identifierSpaceSize.subtract(BigInteger.ONE).bitLength();
+        tmanPartners = new ArrayList<PeerAddress>(n);
+        for (int j = 0; j < n; j++) {
+            pairs = new Pair[buf.size()];
+            for (int i = 0; i < pairs.length; i++) {
+                pairs[i] = new Pair();
+            }
+            BigInteger fingerId = self.getPeerId().add(new BigInteger("2").pow(j)).mod(identifierSpaceSize);
+            for (int i = 0; i < buf.size(); i++) {
+                pairs[i].ranking = compareFinger(fingerId, buf.get(i).getPeerId());
+                pairs[i].peer = buf.get(i);
+            }
+            Arrays.sort(pairs, c);
+            tmanPartners.add(pairs[0].peer);
+        }
+    }
+
+    private class Pair {
+        PeerAddress peer;
+        int ranking;
+
+        @Override
+        public String toString() {
+            return "{" + peer + "=" + ranking + "}";
+        }
+    }
+    private final Comparator<Pair> c = new Comparator<Pair>() {
+        @Override
+        public int compare(Pair o1, Pair o2) {
+            return Integer.compare(o1.ranking, o2.ranking);
+        }
+    };
 }
