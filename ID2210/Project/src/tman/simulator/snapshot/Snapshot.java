@@ -76,7 +76,7 @@ public class Snapshot {
 //-------------------------------------------------------------------
     private static String reportNetworkState() {
         String str = new String("---\n");
-        int totalNumOfPeers = peers.size() - 1;
+        int totalNumOfPeers = peers.size();
         str += "total number of peers: " + totalNumOfPeers + "\n";
 
         return str;
@@ -91,7 +91,8 @@ public class Snapshot {
             peerInfo = peers.get(peer);
 
             str += "peer: " + peer;
-            str += ", cyclon parters: " + peerInfo.getCyclonPartners();
+            //str += ", cyclon parters: " + peerInfo.getCyclonPartners();
+            str += ", succ: " + peerInfo.getSucc() + ", pred: " + peerInfo.getPred();
             str += ", tman parters: " + peerInfo.getTManPartners();
             str += "\n";
         }

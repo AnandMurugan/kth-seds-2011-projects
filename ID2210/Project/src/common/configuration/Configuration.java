@@ -11,7 +11,7 @@ import se.sics.kompics.p2p.bootstrap.BootstrapConfiguration;
 
 
 public class Configuration {
-	public static int SNAPSHOT_PERIOD = 1000; // ms
+	public static int SNAPSHOT_PERIOD = 5000; // ms
 	public static int AVAILABLE_TOPICS = 20; 
 	
 	public InetAddress ip = null;
@@ -30,7 +30,7 @@ public class Configuration {
 
 	BootstrapConfiguration bootConfiguration = new BootstrapConfiguration(bootServerAddress, 60000, 4000, 3, 30000, webPort, webPort);
 	CyclonConfiguration cyclonConfiguration = new CyclonConfiguration(5, 10, 1000, 500000, new BigInteger("2").pow(13), 20);
-	TManConfiguration tmanConfiguration = new TManConfiguration(1000);
+	TManConfiguration tmanConfiguration = new TManConfiguration(5000, new BigInteger("2").pow(13));
 	AggregationConfiguration aggregationConfiguration = new AggregationConfiguration(1000);
         
 	public void set() throws IOException {
