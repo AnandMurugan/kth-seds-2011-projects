@@ -12,10 +12,9 @@ import java.math.BigInteger;
  * @author julio
  */
 public class ScribeForwardEvent extends TopicEvent {
-    ScribeMessageType msgType;
-    
-    
-    public ScribeForwardEvent(BigInteger topicId, PeerAddress source, PeerAddress destination, ScribeMessageType msgType){
+    private final ScribeMessageType msgType;
+
+    public ScribeForwardEvent(BigInteger topicId, PeerAddress source, PeerAddress destination, ScribeMessageType msgType) {
         super(topicId, source, destination);
         this.msgType = msgType;
     }
