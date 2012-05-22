@@ -9,6 +9,8 @@ import cyclon.system.peer.cyclon.CyclonPartnersRequest;
 import cyclon.system.peer.cyclon.CyclonPartnersResponse;
 import java.math.BigInteger;
 import java.util.*;
+import se.sics.asdistances.ASDistances;
+import se.sics.asdistances.DistanceCalculator;
 
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
@@ -37,6 +39,8 @@ public final class TMan extends ComponentDefinition {
     private boolean active;
     private List<PeerAddress> tmanPeerBuf;
     private PeerAddress tmanPeer;
+    private ASDistances distances = ASDistances.getInstance();
+    private BigInteger k;
 
 //-------------------------------------------------------------------	
     public TMan() {
@@ -60,6 +64,7 @@ public final class TMan extends ComponentDefinition {
             identifierSpaceSize = tmanConfiguration.getIdentifierSpaceSize();
             succ = self;
             pred = self;
+            k = identifierSpaceSize.divide(new BigInteger("128"));
 
             SchedulePeriodicTimeout rst = new SchedulePeriodicTimeout(period, period);
             rst.setTimeoutEvent(new TManSchedule(rst));
@@ -188,12 +193,18 @@ public final class TMan extends ComponentDefinition {
         return res.intValue();
     }
 
-    private int compareFinger(BigInteger a, BigInteger b) {
+    private int compareFinger(BigInteger a, BigInteger b, PeerAddress peer) {
         BigInteger res = b.subtract(a);
         if (res.signum() < 0) {
             res = identifierSpaceSize.add(res);
         }
-        return res.intValue();
+
+        //ASDistances
+        byte interASPenalty = distances.getDistance(
+                self.getPeerAddress().getIp().getHostAddress(),
+                peer.getPeerAddress().getIp().getHostAddress());
+
+        return res.add(k.multiply(new BigInteger(Byte.toString(interASPenalty)))).intValue();
     }
 
     private PeerAddress selectPeer(PeerAddress succ, PeerAddress pred, List<PeerAddress> fingers) {
@@ -208,7 +219,7 @@ public final class TMan extends ComponentDefinition {
         pairs[1].peer = pred;
         for (int i = 0; i < fingers.size(); i++) {
             pairs[i + 2].ranking = compareFinger(self.getPeerId().add(new BigInteger("2").pow(i)).mod(identifierSpaceSize),
-                    fingers.get(i).getPeerId());
+                    fingers.get(i).getPeerId(), fingers.get(i));
             pairs[i + 2].peer = fingers.get(i);
         }
 
@@ -254,7 +265,7 @@ public final class TMan extends ComponentDefinition {
             }
             BigInteger fingerId = self.getPeerId().add(new BigInteger("2").pow(j)).mod(identifierSpaceSize);
             for (int i = 0; i < buf.size(); i++) {
-                pairs[i].ranking = compareFinger(fingerId, buf.get(i).getPeerId());
+                pairs[i].ranking = compareFinger(fingerId, buf.get(i).getPeerId(), buf.get(i));
                 pairs[i].peer = buf.get(i);
             }
             Arrays.sort(pairs, c);
