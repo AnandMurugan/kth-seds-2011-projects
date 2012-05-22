@@ -69,7 +69,17 @@ public final class Scribe extends ComponentDefinition {
         public void handle(PublishEvent event) {
             BigInteger topicId = event.getTopicId();
 
+            if (topics.contains(topicId)) {
+                // deliver
+                //Snapshot.updateRecvTopicEvent(self, topicId);
+            }
             
+            if (children.get(topicId) != null) {
+                for (PeerAddress child : children.get(topicId) ) {
+                    // broadcast message
+                    trigger(new TopicEvent(event.getTopicId(), self, child), networkPort);
+                }
+            }
 
             Snapshot.publishTopicEvent(topicId);
         }
@@ -80,9 +90,16 @@ public final class Scribe extends ComponentDefinition {
             BigInteger topicId = event.getTopicId();
 
             // check if receiver
-
+            if (topics.contains(event.getTopicId())) {
+                //Snapshot.updateRecvTopicEvent(self, topicId);    
+            }
             // check if forwarder
-
+            if (children.get(event.getTopicId()) != null) {
+                for (PeerAddress child: children.get(event.getTopicId())) {
+                    // broadcast message
+                    trigger(new TopicEvent(event.getTopicId(), self, child), networkPort);
+                }
+            }
 
             Snapshot.updateRecvTopicEvent(self, topicId);
         }
