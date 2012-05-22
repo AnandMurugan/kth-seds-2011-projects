@@ -4,8 +4,6 @@ import common.peer.PeerAddress;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
@@ -16,7 +14,6 @@ import se.sics.kompics.timer.SchedulePeriodicTimeout;
 import se.sics.kompics.timer.Timer;
 
 import scribe.simulator.snapshot.Snapshot;
-import se.sics.kompics.timer.ScheduleTimeout;
 import tman.system.peer.tman.TManPartnersPort;
 import tman.system.peer.tman.TManPartnersRequest;
 import tman.system.peer.tman.TManPartnersResponse;
@@ -31,7 +28,6 @@ public final class Scribe extends ComponentDefinition {
     private ArrayList<BigInteger> topics;
     private ArrayList<PeerAddress> tmanPartners;
     private HashMap<BigInteger, ArrayList<PeerAddress>> children;
-    private long stabilizationPeriod = 10000;
 
 //-------------------------------------------------------------------	
     public Scribe() {
@@ -44,7 +40,6 @@ public final class Scribe extends ComponentDefinition {
         subscribe(handleRecvTopicEvent, networkPort);
         subscribe(handleRecvTManPartners, tmanPartnersPort);
         subscribe(handlePublish, scribePort);
-        subscribe(handleStabilizationTimeout, timerPort);
         subscribe(handleFwdEvent, networkPort);
     }
 //-------------------------------------------------------------------	
@@ -57,11 +52,6 @@ public final class Scribe extends ComponentDefinition {
             SchedulePeriodicTimeout rst = new SchedulePeriodicTimeout(period, period);
             rst.setTimeoutEvent(new ScribeSchedule(rst));
             trigger(rst, timerPort);
-
-            // Set timer and join the groups.
-            //ScheduleTimeout stbTimer = new ScheduleTimeout(stabilizationPeriod);
-            //stbTimer.setTimeoutEvent(new StabilizationTimeout(stbTimer));
-            //trigger(stbTimer, timerPort);
         }
     };
 //-------------------------------------------------------------------	
@@ -73,9 +63,9 @@ public final class Scribe extends ComponentDefinition {
                 // deliver
                 //Snapshot.updateRecvTopicEvent(self, topicId);
             }
-            
+
             if (children.get(topicId) != null) {
-                for (PeerAddress child : children.get(topicId) ) {
+                for (PeerAddress child : children.get(topicId)) {
                     // broadcast message
                     trigger(new TopicEvent(event.getTopicId(), self, child), networkPort);
                 }
@@ -91,11 +81,11 @@ public final class Scribe extends ComponentDefinition {
 
             // check if receiver
             if (topics.contains(event.getTopicId())) {
-                //Snapshot.updateRecvTopicEvent(self, topicId);    
+                // deliver it    
             }
             // check if forwarder
             if (children.get(event.getTopicId()) != null) {
-                for (PeerAddress child: children.get(event.getTopicId())) {
+                for (PeerAddress child : children.get(event.getTopicId())) {
                     // broadcast message
                     trigger(new TopicEvent(event.getTopicId(), self, child), networkPort);
                 }
@@ -132,33 +122,17 @@ public final class Scribe extends ComponentDefinition {
             }
 
             //PeerAddress nextPeer = getCloserFingerNode(event.getTopicId());
-            
             PeerAddress nextPeer = getNextNode(event.getTopicId());
             if (nextPeer != self) {
-                    // continue forwarding
-                    ScribeForwardEvent forwardEvent = new ScribeForwardEvent(event.getTopicId(), event.getPeerSource(), nextPeer, ScribeMessageType.JOIN);
-                    trigger(forwardEvent, networkPort);
-                
+                // continue forwarding
+                ScribeForwardEvent forwardEvent = new ScribeForwardEvent(event.getTopicId(), event.getPeerSource(), nextPeer, ScribeMessageType.JOIN);
+                trigger(forwardEvent, networkPort);
+
             }
 
             // Add to children
             if (!children.get(event.getTopicId()).contains(event.getPeerSource())) {
                 children.get(event.getTopicId()).add(event.getPeerSource());
-            }
-        }
-    };
-    Handler<ScribeDeliverEvent> handleDeliverEvent = new Handler<ScribeDeliverEvent>() {
-        public void handle(ScribeDeliverEvent event) {
-        }
-    };
-    Handler<StabilizationTimeout> handleStabilizationTimeout = new Handler<StabilizationTimeout>() {
-        public void handle(StabilizationTimeout event) {
-            // join all topics
-            for (BigInteger topicId : topics) {
-                PeerAddress closerPeer = getCloserFingerNode(topicId);
-
-                ScribeForwardEvent forwardEvent = new ScribeForwardEvent(topicId, self, closerPeer, ScribeMessageType.JOIN);
-                trigger(forwardEvent, networkPort);
             }
         }
     };
@@ -218,7 +192,6 @@ public final class Scribe extends ComponentDefinition {
         if (closerPeer != self) {
             ScribeForwardEvent forwardEvent = new ScribeForwardEvent(topicId, self, closerPeer, ScribeMessageType.JOIN);
             trigger(forwardEvent, networkPort);
-
         }
     }
 }
