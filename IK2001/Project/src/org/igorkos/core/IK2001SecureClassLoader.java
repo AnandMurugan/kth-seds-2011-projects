@@ -9,12 +9,12 @@ import java.security.CodeSource;
 import java.security.SecureClassLoader;
 import java.security.cert.Certificate;
 
-public class MySecureClassLoader extends SecureClassLoader {
+public class IK2001SecureClassLoader extends SecureClassLoader {
 
     protected URL urlBase;
-    public boolean printLoadMessages = true;
+    public boolean debug = true;
 
-    public MySecureClassLoader(String base, ClassLoader parent) {
+    public IK2001SecureClassLoader(String base, ClassLoader parent) {
         super(parent);
         try {
             if (!(base.endsWith("/"))) {
@@ -57,16 +57,16 @@ public class MySecureClassLoader extends SecureClassLoader {
             }
         }
         try {
-            URL url = new URL(urlBase, urlName + ".class");
-            if (printLoadMessages) {
+            URL url = new URL(urlBase, urlName + ".ik2001");
+            if (debug) {
                 System.out.println("Loading " + url);
             }
             InputStream is = url.openConnection().getInputStream();
             buf = getClassBytes(is);
-            cl = defineClass(name, buf, 0, buf.length, new CodeSource(url, (Certificate[]) null));
+            cl = defineClass(name, buf, 0, buf.length, new CodeSource(urlBase, (Certificate[]) null));
             return cl;
         } catch (Exception e) {
-            throw new ClassNotFoundException(name);
+            throw new ClassNotFoundException(name, e);
         }
     }
 }

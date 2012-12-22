@@ -5,15 +5,21 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    public static final int PORT = 8080;
+    public static final int DEFAULT_PORT = 8080;
+
     private static ServerSocket serverSocket;
 
     public static void main(String[] args) throws IOException {
-        serverSocket = new ServerSocket(PORT);
-        System.out.println("Waiting for connections...");
-        while(true) {
+        int port = DEFAULT_PORT;
+        if (args.length > 0) {
+            port = Integer.parseInt(args[0]);
+        }
+
+        serverSocket = new ServerSocket(port);
+        System.out.println("Waiting for connections on port " + port + "...");
+        while (true) {
             Socket socket = serverSocket.accept();
-            System.out.println("Accepted connection from "+socket.getInetAddress().getHostAddress());
+            System.out.println("Accepted connection from " + socket.getInetAddress().getHostAddress());
             socket.close();
         }
     }

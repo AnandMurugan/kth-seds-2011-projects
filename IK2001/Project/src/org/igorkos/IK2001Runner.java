@@ -1,19 +1,19 @@
 package org.igorkos;
 
-import org.igorkos.core.MySecureClassLoader;
-import org.igorkos.core.MySecurityManager;
+import org.igorkos.core.IK2001SecureClassLoader;
+import org.igorkos.core.IK2001SecurityManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class MyJavaRunner implements Runnable {
+public class IK2001Runner implements Runnable {
     private final static int NUM_ARGS = 2;
 
     private ClassLoader cl;
     private Object args[];
     private String className;
 
-    MyJavaRunner(ClassLoader cl, String className, Object args[]) {
+    IK2001Runner(ClassLoader cl, String className, Object args[]) {
         this.cl = cl;
         this.className = className;
         this.args = args;
@@ -60,7 +60,8 @@ public class MyJavaRunner implements Runnable {
             target = cl.loadClass(className);
             invokeMain(target);
         } catch (ClassNotFoundException cnfe) {
-            System.out.println("Can't load " + className);
+            System.out.println("Can't load " + className + ": " + cnfe.getException());
+            cnfe.printStackTrace();
         }
     }
 
@@ -69,9 +70,9 @@ public class MyJavaRunner implements Runnable {
             System.err.println("usage:  JavaRunner <url> <classfile>");
             System.exit(-1);
         }
-        System.setSecurityManager(new MySecurityManager());
-        MySecureClassLoader cl = new MySecureClassLoader(args[0], ClassLoader.getSystemClassLoader());
-        Thread t = new Thread(new MyJavaRunner(cl, args[1], getArgs(args)));
+        IK2001SecureClassLoader cl = new IK2001SecureClassLoader(args[0], ClassLoader.getSystemClassLoader());
+        System.setSecurityManager(new IK2001SecurityManager());
+        Thread t = new Thread(new IK2001Runner(cl, args[1], getArgs(args)));
         t.start();
         try {
             t.join();
