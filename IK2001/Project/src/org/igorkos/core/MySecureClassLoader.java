@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.security.CodeSource;
 import java.security.SecureClassLoader;
+import java.security.cert.Certificate;
 
 public class MySecureClassLoader extends SecureClassLoader {
 
@@ -62,7 +63,7 @@ public class MySecureClassLoader extends SecureClassLoader {
             }
             InputStream is = url.openConnection().getInputStream();
             buf = getClassBytes(is);
-            cl = defineClass(name, buf, 0, buf.length, (CodeSource) null);
+            cl = defineClass(name, buf, 0, buf.length, new CodeSource(url, (Certificate[]) null));
             return cl;
         } catch (Exception e) {
             throw new ClassNotFoundException(name);
