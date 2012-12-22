@@ -5,15 +5,16 @@ import org.igorkos.core.IK2001SecurityManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.SecureClassLoader;
 
 public class IK2001Runner implements Runnable {
     private final static int NUM_ARGS = 2;
 
-    private ClassLoader cl;
+    private SecureClassLoader cl;
     private Object args[];
     private String className;
 
-    IK2001Runner(ClassLoader cl, String className, Object args[]) {
+    IK2001Runner(SecureClassLoader cl, String className, Object args[]) {
         this.cl = cl;
         this.className = className;
         this.args = args;
@@ -55,10 +56,10 @@ public class IK2001Runner implements Runnable {
 
     @Override
     public void run() {
-        Class target;
+        Class clazz;
         try {
-            target = cl.loadClass(className);
-            invokeMain(target);
+            clazz = cl.loadClass(className);
+            invokeMain(clazz);
         } catch (ClassNotFoundException cnfe) {
             System.out.println("Can't load " + className + ": " + cnfe.getException());
             cnfe.printStackTrace();
