@@ -1,6 +1,7 @@
 package org.igorkos;
 
 import org.igorkos.core.MySecureClassLoader;
+import org.igorkos.core.MySecurityManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -65,9 +66,10 @@ public class MyJavaRunner implements Runnable {
 
     public static void main(String args[]) throws ClassNotFoundException {
         if (args.length < 1) {
-            System.err.println("usage:  JavaRunner <location> <classfile>");
+            System.err.println("usage:  JavaRunner <url> <classfile>");
             System.exit(-1);
         }
+        System.setSecurityManager(new MySecurityManager());
         MySecureClassLoader cl = new MySecureClassLoader(args[0], ClassLoader.getSystemClassLoader());
         Thread t = new Thread(new MyJavaRunner(cl, args[1], getArgs(args)));
         t.start();
