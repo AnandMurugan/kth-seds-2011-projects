@@ -44,10 +44,10 @@ public class IK2001SecureClassLoader extends SecureClassLoader {
     }
 
     @Override
-    protected Class findClass(String name) throws ClassNotFoundException {
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
         String urlName = name.replace('.', '/');
         byte buf[];
-        Class cl;
+        Class clazz;
 
         SecurityManager sm = System.getSecurityManager();
         if (sm != null) {
@@ -63,8 +63,8 @@ public class IK2001SecureClassLoader extends SecureClassLoader {
             }
             InputStream is = url.openConnection().getInputStream();
             buf = getClassBytes(is);
-            cl = defineClass(name, buf, 0, buf.length, new CodeSource(urlBase, (Certificate[]) null));
-            return cl;
+            clazz = defineClass(name, buf, 0, buf.length, new CodeSource(urlBase, (Certificate[]) null));
+            return clazz;
         } catch (Exception e) {
             throw new ClassNotFoundException(name, e);
         }
